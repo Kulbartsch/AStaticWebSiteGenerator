@@ -1,0 +1,10 @@
+@Foo: Baa
+
++h.in
+
+<article>
+The time is
+{{now}}
+
+<p>Are we happy?</p>
+
