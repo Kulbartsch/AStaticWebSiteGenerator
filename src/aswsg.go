@@ -22,6 +22,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"flag"
 	//"regexp"
 )
 
@@ -41,15 +42,15 @@ var siteVars = map[string]string{
 	"ASWSG-EMP-2":      "//",
 	// line level formating at begin of line, using one of the characters
 	"ASWSG-DEFINE":     "@",
-	"ASWG-INCLUDE":     "+"
+	"ASWG-INCLUDE":     "+",
 	"ASWSG-LIST":       "*-",
 	"ASWSG-CITE":       ">",
 	"ASWSG-HEADER":     "=!",
-	"ASWSG-NUMERATION": "#",
+	"ASWSG-NUMERATION": "#0123456789",
 	"ASWSG-TABLE":      "|",
 	// single multi char in one line alone, at least 3
 	"ASWSG-CODE":       "%",  // start/end code block
-	"ASWSG-LINE":       "-",  // horizontal line 
+	"ASWSG-LINE":       "-",  // horizontal line
 }
 
 func setDefaultSiteVars() {
@@ -60,11 +61,19 @@ func setDefaultSiteVars() {
 	siteVars["today"] = time.Now().Format(siteVars["DateFormat"])
 }
 
-func firstCharCountAndTrim(line string) firstChar string, count int, content string {
+func parseAndSetCommandLineVars() {
+  for i := 0; i < 5; i ++ {
+		arg := flag.Arg(i)
+		// debug
+		fmt.Println("cmdl param", i, ':', arg)
+	}
+}
+
+func firstCharCountAndTrim(line string) (firstChar string, count int, content string) {
 	if len(line) == 0 { return "", 0, "" }
-	firstChar := line[0:1]
-	for count := 1; line[count] == firstChar; count ++ {	}
-	content := string.Trim(line[count:], " \t")
+	firstChar = line[0:1]
+	for count = 1; line[count] == firstChar[0]; count ++ {	}
+	content = strings.Trim(line[count:], " \t")
 	return firstChar, count, content
 }
 
@@ -73,7 +82,7 @@ func parseAndSetVar(line string) {
 	//if validID.MatchString(line) {
 	//if line[0] == siteVars["ASWG-VAR"][0]) {
 	if strings.ContainsAny(line[0:1] , siteVars["ASWG-VAR"]) {
-		var dp := strings.Index(line, ":")
+		dp := strings.Index(line, ":")
 		siteVars[line[1:(dp)]] = line[(dp + 1):]
 	}
 }
@@ -146,6 +155,8 @@ func main() {
 
 	setDefaultSiteVars()
 
+  parseAndSetCommandLineVars()
+
 	fmt.Println(parseLine("@test:OK"))
 	fmt.Println(parseLine("@ASWG-VAR:$@"))
 	fmt.Println(parseLine("@FOO:foo"))
@@ -173,7 +184,7 @@ func main() {
 	TestSBS2("11 Hallo-{{_name__))!")
 	TestSBS2("12 Hallo _name_!")
 	TestSBS2("13 Hallo __name__!")
-	TestSBS("14 Hallo_\{{name}}!")
+	TestSBS("14 Hallo_\\{{name}}!")
 
 	fmt.Println("By!")
 
