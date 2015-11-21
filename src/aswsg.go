@@ -3,15 +3,15 @@
 //
 // Lines beginning with "@" (and no further white space)
 // are interpreted as variables in the form "@var: value".
-// White spaces after the dubble colon is oprtional and gets removed.
+// White spaces after the dubble colon is optional and gets removed.
 //
 // Lines beginning with a "+" (and no further white space)
 // are interpreted in the form "+filename".
-// The named file will be inclued here.
+// The named file will be included here.
 //
 // \ escapes the special line characters (and will be removed)
 //
-// A {{variable}} in the texted will be replaced by the named variable
+// A {{variable}} in the text will be replaced by the named variable
 //
 
 package main
@@ -42,7 +42,7 @@ var siteVars = map[string]string{
 	"ASWSG-EMP-2":      "//",
 	// line level formating at begin of line, using one of the characters
 	"ASWSG-DEFINE":     "@",
-	"ASWG-INCLUDE":     "+",
+	"ASWSG-INCLUDE":    "+",
 	"ASWSG-LIST":       "*-",
 	"ASWSG-CITE":       ">",
 	"ASWSG-HEADER":     "=!",
@@ -80,8 +80,8 @@ func firstCharCountAndTrim(line string) (firstChar string, count int, content st
 func parseAndSetVar(line string) {
 	//var validID = regexp.MustCompile(`^@(.+):(.+)`)
 	//if validID.MatchString(line) {
-	//if line[0] == siteVars["ASWG-VAR"][0]) {
-	if strings.ContainsAny(line[0:1] , siteVars["ASWG-VAR"]) {
+	//if line[0] == siteVars["ASWSG-VAR"][0]) {
+	if strings.ContainsAny(line[0:1] , siteVars["ASWSG-VAR"]) {
 		dp := strings.Index(line, ":")
 		siteVars[line[1:(dp)]] = line[(dp + 1):]
 	}
@@ -93,10 +93,10 @@ func parseLine(line string) string {
 	switch {
 	case len(line) == 0:
 		return "/0"
-	case strings.ContainsAny(line[0:1] , siteVars["ASWG-VAR"]):
+	case strings.ContainsAny(line[0:1] , siteVars["ASWSG-VAR"]):
 		parseAndSetVar( line )
 		return "/var"
-	case strings.ContainsAny(line[0:1] , siteVars["ASWG-HEADER"]):
+	case strings.ContainsAny(line[0:1] , siteVars["ASWSG-HEADER"]):
 		return "<h1>" + line[1:] + "</h1>"
 	}
 	return line
@@ -158,7 +158,7 @@ func main() {
   parseAndSetCommandLineVars()
 
 	fmt.Println(parseLine("@test:OK"))
-	fmt.Println(parseLine("@ASWG-VAR:$@"))
+	fmt.Println(parseLine("@ASWSG-VAR:$@"))
 	fmt.Println(parseLine("@FOO:foo"))
 	fmt.Println(parseLine("$BAA:baa"))
 	fmt.Println(parseLine("= Welcome"))
