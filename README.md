@@ -13,7 +13,7 @@ But it is even possible to redefine markup symbols due to different markup diale
 (i.E. use "!" instead/as well of "=" for headers.)
 All variables can be used subsequent, also in included files. (i.E. using the article name in a header include.)
 
-Of course, this tool will generate new HTML code, which of course may contain dynamic code.
+This tool will generate new HTML code, which -- of course -- may contain dynamic code.
 
 ## Planned Features
 

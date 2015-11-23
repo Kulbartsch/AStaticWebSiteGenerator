@@ -22,11 +22,10 @@ import (
 	"os"
 	"strings"
 	"time"
-	"flag"
 	//"regexp"
 )
 
-var siteVars = map[string]string{
+var siteVars = map[string]string {
 	"ASWSG-VERSION":    "0.1",
 	"ASWSG-AUTHOR":     "Alexander Kulbartsch",
 	"ASWSG-LICENSE":    "GPL V3",
@@ -62,10 +61,13 @@ func setDefaultSiteVars() {
 }
 
 func parseAndSetCommandLineVars() {
-  for i := 0; i < 5; i ++ {
-		arg := flag.Arg(i)
-		// debug
-		fmt.Println("cmdl param", i, ':', arg)
+  for i := 1; i < len(os.Args); i ++ {
+		arg := os.Args[i]
+		dp := strings.Index(arg, ":")
+		siteVars[arg[1:(dp)]] = arg[(dp + 1):]
+
+		// TODO debug, remove
+		fmt.Println("cmdl param", i, ":", arg)
 	}
 }
 
@@ -135,7 +137,6 @@ func ReadTextFile(path string) ([]string, error) {
 }
 
 
-
 // test
 
 func TestSBS(text string) {
@@ -148,14 +149,29 @@ func TestSBS2(text string) {
 	fmt.Println(a, "*", b, "*", c)
 }
 
+func parseFile(filename string, lineState string) ([]string, string) {
+	// ToDo
+	// 1. read file
+	// 2. replace vars
+	// 3. parse line
+	// 4. parse inline
+
+	// TODO dummy, remove
+	result := []string{ "test", "empty" }
+  return result, ""
+}
 
 func main() {
-
-	fmt.Println("Hi!")
 
 	setDefaultSiteVars()
 
   parseAndSetCommandLineVars()
+
+  parseFile("", " ")
+
+// Tests
+
+	fmt.Println("Hi!")
 
 	fmt.Println(parseLine("@test:OK"))
 	fmt.Println(parseLine("@ASWSG-VAR:$@"))
