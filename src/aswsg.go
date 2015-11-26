@@ -153,8 +153,11 @@ func parseFile(filename string, lineState string) ([]string, string) {
 	// ToDo
 	// 1. read file
 	// 2. replace vars
-	// 3. parse line
-	// 4. parse inline
+	// 3. parse vars
+	// 4. process includes
+	// 5. process markup/down
+	//    a. parse line
+	//    b. parse inline
 
 	// TODO dummy, remove
 	result := []string{ "test", "empty" }
@@ -165,11 +168,11 @@ func main() {
 
 	setDefaultSiteVars()
 
-  parseAndSetCommandLineVars()
+	parseAndSetCommandLineVars()
 
-  parseFile("", " ")
+  	parseFile("", " ")
 
-// Tests
+//  Tests
 
 	fmt.Println("Hi!")
 
