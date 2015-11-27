@@ -25,20 +25,26 @@ import (
 	//"regexp"
 )
 
-var siteVars = map[string]string {
-	"ASWSG-VERSION":    "0.1",
-	"ASWSG-AUTHOR":     "Alexander Kulbartsch",
-	"ASWSG-LICENSE":    "GPL V3",
+type SimpleVars map[string]string
+
+var siteVars = SimpleVars{
+	"ASWSG-VERSION": "0.1",
+	"ASWSG-AUTHOR":  "Alexander Kulbartsch",
+	"ASWSG-LICENSE": "GPL V3",
 	// inline formating, pairs end on -1 respective -2
-	"ASWSG-ESCAPE":     "\\",
-	"ASWSG-VAR-1":      "{{",
-	"ASWSG-VAR-2":      "}}",
-	"ASWSG-LINK-1":     "[[",
-	"ASWSG-LINK-2":     "]]",
-	"ASWSG-BOLD-1":     "*",
-	"ASWSG-BOLD-2":     "*",
-	"ASWSG-EMP-1":      "//",
-	"ASWSG-EMP-2":      "//",
+	"ASWSG-ESCAPE":   "\\",
+	"ASWSG-VAR-1":    "{{",
+	"ASWSG-VAR-2":    "}}",
+	"ASWSG-LINK-1":   "[[",
+	"ASWSG-LINK-2":   "]]",
+	"ASWSG-BOLD-1":   "*",
+	"ASWSG-BOLD-2":   "*",
+	"ASWSG-EMP-1":    "//",
+	"ASWSG-EMP-2":    "//",
+	"ASWSG-CODE-1":   "``",
+	"ASWSG-CODE-2":   "``",
+	"ASWSG-STRIKE-1": "~~",
+	"ASWSG-STRIKE-2": "~~",
 	// line level formating at begin of line, using one of the characters
 	"ASWSG-DEFINE":     "@",
 	"ASWSG-INCLUDE":    "+",
@@ -48,33 +54,82 @@ var siteVars = map[string]string {
 	"ASWSG-NUMERATION": "#0123456789",
 	"ASWSG-TABLE":      "|",
 	// single multi char in one line alone, at least 3
-	"ASWSG-CODE":       "%",  // start/end code block
-	"ASWSG-LINE":       "-",  // horizontal line
+	"ASWSG-LINE":    "-", // horizontal line
+	"ASWSG-ML-CODE": "%", // start/end code block
+	"ASWSG-ML-CITE": ">",
 }
 
+// Var handling
+
+// WhiteSpaceTrim
+func WhiteSpaceTrim(in string) string {
+	return strings.Trim(in, " \t\n")
+}
+
+func (v SimpleVars) SetVar(key, val string) (ok bool) {
+	tkey := WhiteSpaceTrim(key)
+	if len(tkey) == 0 {
+		return false
+	}
+	v[strings.ToUpper(tkey)] = WhiteSpaceTrim(val)
+	return true
+}
+
+func (v SimpleVars) GetVal(key string) (result string) {
+	tkey := WhiteSpaceTrim(key)
+	if len(tkey) == 0 {
+		return ""
+	}
+	// TODO: check if value exists
+	return v[strings.ToUpper(key)]
+}
+
+func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
+	dp := strings.Index(toparse, ":")
+	if dp < 1 || dp == len(toparse) {
+		return false
+	}
+	v.SetVar(toparse[0:(dp)], toparse[(dp+1):])
+	return true
+}
+
+// message handling
+
+func Message(filename string, line int, severity string, messagetext string) {
+	fmt.Println(filename, ":", line, ":", severity, ":", messagetext)
+}
+
+// main
+
 func setDefaultSiteVars() {
-	siteVars["TimeStampFormat"] = "2006-01-02 15:04:05 UTC+ 07:00"
-	siteVars["DateFormat"] = "2006-01-02"
-	siteVars["TimeFormat"] = "15:04:05"
-	siteVars["now"] = time.Now().Format(siteVars["TimeStampFormat"])
-	siteVars["today"] = time.Now().Format(siteVars["DateFormat"])
+	_ = siteVars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
+	_ = siteVars.SetVar("DateFormat", "2006-01-02")
+	_ = siteVars.SetVar("TimeFormat", "15:04:05")
+	_ = siteVars.SetVar("now", time.Now().Format(siteVars.GetVal("TimeStampFormat")))
+	_ = siteVars.SetVar("today", time.Now().Format(siteVars.GetVal("DateFormat")))
 }
 
 func parseAndSetCommandLineVars() {
-  for i := 1; i < len(os.Args); i ++ {
+	for i := 1; i < len(os.Args); i++ {
 		arg := os.Args[i]
-		dp := strings.Index(arg, ":")
-		siteVars[arg[1:(dp)]] = arg[(dp + 1):]
-
-		// TODO debug, remove
-		fmt.Println("cmdl param", i, ":", arg)
+		Message("$CMDLINEARG$", i, "D", arg)
+		if strings.Index(arg, ":") >= 0 {
+			if siteVars.ParseAndSetVar(arg) != true {
+				Message("", 0, "w", "Can't parse variable: "+arg)
+			}
+		} else {
+			// TODO process none variable setting parameter
+		}
 	}
 }
 
 func firstCharCountAndTrim(line string) (firstChar string, count int, content string) {
-	if len(line) == 0 { return "", 0, "" }
+	if len(line) == 0 {
+		return "", 0, ""
+	}
 	firstChar = line[0:1]
-	for count = 1; line[count] == firstChar[0]; count ++ {	}
+	for count = 1; line[count] == firstChar[0]; count++ {
+	}
 	content = strings.Trim(line[count:], " \t")
 	return firstChar, count, content
 }
@@ -83,9 +138,8 @@ func parseAndSetVar(line string) {
 	//var validID = regexp.MustCompile(`^@(.+):(.+)`)
 	//if validID.MatchString(line) {
 	//if line[0] == siteVars["ASWSG-VAR"][0]) {
-	if strings.ContainsAny(line[0:1] , siteVars["ASWSG-VAR"]) {
-		dp := strings.Index(line, ":")
-		siteVars[line[1:(dp)]] = line[(dp + 1):]
+	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-VAR")) {
+		siteVars.ParseAndSetVar(line[1:])
 	}
 }
 
@@ -95,10 +149,10 @@ func parseLine(line string) string {
 	switch {
 	case len(line) == 0:
 		return "/0"
-	case strings.ContainsAny(line[0:1] , siteVars["ASWSG-VAR"]):
-		parseAndSetVar( line )
+	case strings.ContainsAny(line[0:1], siteVars["ASWSG-VAR"]):
+		parseAndSetVar(line)
 		return "/var"
-	case strings.ContainsAny(line[0:1] , siteVars["ASWSG-HEADER"]):
+	case strings.ContainsAny(line[0:1], siteVars["ASWSG-HEADER"]):
 		return "<h1>" + line[1:] + "</h1>"
 	}
 	return line
@@ -118,7 +172,6 @@ func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a st
 	return text[0:m], text[m+len(b1) : n], text[n+len(b2):]
 }
 
-
 //HACK: stream parsing
 
 func ReadTextFile(path string) ([]string, error) {
@@ -135,7 +188,6 @@ func ReadTextFile(path string) ([]string, error) {
 	}
 	return lines, scanner.Err()
 }
-
 
 // test
 
@@ -157,19 +209,19 @@ func parseFile(filename string, lineState string) ([]string, string) {
 	// 4. parse inline
 
 	// TODO dummy, remove
-	result := []string{ "test", "empty" }
-  return result, ""
+	result := []string{"test", "empty"}
+	return result, ""
 }
 
 func main() {
 
 	setDefaultSiteVars()
 
-  parseAndSetCommandLineVars()
+	parseAndSetCommandLineVars()
 
-  parseFile("", " ")
+	parseFile("", " ")
 
-// Tests
+	// Tests
 
 	fmt.Println("Hi!")
 
