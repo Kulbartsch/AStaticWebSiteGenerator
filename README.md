@@ -31,13 +31,13 @@ may vary
     * [ ] bold
     * [ ] emphasised
     * [ ] links
-* [ ] Include file processing
-* [ ] Setting and using of variables
+* [X] Include file processing
+* [X] Setting and using of variables
   * [ ] Setting variables (in this order, later overwrites former)
-    1. [ ] static
+    1. [X] static
     2. [ ] dynamically
-    3. [ ] from parameter
-    4. [x] in file
+    3. [X] from parameter
+    4. [X] in file
   * [x] Using
 * [x] redefine markup tags
 * [x] *make* friendly
