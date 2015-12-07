@@ -426,10 +426,15 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	defer file.Close()
 
 	// ToDo set vars
-	//    - filename
+	//    - filename        ok
 	//    - fqfn
 	//    - file last change date + time
 	//    - file creation date + time
+	file_stat, stat_error := file.Stat()
+	if stat_error != nil {
+		return nil, paragraphState, err
+	}
+	siteVars.SetVar("filename", file_stat.Name())
 
 	scanner := bufio.NewScanner(file)
 
@@ -459,7 +464,7 @@ func main() {
 	if err != nil {
 		fmt.Println("Error:", err.Error());
 	}
-	
+
 	// cleanup unclosed paragraphs
 	parsedText = append(parsedText, changeParagraphs(paragraphState, "", false)...)
 
