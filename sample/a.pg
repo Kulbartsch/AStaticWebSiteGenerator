@@ -6,5 +6,7 @@
 The time is
 {{now}}
 
+<p>Foo is: {{Foo}}</p>
+
 <p>Are we happy?</p>
 

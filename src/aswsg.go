@@ -138,15 +138,24 @@ func setDefaultSiteVars() {
 }
 
 func parseAndSetCommandLineVars() {
+	destinationVar := "IN-FILE"
 	for i := 1; i < len(os.Args); i++ {
 		arg := os.Args[i]
 		Message("$CMDLINEARG$", i, "D", arg)
 		if strings.Index(arg, ":") >= 0 {
 			if siteVars.ParseAndSetVar(arg) != true {
-				Message("", 0, "w", "Can't parse variable: "+arg)
+				Message("", i, "w", "Can't parse variable: "+arg)
 			}
 		} else {
-			// TODO process none variable setting parameter
+			if siteVars.SetVar(destinationVar, arg) != true {
+				Message("", i, "w", "Can't parse variable: "+arg)
+			} else {
+				if destinationVar = "IN-FILE" {
+					destinationVar = "OUT-FILE"
+				} else {
+					Message("$CMDLINEARG$", i, "W", "To much non variable parameters (ignored): "+arg)
+				}
+			}
 		}
 	}
 }
@@ -295,7 +304,11 @@ func changeParagraphs(oldParagraphState string, newParagraphState string, refres
 		return
 	}
 	intermediateState := oldParagraphState
-	for len(intermediateState) > 0 && intermediateState != newParagraphState[:len(intermediateState)] {
+	Message("", 0, "D", "paragraphState: '" + paragraphState + "', intermediateState: '" + intermediateState + "'")
+	for len(intermediateState) > 0  {
+		if  intermediateState == newParagraphState {
+			break
+		}
 		x := len(intermediateState) - 1
 		resultLines = append(resultLines, generateTag(right(intermediateState, 1), true))
 		intermediateState = intermediateState[:x]
@@ -454,6 +467,8 @@ func main() {
 	var parsedText []string
 	var err error
 
+	Message("", 0, "D", "---- ASWSG start ----")
+
 	setDefaultSiteVars()
 
 	paragraphState = ""
@@ -481,7 +496,7 @@ func main() {
 
 	// Tests
 
-	fmt.Println("---- Test Line Parsing ----")
+	Message("", 0, "D", "---- Test Line Parsing ----")
 
 	fmt.Println(parseLine("@test:OK", ""))
 	fmt.Println(parseLine("@ASWSG-VAR:$@", ""))

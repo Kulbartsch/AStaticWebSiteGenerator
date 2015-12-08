@@ -36,7 +36,7 @@ may vary
   * [ ] Setting variables (in this order, later overwrites former)
     1. [X] static
     2. [ ] dynamically
-    3. [X] from parameter
+    3. [X] from command line parameter
     4. [X] in file
   * [x] Using
 * [x] redefine markup tags
