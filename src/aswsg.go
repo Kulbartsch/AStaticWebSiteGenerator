@@ -150,7 +150,7 @@ func parseAndSetCommandLineVars() {
 			if siteVars.SetVar(destinationVar, arg) != true {
 				Message("", i, "w", "Can't parse variable: "+arg)
 			} else {
-				if destinationVar = "IN-FILE" {
+				if destinationVar == "IN-FILE" {
 					destinationVar = "OUT-FILE"
 				} else {
 					Message("$CMDLINEARG$", i, "W", "To much non variable parameters (ignored): "+arg)
@@ -411,18 +411,6 @@ func ReadTextFile(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-// test
-// TODO move tests to test file
-
-func TestSBS(text string) {
-	a, b, c := StringBracketsSplit(text, "{{", "}}", "\\")
-	fmt.Println(a, "*", b, "*", c)
-}
-
-func TestSBS2(text string) {
-	a, b, c := StringBracketsSplit(text, "_", "_", "\\")
-	fmt.Println(a, "*", b, "*", c)
-}
 
 
 // core logic
@@ -513,27 +501,7 @@ func main() {
 		fmt.Println(key, ":", value)
 	}
 
-	fmt.Println("---- inline test ----")
-
-	TestSBS("1 Hallo_{{name}}!")
-	TestSBS("2 Hallo_{{na{{me}}!")
-	TestSBS("3 Hallo_{{name}} und {{nummer}}!")
-	TestSBS("4 Hallo_{{name))!")
-	TestSBS("5 Hallo_{{}}!")
-	TestSBS("{{ 6 name}}")
-	TestSBS("7 brave world")
-	TestSBS2("11 Hallo-{{_name__))!")
-	TestSBS2("12 Hallo _name_!")
-	TestSBS2("13 Hallo __name__!")
-	TestSBS("14 Hallo_\\{{name}}!")
-
-	fmt.Println("---- other ----")
-
-	fmt.Println("right of 'aBc': " + right("aBc", 1))
-	fmt.Println("right of nothing: " + right("", 1))
-	fmt.Println("right 2 of '4321': " + right("4321", 2))
-	fmt.Println("---- By! ----")
-
+	fmt.Println("---- bye ----")
 
 }
 
