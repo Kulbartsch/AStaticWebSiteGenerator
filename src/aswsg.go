@@ -28,7 +28,7 @@ import (
 type SimpleVars map[string]string
 
 var siteVars = SimpleVars{
-	"ASWSG-VERSION": "0.2",
+	"ASWSG-VERSION": "0.0",
 	"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 	"ASWSG-LICENSE": "GPL V3",
 	// inline formating, pairs end on -1 respective -2
