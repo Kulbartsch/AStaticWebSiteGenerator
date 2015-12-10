@@ -1,4 +1,5 @@
 @Foo: Baa
+@Foo= Koo
 
 +h.in
 
@@ -6,7 +7,11 @@
 The time is
 {{now}}
 
-<p>Foo is: {{Foo}}</p>
+== Header 2 ===
+Foo is: {{Foo}}
 
-<p>Are we happy?</p>
+* Are we happy?
+* do we like it
+** or not
+* we will see
 
