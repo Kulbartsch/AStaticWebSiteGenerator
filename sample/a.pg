@@ -1,5 +1,6 @@
-@Foo: Baa
-@Foo= Koo
+@Foo:Baa
+@Foo=Koo
+@Title:A test page
 
 +h.in
 

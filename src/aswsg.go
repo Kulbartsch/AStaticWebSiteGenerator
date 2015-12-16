@@ -76,7 +76,7 @@ var paragraphTags = map[string]string {
 	"b": "b",
 }
 
-var paragraphState string
+// var paragraphState string
 
 
 // simpleVar handling
@@ -196,8 +196,8 @@ func ContainsOnly(s, only string) bool {
 	return true
 }
 
-// right returns the right most char of s in r
-func right(s string, l int) (r string) {
+// right returns the right most l char(s) of s in r
+func Right(s string, l int) (r string) {
 	le := len(s)
 	if le == 0 || l == 0 {
 		return ""
@@ -244,11 +244,11 @@ func generateTag(tagKind string, openTag bool) (resultTag string) {
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
 	m := strings.Index(text, b1)
 	if m == -1 { // TODO: maybe Check for code rune
-		return text, "", "1"
+		return text, "", ""
 	}
 	n := strings.Index(text[m+1:], b2) + m + 1
 	if n == -1 || n <= m { // ToDo: maybe Check for Escape rune
-		return text, "", "2"
+		return text, "", ""
 	}
 	return text[0:m], text[m+len(b1) : n], text[n+len(b2):]
 }
@@ -283,6 +283,7 @@ func parseAndSetVar(line string) (varParsed bool) {
 
 
 func replaceInlineVars(line string) (string) {
+	// TODO change to use interface Simplevars
 	t1, t2, t3 := StringBracketsSplit(line, siteVars.GetVal("ASWSG-VAR-1"), siteVars.GetVal("ASWSG-VAR-2"), siteVars.GetVal("ASWSG-ESC"))
 	if !siteVars.ExistsVal(t2) {
 		return line
@@ -296,27 +297,30 @@ func replaceInlineVars(line string) (string) {
 // changeParagraphs returns the necessary HTML Tags to close the previous state and initiate the new one.
 // if both states are the same refreshInner forces the inner tag to be closed and opened
 func changeParagraphs(oldParagraphState string, newParagraphState string, refreshInner bool) (resultLines []string) {
-	if oldParagraphState == newParagraphState {
+	if oldParagraphState == newParagraphState  &&  len(oldParagraphState) > 0  {
 		if refreshInner {
-			resultLines = append(resultLines, generateTag(right(oldParagraphState, 1), true))
-			resultLines = append(resultLines, generateTag(right(newParagraphState, 1), false))
+			resultLines = append(resultLines, generateTag(Right(oldParagraphState, 1), false))
+			resultLines = append(resultLines, generateTag(Right(newParagraphState, 1), true))
 		}
 		return
 	}
 	intermediateState := oldParagraphState
-	Message("", 0, "D", "paragraphState: '" + paragraphState + "', intermediateState: '" + intermediateState + "'")
+	Message("", 0, "D", "intermediateState: '" + intermediateState + "', newParagraphState: '" + newParagraphState + "'")
+	// close previous paragraph state(s)
 	for len(intermediateState) > 0  {
-		if  intermediateState == newParagraphState {
+		iSLen := len(intermediateState)
+		if  iSLen <= len(newParagraphState)  &&  intermediateState == newParagraphState[:iSLen] {
 			break
 		}
 		x := len(intermediateState) - 1
-		resultLines = append(resultLines, generateTag(right(intermediateState, 1), true))
+		resultLines = append(resultLines, generateTag(Right(intermediateState, 1), false))
 		intermediateState = intermediateState[:x]
 	}
-	for len(intermediateState) < len(newParagraphState) && intermediateState != newParagraphState {
+	// open new paragraph state(s)
+	for len(intermediateState) < len(newParagraphState) /* && intermediateState != newParagraphState */ {
 		x := len(intermediateState)
 		addState := newParagraphState[x:x+1]
-		resultLines = append(resultLines, generateTag(addState, false))
+		resultLines = append(resultLines, generateTag(addState, true))
 		intermediateState = intermediateState + addState
 	}
 	return
@@ -324,19 +328,42 @@ func changeParagraphs(oldParagraphState string, newParagraphState string, refres
 
 
 // parse paragraph line + parse inline
-func parseCommonParagraphControls(line string, oldParagraphState string, newParagraphState string) (resultLines []string, resultingParagraphState string) {
+func parseCommonParagraphControls(line string, currentParagraphState string) (resultLines []string, resultingParagraphState string) {
 	firstChar := line[0:1]
-	resultingParagraphState = newParagraphState
-	if strings.ContainsAny(firstChar, siteVars.GetVal("ASWSG-LIST")) {
-		resultingParagraphState = resultingParagraphState + "L"
-		return parseCommonParagraphControls(line[1:], oldParagraphState, resultingParagraphState)
+	// resultingParagraphState = currentParagraphState
+	controlChars := siteVars.GetVal("ASWSG-LIST") + siteVars.GetVal("ASWSG-CITE") + siteVars.GetVal("ASWSG-NUMERATION")
+    //	if strings.ContainsAny(firstChar, siteVars.GetVal("ASWSG-LIST")) {
+	//		resultingParagraphState = resultingParagraphState + "L"
+	//		return parseCommonParagraphControls(line[1:], oldParagraphState, resultingParagraphState)
+	//	}
+	for _, r := range line {
+		a := string(r)
+		if ContainsOnly(a, controlChars) {
+			switch  {
+			case ContainsOnly(a, siteVars.GetVal("ASWSG-LIST")):
+				resultingParagraphState = resultingParagraphState + "L"
+			case ContainsOnly(a, siteVars.GetVal("ASWSG-CITE")):
+				resultingParagraphState = resultingParagraphState + "C"
+			case ContainsOnly(a, siteVars.GetVal("ASWSG-NUMERATION")):
+				resultingParagraphState = resultingParagraphState + "N"
+			default:
+				Message("", 0, "A", "should not happen")
+				break
+			}
+			line = line[1:]
+		} else {
+			break
+		}
 	}
 
-	if len(resultingParagraphState) == 0 {
+	if firstChar == siteVars.GetVal("ASWSG-ESCAPE") {
+		line = line[1:]
+	}
+	if len(resultingParagraphState) == 0  &&  len(line) != 0  {
 		resultingParagraphState = "P"
 	}
 
-	resultLines = append( changeParagraphs(paragraphState, resultingParagraphState, false), parseInLine(line) )
+	resultLines = append( changeParagraphs(currentParagraphState, resultingParagraphState, false), parseInLine(line) )
 
 	return
 }
@@ -389,7 +416,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	}
 
 	// parse paragraph line (list, ...) + parse inline
-	resultLines, newParagraphState = parseCommonParagraphControls(line, paragraphState, newParagraphState)
+	resultLines, newParagraphState = parseCommonParagraphControls(line, paragraphState)
 
 	return resultLines, newParagraphState
 }
@@ -418,7 +445,7 @@ func ReadTextFile(path string) ([]string, error) {
 func parseFile(filename string, startParagraphState string) ([]string, string, error) {
 	var lines []string
 
-	paragraphState = startParagraphState
+	paragraphState := startParagraphState
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -459,7 +486,7 @@ func main() {
 
 	setDefaultSiteVars()
 
-	paragraphState = ""
+	paragraphState := ""
 
 	parseAndSetCommandLineVars()
 
@@ -477,25 +504,11 @@ func main() {
 		fmt.Println( l )
 	}
 
-	// DEBUG remove
+
+	// DEBUG TODO change to debug outpout
 	fmt.Println("---- Resulting paragraph style :", paragraphState)
 
-
-
-	// Tests
-
-	Message("", 0, "D", "---- Test Line Parsing ----")
-
-	fmt.Println(parseLine("@test:OK", ""))
-	fmt.Println(parseLine("@ASWSG-VAR:$@", ""))
-	fmt.Println(parseLine("@FOO:foo", ""))
-	fmt.Println(parseLine("$BAA:baa", ""))
-	fmt.Println(parseLine("= Welcome", ""))
-	fmt.Println(parseLine("== To the Future =", ""))
-	fmt.Println(parseLine("", ""))
-	fmt.Println(parseLine("Bla bla", ""))
-
-	// just some test
+	// Display Vars for Debug - TODO change to debug outpout
 	fmt.Println("---- my vars ----")
 	for key, value := range siteVars {
 		fmt.Println(key, ":", value)
