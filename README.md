@@ -22,12 +22,12 @@ may vary
 ### Release 1
 
 * [ ] Simple markup parsing
-  * line based
+  * [ ] line based
     * [ ] headers
     * [ ] paragraphs
     * [ ] unordered lists (1 level)
     * [ ] cites
-  * inline based
+  * [ ] inline based
     * [ ] bold
     * [ ] emphasised
     * [ ] links
