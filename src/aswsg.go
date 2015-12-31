@@ -274,7 +274,9 @@ func parseInLine(rawLine string) (parsedLine string) {
 
 
 func parseAndSetVar(line string) (varParsed bool) {
+        Message("", 0, "D", "ParseVar:" + line)
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-VAR")) {
+                Message("", 0, "D", "  yes") 
 		siteVars.ParseAndSetVar(line[1:])
 		return true
 	}
@@ -330,14 +332,13 @@ func changeParagraphs(oldParagraphState string, newParagraphState string, refres
 // parse paragraph line + parse inline
 func parseCommonParagraphControls(line string, currentParagraphState string) (resultLines []string, resultingParagraphState string) {
 	firstChar := line[0:1]
-	// resultingParagraphState = currentParagraphState
+	resultingParagraphState = ""
 	controlChars := siteVars.GetVal("ASWSG-LIST") + siteVars.GetVal("ASWSG-CITE") + siteVars.GetVal("ASWSG-NUMERATION")
-    //	if strings.ContainsAny(firstChar, siteVars.GetVal("ASWSG-LIST")) {
-	//		resultingParagraphState = resultingParagraphState + "L"
-	//		return parseCommonParagraphControls(line[1:], oldParagraphState, resultingParagraphState)
-	//	}
+        // Message("", 0, "D", "inline:" + line)
+        // Message("", 0, "D", "  PS:" + currentParagraphState)
 	for _, r := range line {
 		a := string(r)
+                Message("", 0, "D", "  controlChar:" + a )
 		if ContainsOnly(a, controlChars) {
 			switch  {
 			case ContainsOnly(a, siteVars.GetVal("ASWSG-LIST")):
@@ -347,13 +348,14 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 			case ContainsOnly(a, siteVars.GetVal("ASWSG-NUMERATION")):
 				resultingParagraphState = resultingParagraphState + "N"
 			default:
-				Message("", 0, "A", "should not happen")
+				// Message("", 0, "A", "should not happen")
 				break
 			}
 			line = line[1:]
 		} else {
 			break
 		}
+		// Message("", 0, "D", "  resultState:"+ resultingParagraphState )
 	}
 
 	if firstChar == siteVars.GetVal("ASWSG-ESCAPE") {

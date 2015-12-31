@@ -6,7 +6,7 @@
 
 <article>
 The time is
-{{now}}
+\{{now}}
 
 == Header 2 ===
 Foo is: {{Foo}}
