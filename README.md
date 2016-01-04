@@ -23,32 +23,38 @@ may vary
 
 * [ ] Simple markup parsing
   * [ ] line based
-    * [ ] headers
-    * [ ] paragraphs
-    * [ ] unordered lists (1 level)
+    * [ ] headers (currently only 1 level)
+    * [X] paragraphs
+    * [X] unordered lists (~~1 level~~ nested)
+    * [x] ordered lists (~~1 level~~ nested)
     * [ ] cites
+    * [ ] raw lines
   * [ ] inline based
-    * [ ] bold
+    * [X] bold
     * [ ] emphasised
+    * [ ] strike trough
     * [ ] links
+    * [ ] code
+  * [ ] multi line
+    * [ ] raw
+    * [ ] cite
+    * [ ] code
 * [X] Include file processing
 * [X] Setting and using of variables
-  * [ ] Setting variables (in this order, later overwrites former)
+  * [X] Setting variables (in this order, later overwrites former)
     1. [X] static
-    2. [ ] dynamically
+    2. [X] dynamically
     3. [X] from command line parameter
     4. [X] in file
   * [x] Using
 * [x] redefine markup tags
 * [x] *make* friendly
-* [ ] Test
-  * [ ] Unit tests
-  * [ ] test suite
+* [ ] go tests (partly)
 * [ ] An example
-* [ ] Anchor for headers
 
 ### Future Releases
 
+* [ ] Anchor for headers
 * [ ] more examples
 * [ ] Index of page (based on header)
 * [ ] More link types
@@ -59,4 +65,6 @@ may vary
 * [ ] increased markup features like
   * [ ] Tables
   * [ ] Pictures / embeded documents
+* [x] nested lists
+* [ ] multi line lists
 * [ ] Basic markdown features

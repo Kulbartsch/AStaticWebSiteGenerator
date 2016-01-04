@@ -14,6 +14,11 @@
 // A {{variable}} in the text will be replaced by the named variable
 //
 
+// TODO Bugs:
+// * FIXME: to many leading spaces
+// * FIXME: header level > 1 does not work
+// * FIXME: header with trailing header symbol. remove trailings
+
 package main
 
 import (
@@ -47,6 +52,7 @@ var siteVars = SimpleVars{
 	// line level formating (for paragraphs) at begin of line, using one of the characters
 	"ASWSG-DEFINE":     "@",  // special: define var
 	"ASWSG-INCLUDE":    "+",  // special: include
+	"ASWSG-RAWLINE":    "$",  // special: raw (html) line
 	"ASWSG-ESCAPE":     "\\", // special: escape char for paragraph
 	                          // paragraph: initial state: __ (empty)
 							  // paragraph: _P_aragraph
@@ -59,6 +65,7 @@ var siteVars = SimpleVars{
 	"ASWSG-LINE":    "-", // special: horizontal line
 	"ASWSG-ML-CODE": "%", // start/end block: code c_O_de
 	"ASWSG-ML-CITE": ">", // start/end block: cite _M_ention
+	"ASWSG-ML-RAW":  "$", // start/end block: raw line (i.e. for HTML code)
 }
 
 var paragraphTags = map[string]string {
@@ -100,7 +107,11 @@ func (v SimpleVars) GetVal(key string) (result string) {
 	if len(tkey) == 0 {
 		return ""
 	}
-	return v[strings.ToUpper(key)]
+	s, r :=  v[strings.ToUpper(key)]
+	if r == false {
+		Message("", 0, "W", "Key '" + key + "' does not exist.")
+	}
+	return s
 }
 
 func (v SimpleVars) ExistsVal(key string) (result bool) {
@@ -135,6 +146,7 @@ func setDefaultSiteVars() {
 	_ = siteVars.SetVar("TimeFormat", "15:04:05")
 	_ = siteVars.SetVar("now", time.Now().Format(siteVars.GetVal("TimeStampFormat")))
 	_ = siteVars.SetVar("today", time.Now().Format(siteVars.GetVal("DateFormat")))
+	_ = siteVars.SetVar("time", time.Now().Format(siteVars.GetVal("TimeFormat")))
 }
 
 func parseAndSetCommandLineVars() {
@@ -229,9 +241,11 @@ func generateHTMLTag(tag string, openTag bool) (resultHTMLTag string) {
 	return
 }
 
-func surroundWithHTMLTag(s string, tag string) string {
+
+func surroundWithHTMLTag(tag string, s string) string {
 	return generateHTMLTag(tag, true) + s + generateHTMLTag(tag, false)
 }
+
 
 func generateTag(tagKind string, openTag bool) (resultTag string) {
 	if len(tagKind) == 0 {
@@ -240,6 +254,7 @@ func generateTag(tagKind string, openTag bool) (resultTag string) {
 	resultTag = generateHTMLTag(paragraphTags[tagKind], openTag)
 	return
 }
+
 
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
 	m := strings.Index(text, b1)
@@ -253,13 +268,14 @@ func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a st
 	return text[0:m], text[m+len(b1) : n], text[n+len(b2):]
 }
 
+
 func parseInLine(rawLine string) (parsedLine string) {
 
 	didParse := false
 	parsedLine = rawLine
 
 	// check bold
-	t1, t2, t3 := StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-BOLD-1"), siteVars.GetVal("ASWSG-BOLD-2"), siteVars.GetVal("ASWSG-ESC"))
+	t1, t2, t3 := StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-BOLD-1"), siteVars.GetVal("ASWSG-BOLD-2"), siteVars.GetVal("ASWSG-ESCAPE"))
 	if len(t2) > 0 {
 		didParse = true
 		parsedLine = t1 + surroundWithHTMLTag("b", t2) + t3
@@ -274,9 +290,9 @@ func parseInLine(rawLine string) (parsedLine string) {
 
 
 func parseAndSetVar(line string) (varParsed bool) {
-        Message("", 0, "D", "ParseVar:" + line)
-	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-VAR")) {
-                Message("", 0, "D", "  yes") 
+	Message("", 0, "D", "ParseVar:" + line)
+	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-DEFINE")) {
+		Message("", 0, "D", "  yes")
 		siteVars.ParseAndSetVar(line[1:])
 		return true
 	}
@@ -286,7 +302,7 @@ func parseAndSetVar(line string) (varParsed bool) {
 
 func replaceInlineVars(line string) (string) {
 	// TODO change to use interface Simplevars
-	t1, t2, t3 := StringBracketsSplit(line, siteVars.GetVal("ASWSG-VAR-1"), siteVars.GetVal("ASWSG-VAR-2"), siteVars.GetVal("ASWSG-ESC"))
+	t1, t2, t3 := StringBracketsSplit(line, siteVars.GetVal("ASWSG-VAR-1"), siteVars.GetVal("ASWSG-VAR-2"), siteVars.GetVal("ASWSG-ESCAPE"))
 	if !siteVars.ExistsVal(t2) {
 		return line
 	}
@@ -336,6 +352,12 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 	controlChars := siteVars.GetVal("ASWSG-LIST") + siteVars.GetVal("ASWSG-CITE") + siteVars.GetVal("ASWSG-NUMERATION")
         // Message("", 0, "D", "inline:" + line)
         // Message("", 0, "D", "  PS:" + currentParagraphState)
+	// TODO parse raw
+	if firstChar == siteVars.GetVal("ASWSG-RAWLINE") {
+		resultingParagraphState = currentParagraphState
+		resultLines = append(resultLines, line[1:])
+		return
+	}
 	for _, r := range line {
 		a := string(r)
                 Message("", 0, "D", "  controlChar:" + a )
@@ -348,7 +370,7 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 			case ContainsOnly(a, siteVars.GetVal("ASWSG-NUMERATION")):
 				resultingParagraphState = resultingParagraphState + "N"
 			default:
-				// Message("", 0, "A", "should not happen")
+				Message("", 0, "A", "should not happen")
 				break
 			}
 			line = line[1:]
@@ -401,6 +423,8 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		newParagraphState = parsedParagraph
 		return resultLines, newParagraphState
 	}
+
+	// TODO parse multi liner
 
 	// parse one liner: header
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-HEADER")) {
