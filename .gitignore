@@ -49,3 +49,5 @@ Temporary Items
 .apdisk
 
 src/aswsg
+
+*.exe
