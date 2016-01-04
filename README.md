@@ -22,13 +22,13 @@ may vary
 ### Release 1
 
 * [ ] Simple markup parsing
-  * [ ] line based
-    * [ ] headers (currently only 1 level)
+  * [x] line based
+    * [X] headers
     * [X] paragraphs
     * [X] unordered lists (~~1 level~~ nested)
     * [x] ordered lists (~~1 level~~ nested)
-    * [ ] cites
-    * [ ] raw lines
+    * [X] cites
+    * [X] raw lines
   * [ ] inline based
     * [X] bold
     * [ ] emphasised
@@ -40,6 +40,7 @@ may vary
     * [ ] cite
     * [ ] code
 * [X] Include file processing
+* [ ] Include raw files
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
     1. [X] static

@@ -15,9 +15,9 @@
 //
 
 // TODO Bugs:
-// * FIXME: to many leading spaces
-// * FIXME: header level > 1 does not work
-// * FIXME: header with trailing header symbol. remove trailings
+// FIXME: header with trailing header symbol. remove trailings
+// FIXME: no new list item on new bullet
+// FIXME: remember line number for Message
 
 package main
 
@@ -28,12 +28,13 @@ import (
 	"strings"
 	"time"
 	//"regexp"
+	"strconv"
 )
 
 type SimpleVars map[string]string
 
 var siteVars = SimpleVars{
-	"ASWSG-VERSION": "0.0",
+	"ASWSG-VERSION": "0.1",
 	"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 	"ASWSG-LICENSE": "GPL V3",
 	// inline formating, pairs end on -1 respective -2
@@ -73,7 +74,7 @@ var paragraphTags = map[string]string {
 	"B": "li",
 	"C": "cite",
 	"D": "td",
-	"L": "ul",
+	"L": "ul", // "ul style=\"list-style-type:circle\"",
 	"M": "cite",
 	"N": "ol",
 	"O": "pre",
@@ -135,6 +136,8 @@ func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 // message handling
 
 func Message(filename string, line int, severity string, messagetext string) {
+	// TODO message to stderr or as HTML comments
+	// TODO check message level
 	fmt.Println(filename, ":", line, ":", severity, ":", messagetext)
 }
 
@@ -179,7 +182,7 @@ func firstCharCountAndTrim(line string) (firstChar string, count int, content st
 	firstChar = line[0:1]
 	for count = 1; line[count] == firstChar[0]; count++ {
 	}
-	content = strings.Trim(line[count:], " \t")
+	content = strings.Trim(line[count:], " \t" + firstChar)
 	return firstChar, count, content
 }
 
@@ -352,7 +355,7 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 	controlChars := siteVars.GetVal("ASWSG-LIST") + siteVars.GetVal("ASWSG-CITE") + siteVars.GetVal("ASWSG-NUMERATION")
         // Message("", 0, "D", "inline:" + line)
         // Message("", 0, "D", "  PS:" + currentParagraphState)
-	// TODO parse raw
+	// parse raw
 	if firstChar == siteVars.GetVal("ASWSG-RAWLINE") {
 		resultingParagraphState = currentParagraphState
 		resultLines = append(resultLines, line[1:])
@@ -373,7 +376,7 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 				Message("", 0, "A", "should not happen")
 				break
 			}
-			line = line[1:]
+			line = WhiteSpaceTrim(line[1:])
 		} else {
 			break
 		}
@@ -383,6 +386,7 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 	if firstChar == siteVars.GetVal("ASWSG-ESCAPE") {
 		line = line[1:]
 	}
+
 	if len(resultingParagraphState) == 0  &&  len(line) != 0  {
 		resultingParagraphState = "P"
 	}
@@ -429,8 +433,13 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	// parse one liner: header
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-HEADER")) {
 		newParagraphState = ""
-		// TODO implement real header parser ...
-		resultLines = append( changeParagraphs(paragraphState, newParagraphState, false), "<h1>" + line[1:] + "</h1>" )
+		// TODO implement real header parser
+		fc, count, content := firstCharCountAndTrim(line)
+		if ! ContainsOnly(fc, siteVars.GetVal("ASWSG-HEADER")) {
+			Message("", 0, "A", "should not happen - expected ASWSG-HEADER character")
+		}
+		level := strconv.Itoa(count)
+		resultLines = append( changeParagraphs(paragraphState, newParagraphState, false), "<h" + level + ">" + content + "</h" + level + ">" )
 		return resultLines, newParagraphState
 	}
 
@@ -482,7 +491,8 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	// ToDo set vars
 	//    - filename        ok
 	//    - fqfn
-	//    - file last change date + time
+	//    - basefn
+	//    - file change date + time
 	//    - file creation date + time
 	file_stat, stat_error := file.Stat()
 	if stat_error != nil {
@@ -515,6 +525,8 @@ func main() {
 	paragraphState := ""
 
 	parseAndSetCommandLineVars()
+
+	// TODO set original file name
 
 	parsedText, paragraphState, err = parseFile(siteVars.GetVal("IN-FILE"), paragraphState)
 	if err != nil {
