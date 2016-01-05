@@ -1,14 +1,17 @@
 # ASWSG - Another|Alexanders Static WebSite Generator
 
-**Please note: This is the first, currently unusable, code.**
+ASWG allows you to generate Websites using Markup Syntax and HTML.
+It is build with the idea of classical unix tools to do one job, just like a compiler generating a new output.
+ASWSG will not generate a file structure or an HTML frame, but you can do so using includes and
+use it with a build system like make.
 
-Under development.
+**Please note: This is under development and the first, currently unusable, code.**
 
-ASWG allows you to generate Websites using HTML, and Markup Syntax. It is useable with a build system like make.
-
-HTML and Markup can be mixed, reusable
-Most benefits come from using dynamic variables, which are partly set dynamically by aswsg, by the document or via the command line and the include system.
-In example the current *date*, *time* and the actual *filename* is set dynamically, *author*, *creation date* and others in the document, the *sitename* as a command line parameter.
+HTML and Markup can be mixed, reusable includes may be used for headers, footers and other repeating code blocks.
+Most benefits come from using dynamic variables, which are partly set dynamically by aswsg,
+by the document or via the command line and the include system.
+In example the current *date*, *time* and the actual *filename* is set dynamically, *author*, *creation date*
+and others in the document, the *sitename* as a command line parameter.
 But it is even possible to redefine markup symbols due to different markup dialects.
 (i.E. use "!" instead/as well of "=" for headers.)
 All variables can be used subsequent, also in included files. (i.E. using the article name in a header include.)
@@ -31,8 +34,8 @@ may vary
     * [X] raw lines
   * [ ] inline based
     * [X] bold
-    * [ ] emphasised
-    * [ ] strike trough
+    * [X] emphasised
+    * [X] strike trough
     * [ ] links
     * [ ] code
   * [ ] multi line
@@ -40,7 +43,7 @@ may vary
     * [ ] cite
     * [ ] code
 * [X] Include file processing
-* [ ] Include raw files
+* [ ] Include raw files ?
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
     1. [X] static
