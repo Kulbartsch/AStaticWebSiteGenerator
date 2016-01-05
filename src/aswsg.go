@@ -15,9 +15,7 @@
 //
 
 // TODO Bugs:
-// FIXME: header with trailing header symbol. remove trailings
-// FIXME: no new list item on new bullet
-// FIXME: remember line number for Message
+// FIXME: remember line number for meta Message
 
 package main
 
@@ -42,7 +40,7 @@ var siteVars = SimpleVars{
 	"ASWSG-VAR-2":    "}}",
 	"ASWSG-LINK-1":   "[[", // special: link
 	"ASWSG-LINK-2":   "]]",
-	"ASWSG-BOLD-1":   "*",  // inline: bold
+	"ASWSG-BOLD-1":   "*", // inline: bold
 	"ASWSG-BOLD-2":   "*",
 	"ASWSG-EMP-1":    "//", // inline: emphasised
 	"ASWSG-EMP-2":    "//",
@@ -51,17 +49,18 @@ var siteVars = SimpleVars{
 	"ASWSG-STRIKE-1": "~~", // inline: strike through
 	"ASWSG-STRIKE-2": "~~",
 	// line level formating (for paragraphs) at begin of line, using one of the characters
-	"ASWSG-DEFINE":     "@",  // special: define var
-	"ASWSG-INCLUDE":    "+",  // special: include
-	"ASWSG-RAWLINE":    "$",  // special: raw (html) line
-	"ASWSG-ESCAPE":     "\\", // special: escape char for paragraph
-	                          // paragraph: initial state: __ (empty)
-							  // paragraph: _P_aragraph
-	"ASWSG-LIST":       "*-", // paragraph: _L_ist and _B_ullets
-	"ASWSG-CITE":       ">",  // paragraph: _C_ite
+	"ASWSG-DEFINE":  "@",  // special: define var
+	"ASWSG-INCLUDE": "+",  // special: include
+	"ASWSG-RAWLINE": "$",  // special: raw (html) line
+	"ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
+	// ... paragraph: initial state: __ (empty)
+	// ... paragraph: _P_aragraph
+	"ASWSG-LIST":       "*-",          // paragraph: _L_ist and _B_ullets
+	"ASWSG-CITE":       ">",           // paragraph: _C_ite
 	"ASWSG-NUMERATION": "#0123456789", // paragraph: _N_umbered list and _B_ullets
-	// "ASWSG-TABLE":      "|",  // paragraph: _T_able and _R_ows and _D_ata // TODO implement
-	"ASWSG-HEADER":     "=!", // one liner: header
+	"ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")", should not be changed // TODO implement commands
+	"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata // TODO implement table
+	"ASWSG-HEADER": "=!", // one liner: header
 	// single multi char in one line alone, at least 3
 	"ASWSG-LINE":    "-", // special: horizontal line
 	"ASWSG-ML-CODE": "%", // start/end block: code c_O_de
@@ -69,7 +68,7 @@ var siteVars = SimpleVars{
 	"ASWSG-ML-RAW":  "$", // start/end block: raw line (i.e. for HTML code)
 }
 
-var paragraphTags = map[string]string {
+var paragraphTags = map[string]string{
 	" ": "",
 	"B": "li",
 	"C": "cite",
@@ -85,7 +84,6 @@ var paragraphTags = map[string]string {
 }
 
 // var paragraphState string
-
 
 // simpleVar handling
 
@@ -108,9 +106,9 @@ func (v SimpleVars) GetVal(key string) (result string) {
 	if len(tkey) == 0 {
 		return ""
 	}
-	s, r :=  v[strings.ToUpper(key)]
+	s, r := v[strings.ToUpper(key)]
 	if r == false {
-		Message("", 0, "W", "Key '" + key + "' does not exist.")
+		Message("", 0, "W", "Key '"+key+"' does not exist.")
 	}
 	return s
 }
@@ -182,10 +180,9 @@ func firstCharCountAndTrim(line string) (firstChar string, count int, content st
 	firstChar = line[0:1]
 	for count = 1; line[count] == firstChar[0]; count++ {
 	}
-	content = strings.Trim(line[count:], " \t" + firstChar)
+	content = strings.Trim(line[count:], " \t"+firstChar)
 	return firstChar, count, content
 }
-
 
 // ContainsOnly returns true if s contains only runes in the string only.
 // An empty string s is always true. If otherwise only is empty the result is false.
@@ -225,8 +222,6 @@ func Right(s string, l int) (r string) {
 	return
 }
 
-
-
 // inline
 
 func generateHTMLTag(tag string, openTag bool) (resultHTMLTag string) {
@@ -244,11 +239,9 @@ func generateHTMLTag(tag string, openTag bool) (resultHTMLTag string) {
 	return
 }
 
-
 func surroundWithHTMLTag(tag string, s string) string {
 	return generateHTMLTag(tag, true) + s + generateHTMLTag(tag, false)
 }
-
 
 func generateTag(tagKind string, openTag bool) (resultTag string) {
 	if len(tagKind) == 0 {
@@ -257,7 +250,6 @@ func generateTag(tagKind string, openTag bool) (resultTag string) {
 	resultTag = generateHTMLTag(paragraphTags[tagKind], openTag)
 	return
 }
-
 
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
 	m := strings.Index(text, b1)
@@ -271,17 +263,31 @@ func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a st
 	return text[0:m], text[m+len(b1) : n], text[n+len(b2):]
 }
 
-
 func parseInLine(rawLine string) (parsedLine string) {
 
 	didParse := false
 	parsedLine = rawLine
+	var t1, t2, t3 string
 
 	// check bold
-	t1, t2, t3 := StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-BOLD-1"), siteVars.GetVal("ASWSG-BOLD-2"), siteVars.GetVal("ASWSG-ESCAPE"))
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-BOLD-1"), siteVars.GetVal("ASWSG-BOLD-2"), siteVars.GetVal("ASWSG-ESCAPE"))
 	if len(t2) > 0 {
 		didParse = true
 		parsedLine = t1 + surroundWithHTMLTag("b", t2) + t3
+	}
+
+	// check emphasised
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-EMP-1"), siteVars.GetVal("ASWSG-EMP-2"), siteVars.GetVal("ASWSG-ESCAPE"))
+	if len(t2) > 0 {
+		didParse = true
+		parsedLine = t1 + surroundWithHTMLTag("em", t2) + t3
+	}
+
+	// check strike
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-STRIKE-1"), siteVars.GetVal("ASWSG-STRIKE-2"), siteVars.GetVal("ASWSG-ESCAPE"))
+	if len(t2) > 0 {
+		didParse = true
+		parsedLine = t1 + surroundWithHTMLTag("del", t2) + t3
 	}
 
 	if didParse == true {
@@ -291,19 +297,17 @@ func parseInLine(rawLine string) (parsedLine string) {
 	return
 }
 
-
 func parseAndSetVar(line string) (varParsed bool) {
-	Message("", 0, "D", "ParseVar:" + line)
+	Message("", 0, "D", "ParseVar:"+line)
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-DEFINE")) {
 		Message("", 0, "D", "  yes")
 		siteVars.ParseAndSetVar(line[1:])
 		return true
 	}
-   return false
+	return false
 }
 
-
-func replaceInlineVars(line string) (string) {
+func replaceInlineVars(line string) string {
 	// TODO change to use interface Simplevars
 	t1, t2, t3 := StringBracketsSplit(line, siteVars.GetVal("ASWSG-VAR-1"), siteVars.GetVal("ASWSG-VAR-2"), siteVars.GetVal("ASWSG-ESCAPE"))
 	if !siteVars.ExistsVal(t2) {
@@ -312,13 +316,12 @@ func replaceInlineVars(line string) (string) {
 	return t1 + siteVars.GetVal(t2) + t3
 }
 
-
 // line
 
 // changeParagraphs returns the necessary HTML Tags to close the previous state and initiate the new one.
 // if both states are the same refreshInner forces the inner tag to be closed and opened
 func changeParagraphs(oldParagraphState string, newParagraphState string, refreshInner bool) (resultLines []string) {
-	if oldParagraphState == newParagraphState  &&  len(oldParagraphState) > 0  {
+	if oldParagraphState == newParagraphState && len(oldParagraphState) > 0 {
 		if refreshInner {
 			resultLines = append(resultLines, generateTag(Right(oldParagraphState, 1), false))
 			resultLines = append(resultLines, generateTag(Right(newParagraphState, 1), true))
@@ -326,11 +329,11 @@ func changeParagraphs(oldParagraphState string, newParagraphState string, refres
 		return
 	}
 	intermediateState := oldParagraphState
-	Message("", 0, "D", "intermediateState: '" + intermediateState + "', newParagraphState: '" + newParagraphState + "'")
+	Message("", 0, "D", "intermediateState: '"+intermediateState+"', newParagraphState: '"+newParagraphState+"'")
 	// close previous paragraph state(s)
-	for len(intermediateState) > 0  {
+	for len(intermediateState) > 0 {
 		iSLen := len(intermediateState)
-		if  iSLen <= len(newParagraphState)  &&  intermediateState == newParagraphState[:iSLen] {
+		if iSLen <= len(newParagraphState) && intermediateState == newParagraphState[:iSLen] {
 			break
 		}
 		x := len(intermediateState) - 1
@@ -340,21 +343,22 @@ func changeParagraphs(oldParagraphState string, newParagraphState string, refres
 	// open new paragraph state(s)
 	for len(intermediateState) < len(newParagraphState) /* && intermediateState != newParagraphState */ {
 		x := len(intermediateState)
-		addState := newParagraphState[x:x+1]
+		addState := newParagraphState[x : x+1]
 		resultLines = append(resultLines, generateTag(addState, true))
 		intermediateState = intermediateState + addState
 	}
 	return
 }
 
-
 // parse paragraph line + parse inline
 func parseCommonParagraphControls(line string, currentParagraphState string) (resultLines []string, resultingParagraphState string) {
 	firstChar := line[0:1]
 	resultingParagraphState = ""
+	refreshInner := false
+	surroundWith := ""
 	controlChars := siteVars.GetVal("ASWSG-LIST") + siteVars.GetVal("ASWSG-CITE") + siteVars.GetVal("ASWSG-NUMERATION")
-        // Message("", 0, "D", "inline:" + line)
-        // Message("", 0, "D", "  PS:" + currentParagraphState)
+	// Message("", 0, "D", "inline:" + line)
+	// Message("", 0, "D", "  PS:" + currentParagraphState)
 	// parse raw
 	if firstChar == siteVars.GetVal("ASWSG-RAWLINE") {
 		resultingParagraphState = currentParagraphState
@@ -363,17 +367,19 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 	}
 	for _, r := range line {
 		a := string(r)
-                Message("", 0, "D", "  controlChar:" + a )
+		Message("", 0, "D", "  controlChar:"+a)
 		if ContainsOnly(a, controlChars) {
-			switch  {
+			switch {
 			case ContainsOnly(a, siteVars.GetVal("ASWSG-LIST")):
 				resultingParagraphState = resultingParagraphState + "L"
+				surroundWith = "li"
 			case ContainsOnly(a, siteVars.GetVal("ASWSG-CITE")):
 				resultingParagraphState = resultingParagraphState + "C"
 			case ContainsOnly(a, siteVars.GetVal("ASWSG-NUMERATION")):
 				resultingParagraphState = resultingParagraphState + "N"
+				surroundWith = "li"
 			default:
-				Message("", 0, "A", "should not happen")
+				Message("", 0, "A", "should not happen (controlChar not found)")
 				break
 			}
 			line = WhiteSpaceTrim(line[1:])
@@ -387,16 +393,21 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 		line = line[1:]
 	}
 
-	if len(resultingParagraphState) == 0  &&  len(line) != 0  {
+	if len(resultingParagraphState) == 0 && len(line) != 0 {
 		resultingParagraphState = "P"
 	}
 
-	resultLines = append( changeParagraphs(currentParagraphState, resultingParagraphState, false), parseInLine(line) )
+	var newLine string
+	if surroundWith != "" {
+		newLine = surroundWithHTMLTag(surroundWith, parseInLine(line))
+	} else {
+		newLine = parseInLine(line)
+	}
+
+	resultLines = append(changeParagraphs(currentParagraphState, resultingParagraphState, refreshInner), newLine)
 
 	return
 }
-
-
 
 func parseLine(line string, paragraphState string) (resultLines []string, newParagraphState string) {
 
@@ -420,6 +431,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	// process includes
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-INCLUDE")) {
 		parsedLines, parsedParagraph, err := parseFile(line[1:], newParagraphState)
+		// TODO restore linenumber and filename
 		if err != nil {
 			Message(line[1:], -1, "E", err.Error())
 		}
@@ -433,20 +445,20 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	// parse one liner: header
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-HEADER")) {
 		newParagraphState = ""
-		// TODO implement real header parser
+		// header parser
 		fc, count, content := firstCharCountAndTrim(line)
-		if ! ContainsOnly(fc, siteVars.GetVal("ASWSG-HEADER")) {
+		if !ContainsOnly(fc, siteVars.GetVal("ASWSG-HEADER")) {
 			Message("", 0, "A", "should not happen - expected ASWSG-HEADER character")
 		}
 		level := strconv.Itoa(count)
-		resultLines = append( changeParagraphs(paragraphState, newParagraphState, false), "<h" + level + ">" + content + "</h" + level + ">" )
+		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<h"+level+">"+content+"</h"+level+">")
 		return resultLines, newParagraphState
 	}
 
 	// parse one liner: horizontal line
 	if ContainsOnly(strings.TrimRight(line, " \t"), siteVars.GetVal("ASWSG-LINE")) && len(strings.TrimRight(line, " \t")) >= 3 {
 		newParagraphState = " "
-		resultLines = append( changeParagraphs(paragraphState, newParagraphState, false), "<hr \\>")
+		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<hr \\>")
 		return resultLines, newParagraphState
 	}
 
@@ -456,8 +468,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	return resultLines, newParagraphState
 }
 
-
-//TODO remove
+//TODO remove ?
 func ReadTextFile(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -472,8 +483,6 @@ func ReadTextFile(path string) ([]string, error) {
 	}
 	return lines, scanner.Err()
 }
-
-
 
 // core logic
 
@@ -505,6 +514,7 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	var result []string
 
 	for scanner.Scan() {
+		// TODO handle line numbers
 		lines, paragraphState = parseLine(scanner.Text(), paragraphState)
 		result = append(result, lines...)
 	}
@@ -530,7 +540,7 @@ func main() {
 
 	parsedText, paragraphState, err = parseFile(siteVars.GetVal("IN-FILE"), paragraphState)
 	if err != nil {
-		fmt.Println("Error:", err.Error());
+		fmt.Println("Error:", err.Error())
 	}
 
 	// cleanup unclosed paragraphs
@@ -539,9 +549,8 @@ func main() {
 	// Output
 	// TODO use out file
 	for _, l := range parsedText {
-		fmt.Println( l )
+		fmt.Println(l)
 	}
-
 
 	// DEBUG TODO change to debug outpout
 	fmt.Println("---- Resulting paragraph style :", paragraphState)
