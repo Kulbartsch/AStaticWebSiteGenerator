@@ -72,3 +72,139 @@ may vary
 * [x] nested lists
 * [ ] multi line lists
 * [ ] Basic markdown features
+
+## Usage
+
+Description of the markup formating.
+
+### Line level formating
+
+Used at begin the beginning line, using one of the characters.
+Some characters are can be cascaded.
+
+#### Defining a variable
+
+Variable: "ASWSG-DEFINE"
+
+Default character: "@",
+
+Special: Define a variable.
+
+Format: @variablename:value
+
+#### Include a file
+
+Variable: "ASWSG-INCLUDE"
+
+Default character: "+"
+
+special: include a text
+
+Format: +filename
+
+#### raw (html) line
+
+Variable: "ASWSG-RAWLINE"
+
+Default character: "$"
+
+Special: line will be inserted as is
+
+Format: ```$<article>```
+
+
+#### Escape
+
+Variable: "ASWSG-ESCAPE"
+
+Default character: "\"
+
+Special: special: escape char for paragraph
+
+Format: ```\* this is no bullet list```
+
+
+#### paragraph
+
+Variable: (none)
+
+Default character: (none)
+
+Special: (none)
+
+Format: any text not starting not with a line level special.
+
+Empty lines start a new paragraph.
+
+
+#### Bullet list
+
+Variable: "ASWSG-LIST"
+
+Default characters: "*" and "-"
+
+Format:
+
+    * This is
+    * just a simple List
+    *- with four entries
+    *- in two levels
+
+Bulltes and numbered Lists may be nested.
+
+#### Cite
+
+Variable: "ASWSG-CITE"
+
+Default character: ">"
+
+Format: > To be or not to be.
+
+#### Numbered list
+
+Variable: "ASWSG-NUMERATION"
+
+Default character: "#0123456789"
+
+Format:
+
+   	# A numbered list
+   	1 can be made with the numbers 0-9
+   	1 for your convenience
+   	21 but if you use two digits
+   	22 it will be handeled like a nested list
+   	5## numbers and # sign can be mixed
+   	1 numbers don't have to be in sequence
+
+#### Commands (not implemented yet)
+
+Variable: "ASWSG-COMMAND"
+
+Default character: "("
+
+Special: single line command, optionally closed by an ")", should not be changed
+
+Format: ```(command)```
+
+
+#### Defining a Table (not implemented yet)
+
+Variable: "ASWSG-TABLE"
+
+Default character: "|"
+
+Special:
+
+Format:
+
+
+#### Header
+
+Variable: "ASWSG-HEADER"
+
+Default character: "=!"
+
+Special: number of header characters define the depth of the header
+
+Format: ```== header level 2```
+
