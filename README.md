@@ -38,12 +38,9 @@ may vary
     * [X] strike trough
     * [ ] links
     * [ ] code
-  * [ ] multi line
-    * [ ] raw
-    * [ ] cite
-    * [ ] code
-* [X] Include file processing
-* [ ] Include raw files ?
+* [ ] Include file processing
+  * [X] include parsed files
+  * [ ] include raw files
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
     1. [X] static
@@ -51,15 +48,30 @@ may vary
     3. [X] from command line parameter
     4. [X] in file
   * [x] Using
-* [x] redefine markup tags
-* [x] *make* friendly
-* [ ] go tests (partly)
+* [ ] Commands
+  * [ ] dump-vars  (to log)
+  * [ ] message  (to log)
+* [X] redefine markup tags
+* [X] *make* friendly
+* [X] go tests (partly)
 * [ ] An example
 
 ### Future Releases
 
+* [ ] Commands
+  * [ ] dump-context  (to log)
+  * [ ] interactive  (enter interactive mode = read from io.stdin)
+  * [ ] execute-shell-command  <command with parameters>
+  * [ ] execute-script <filename>  (run a script ... maybe in the future)
+* [ ] Include raw files ?
+* [ ] Simple markup parsing
+  * [ ] multi line
+    * [ ] raw
+    * [ ] cite
+    * [ ] code
 * [ ] Anchor for headers
 * [ ] more examples
+* [ ] more tests]
 * [ ] Index of page (based on header)
 * [ ] More link types
   * [ ] camelCase links

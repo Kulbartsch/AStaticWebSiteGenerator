@@ -15,7 +15,8 @@
 //
 
 // TODO Bugs:
-// FIXME: remember line number for meta Message
+// TODO: remember line number for meta Message (will be done with context type)
+// FIXME: use stderr for messages
 
 package main
 
@@ -27,7 +28,17 @@ import (
 	"time"
 	//"regexp"
 	"strconv"
+	"io"
 )
+
+type siteContextType struct {
+	vars            SimpleVars
+	inStream        io.Reader   // ???
+	outStream       io.Writer   // ???
+	paragraphState  string
+	lineNumber      uint32
+	blockMode       string
+}
 
 type SimpleVars map[string]string
 
@@ -50,7 +61,8 @@ var siteVars = SimpleVars{
 	"ASWSG-STRIKE-2": "~~",
 	// line level formating (for paragraphs) at begin of line, using one of the characters
 	"ASWSG-DEFINE":  "@",  // special: define var
-	"ASWSG-INCLUDE": "+",  // special: include
+	"ASWSG-INCLUDE": "+",  // special: include parsed file
+	"ASWSG-RAWFILE": "<",  // special: include raw file
 	"ASWSG-RAWLINE": "$",  // special: raw (html) line
 	"ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
 	// ... paragraph: initial state: __ (empty)
@@ -83,7 +95,6 @@ var paragraphTags = map[string]string{
 	"b": "b",
 }
 
-// var paragraphState string
 
 // general tool functions
 
@@ -144,6 +155,50 @@ func Right(s string, l int) (r string) {
 	return
 }
 
+// Commands
+
+// TODO parse commands
+func parseCommands(command string) (result []string) {
+	var function, parameter string
+	cmd := strings.Trim(command, " \t\n)")
+	i := strings.IndexAny(cmd, " \t")
+	if i == -1 {
+		function = strings.ToUpper(cmd)
+	} else {
+		function = strings.ToUpper(WhiteSpaceTrim(cmd[:i]))
+		parameter = WhiteSpaceTrim(cmd[i:])
+	}
+	switch function {
+	case "DUMP-VARS":
+		result = commandDumpVars(parameter)
+	default:
+		Message("", 0, "E", "unknown command (function/parameter): " + function + "/" + parameter + " = " + cmd)
+		break
+	}
+	return
+}
+
+// TODO command dump-vars  (to log)
+func commandDumpVars(p string) (r []string) {
+	Message("", 0, "I", "---- my vars ----")
+	for key, value := range siteVars {
+		Message("", 0, "I", key + ":" + value)
+	}
+	return
+}
+
+// TODO command dump-context  (to log)
+
+// TODO command message  (to log)
+
+// TODO command interactive  (enter interactive mode = read from io.stdin)
+
+// TODO command execute-shell-command  <command with parameters>
+
+// TODO command execute-script <filename>  (run a script ... maybe in the future)
+
+
+
 // simpleVar handling
 
 func (v SimpleVars) SetVar(key, val string) (ok bool) {
@@ -188,7 +243,7 @@ func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 // message handling
 
 func Message(filename string, line int, severity string, messagetext string) {
-	// TODO message to stderr or as HTML comments
+	// TODO message to log, stderr or as HTML comments
 	// TODO check message level
 	fmt.Println(filename, ":", line, ":", severity, ":", messagetext)
 }
@@ -225,6 +280,14 @@ func parseAndSetCommandLineVars() {
 			}
 		}
 	}
+}
+
+
+// site context helper functions
+
+func (c siteContextType) addStringToOutput(s string) (err error) {
+    // ToDo implement
+	return
 }
 
 
@@ -296,6 +359,9 @@ func parseInLine(rawLine string) (parsedLine string) {
 		parsedLine = t1 + surroundWithHTMLTag("del", t2) + t3
 	}
 
+	// TODO check link
+
+
 	if didParse == true {
 		parsedLine = parseInLine(parsedLine)
 	}
@@ -304,9 +370,7 @@ func parseInLine(rawLine string) (parsedLine string) {
 }
 
 func parseAndSetVar(line string) (varParsed bool) {
-	Message("", 0, "D", "ParseVar:"+line)
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-DEFINE")) {
-		Message("", 0, "D", "  yes")
 		siteVars.ParseAndSetVar(line[1:])
 		return true
 	}
@@ -366,13 +430,6 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 	// Message("", 0, "D", "inline:" + line)
 	// Message("", 0, "D", "  PS:" + currentParagraphState)
 
-	// parse raw
-	if firstChar == siteVars.GetVal("ASWSG-RAWLINE") {
-		resultingParagraphState = currentParagraphState
-		resultLines = append(resultLines, line[1:])
-		return
-	}
-
 	// parse LIST, CITE and NUMERATION
 	for _, r := range line {
 		a := string(r)
@@ -398,10 +455,12 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 		// Message("", 0, "D", "  resultState:"+ resultingParagraphState )
 	}
 
+	// parse Escape
 	if firstChar == siteVars.GetVal("ASWSG-ESCAPE") {
 		line = line[1:]
 	}
 
+	// parse paragraph
 	if len(resultingParagraphState) == 0 && len(line) != 0 {
 		resultingParagraphState = "P"
 	}
@@ -421,9 +480,10 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 func parseLine(line string, paragraphState string) (resultLines []string, newParagraphState string) {
 
 	newParagraphState = paragraphState
+	lineLength := len(line)
 
 	// empty line
-	if len(line) == 0 {
+	if lineLength == 0 {
 		newParagraphState = ""
 		resultLines = changeParagraphs(paragraphState, newParagraphState, false)
 		return resultLines, newParagraphState
@@ -435,6 +495,24 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	// parse vars
 	if parseAndSetVar(line) == true {
 		return resultLines, newParagraphState
+	}
+
+	// TODO block mode raw
+
+	// TODO block mode code
+
+	// parse commands
+	if line[0:1] == siteVars.GetVal("ASWSG-COMMAND") {
+		resultLines = append(resultLines, parseCommands(line[1:])...)
+		return
+	}
+
+	// Entering Markup Mode
+
+	// parse raw
+	if line[0:1] == siteVars.GetVal("ASWSG-RAWLINE") {
+		resultLines = append(resultLines, line[1:])
+		return
 	}
 
 	// process includes
@@ -449,11 +527,10 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return resultLines, newParagraphState
 	}
 
-	// parse commands
-	// todo
+	// TODO block mode cite
 
 
-	// TODO parse multi liner
+	// parse Markup one liner
 
 	// parse one liner: header
 	if strings.ContainsAny(line[0:1], siteVars.GetVal("ASWSG-HEADER")) {
@@ -475,7 +552,9 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return resultLines, newParagraphState
 	}
 
-	// parse paragraph line (list, ...) + parse inline
+
+	// TODO parse Table
+
 	resultLines, newParagraphState = parseCommonParagraphControls(line, paragraphState)
 
 	return resultLines, newParagraphState
@@ -523,10 +602,12 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	siteVars.SetVar("filename", file_stat.Name())
 
 	scanner := bufio.NewScanner(file)
+	// TODO check for errors
 
 	var result []string
 
 	for scanner.Scan() {
+		// TODO check for errors
 		// TODO handle line numbers
 		lines, paragraphState = parseLine(scanner.Text(), paragraphState)
 		result = append(result, lines...)
@@ -556,25 +637,18 @@ func main() {
 		fmt.Println("Error:", err.Error())
 	}
 
+	Message("",9999,"D","---- Resulting paragraph style :", paragraphState)
+
 	// cleanup unclosed paragraphs
 	parsedText = append(parsedText, changeParagraphs(paragraphState, "", false)...)
 
 	// Output
-	// TODO use out file
+	// TODO use out file / stream
 	for _, l := range parsedText {
 		fmt.Println(l)
 	}
 
-	// DEBUG TODO change to debug outpout
-	fmt.Println("---- Resulting paragraph style :", paragraphState)
-
-	// Display Vars for Debug - TODO change to debug outpout
-	fmt.Println("---- my vars ----")
-	for key, value := range siteVars {
-		fmt.Println(key, ":", value)
-	}
-
-	fmt.Println("---- bye ----")
+	Message("",0,"I","---- bye ----")
 
 }
 
