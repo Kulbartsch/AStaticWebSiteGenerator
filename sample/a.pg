@@ -37,8 +37,14 @@ I can haz *cookies* with //Milk//!
 Don't need ~~meat~~ to be happy.
 Ah ... links should do to [[https://wikipedia.org/]] for example.
 
+
+$</article>
+
 ---
 
 Footer
 
-$</article>
+(dump-vars)
+
+(choobie-do asd
+(anything to be done)
