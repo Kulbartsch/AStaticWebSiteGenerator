@@ -1,11 +1,12 @@
 # ASWSG - Another|Alexanders Static WebSite Generator
 
-ASWG allows you to generate Websites using Markup Syntax and HTML.
-It is build with the idea of classical unix tools to do one job, just like a compiler generating a new output.
+ASWSG allows you to generate Websites using Markup Syntax and HTML.
+It is build with the idea of classical unix tools to do one job.
+ASWSG behaves just like a compiler parsing a Markup file and generating a new HTML output.
 ASWSG will not generate a file structure or an HTML frame, but you can do so using includes and
-use it with a build system like make.
+use it with a build system like *make*.
 
-**Please note: This is under development and the first, currently unusable, code.**
+**Please note: This is under development. The output code must currently be manually be cleaned before use.**
 
 HTML and Markup can be mixed, reusable includes may be used for headers, footers and other repeating code blocks.
 Most benefits come from using dynamic variables, which are partly set dynamically by aswsg,
@@ -49,7 +50,7 @@ may vary
     4. [X] in file
   * [x] Using
 * [ ] Commands
-  * [ ] dump-vars  (to log)
+  * [X] dump-vars  (to log)
   * [ ] message  (to log)
 * [X] redefine markup tags
 * [X] *make* friendly
