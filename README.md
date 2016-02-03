@@ -38,7 +38,7 @@ may vary
     * [X] emphasised
     * [X] strike trough
     * [ ] links
-    * [ ] code
+    * [X] code
 * [ ] Include file processing
   * [X] include parsed files
   * [ ] include raw files
@@ -49,9 +49,9 @@ may vary
     3. [X] from command line parameter
     4. [X] in file
   * [x] Using
-* [ ] Commands
+* [X] Commands
   * [X] dump-vars  (to log)
-  * [ ] message  (to log)
+  * [X] message  (to log)
 * [X] redefine markup tags
 * [X] *make* friendly
 * [X] go tests (partly)
