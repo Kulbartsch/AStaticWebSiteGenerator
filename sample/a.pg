@@ -31,7 +31,8 @@ Now we have a list here.
 *# if it works
 *## or not
 *## or maybe
-*# test
+*# test some ``code`` inside a line
+
 == inline foo ==
 I can haz *cookies* with //Milk//!
 Don't need ~~meat~~ to be happy.

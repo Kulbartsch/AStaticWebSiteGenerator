@@ -23,6 +23,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+        "log"
 	"os"
 	"strings"
 	"time"
@@ -157,7 +158,7 @@ func Right(s string, l int) (r string) {
 
 // Commands
 
-// TODO parse commands
+// parse commands
 func parseCommands(command string) (result []string) {
 	var function, parameter string
 	cmd := strings.Trim(command, " \t\n)")
@@ -171,6 +172,8 @@ func parseCommands(command string) (result []string) {
 	switch function {
 	case "DUMP-VARS":
 		result = commandDumpVars(parameter)
+	case "MESSAGE":
+		result = commandMessage(parameter)
 	default:
 		Message("", 0, "E", "unknown command (function/parameter): " + function + "/" + parameter + " = " + cmd)
 		break
@@ -178,7 +181,7 @@ func parseCommands(command string) (result []string) {
 	return
 }
 
-// TODO command dump-vars  (to log)
+// command dump-vars  (to log)
 func commandDumpVars(p string) (r []string) {
 	Message("", 0, "I", "---- my vars ----")
 	for key, value := range siteVars {
@@ -189,7 +192,12 @@ func commandDumpVars(p string) (r []string) {
 
 // TODO command dump-context  (to log)
 
-// TODO command message  (to log)
+// command message  (to log)
+func commandMessage(p string) (r []string) {
+	Message("", 0, "I", p)
+	return
+}
+
 
 // TODO command interactive  (enter interactive mode = read from io.stdin)
 
@@ -243,9 +251,8 @@ func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 // message handling
 
 func Message(filename string, line int, severity string, messagetext string) {
-	// TODO message to log, stderr or as HTML comments
 	// TODO check message level
-	fmt.Println(filename, ":", line, ":", severity, ":", messagetext)
+	log.Println(filename, ":", line, ":", severity, ":", messagetext)
 }
 
 // main
@@ -359,7 +366,19 @@ func parseInLine(rawLine string) (parsedLine string) {
 		parsedLine = t1 + surroundWithHTMLTag("del", t2) + t3
 	}
 
+	// check code
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-CODE-1"), siteVars.GetVal("ASWSG-CODE-2"), siteVars.GetVal("ASWSG-ESCAPE"))
+	if len(t2) > 0 {
+		didParse = true
+		parsedLine = t1 + surroundWithHTMLTag("code", t2) + t3
+	}
+
 	// TODO check link
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-LINK-1"), siteVars.GetVal("ASWSG-LINK-2"), siteVars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func // TOFIX implement link func
+	if len(t2) > 0 {
+		didParse = true
+		parsedLine = t1 + surroundWithHTMLTag("a", t2) + t3 // TOFIX implement link func
+	}
 
 
 	if didParse == true {
@@ -637,7 +656,7 @@ func main() {
 		fmt.Println("Error:", err.Error())
 	}
 
-	Message("",9999,"D","---- Resulting paragraph style :", paragraphState)
+	Message("",9999,"D","---- Resulting paragraph style :" + paragraphState)
 
 	// cleanup unclosed paragraphs
 	parsedText = append(parsedText, changeParagraphs(paragraphState, "", false)...)
