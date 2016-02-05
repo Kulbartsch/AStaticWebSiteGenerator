@@ -1,0 +1,51 @@
+@Foo:Baa
+@Foo=Koo
+@Title:A test page
+
+
++h.in
+$
+$<article>
+$
+== Here starts the contend
+
+This is a simple paragraph.
+It spans several line.
+But contains just nonsense.
+
+Another parapraph.
+The time is
+\{{now}}
+
+> Just do it!
+> Try it out!
+
+== Header 2 - Lists ===
+Foo is: {{Foo}}
+
+Now we have a list here.
+* Are we happy?
+* do we like it
+** or not
+* we will see
+*# if it works
+*## or not
+*## or maybe
+*# test some ``code`` inside a line
+
+== inline foo ==
+I can haz *cookies* with //Milk//!
+Don't need ~~meat~~ to be happy.
+Ah ... links should do to [[https://wikipedia.org/]] for example.
+
+
+$</article>
+
+---
+
+Footer
+
+(dump-vars)
+
+(choobie-do asd
+(anything to be done)

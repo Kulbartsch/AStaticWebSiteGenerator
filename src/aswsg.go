@@ -17,13 +17,14 @@
 // TODO Bugs:
 // TODO: remember line number for meta Message (will be done with context type)
 // FIXME: use stderr for messages
+// TODO: inherit of html lines(/blocks?). identified by starting with an "<". (Ending with a empty line?)
 
 package main
 
 import (
 	"bufio"
 	"fmt"
-        "log"
+	"log"
 	"os"
 	"strings"
 	"time"
