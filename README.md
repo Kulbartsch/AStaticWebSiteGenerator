@@ -65,6 +65,7 @@ may vary
   * [ ] execute-shell-command  <command with parameters>
   * [ ] execute-script <filename>  (run a script ... maybe in the future)
 * [ ] Include raw files ?
+* [ ] Inherit of HTML code (without using raw command)
 * [ ] Simple markup parsing
   * [ ] multi line
     * [ ] raw
@@ -72,7 +73,7 @@ may vary
     * [ ] code
 * [ ] Anchor for headers
 * [ ] more examples
-* [ ] more tests]
+* [ ] more tests
 * [ ] Index of page (based on header)
 * [ ] More link types
   * [ ] camelCase links
