@@ -301,8 +301,11 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 // inline
 
-func generateHTMLTag(tag string, openTag bool) (resultHTMLTag string) {
+type HTMLAttrib map[string]string
+
+func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) (resultHTMLTag string) {
 	// TODO check using HTML library
+	var attributes string
 	if len(tag) == 0 {
 		return
 	}
@@ -311,9 +314,21 @@ func generateHTMLTag(tag string, openTag bool) (resultHTMLTag string) {
 		close = "/"
 	} else {
 		close = ""
+		for k,v := range attrib {
+			attributes = " "
+			attributes += k + "=\"" + v + "\" "
+		}
 	}
-	resultHTMLTag = "<" + close + tag + ">"
+	resultHTMLTag = "<" + close + tag + attributes + ">"
 	return
+}
+
+func generateHTMLTag(tag string, openTag bool) (resultHTMLTag string) {
+	return generateHTMLTagWithAttributes(tag, openTag, HTMLAttrib{} )
+}
+
+func surroundWithHTMLTagWithAttributes(tag string, s string, attrib HTMLAttrib) string {
+	return generateHTMLTagWithAttributes(tag, true, attrib) + s + generateHTMLTag(tag, false)
 }
 
 func surroundWithHTMLTag(tag string, s string) string {
@@ -326,6 +341,27 @@ func generateTag(tagKind string, openTag bool) (resultTag string) {
 	}
 	resultTag = generateHTMLTag(paragraphTags[tagKind], openTag)
 	return
+}
+
+// Proceeses the inner part of an [[text]] (ASWSG-LINK-x) an generates a complete <a> tag.
+// If text contains a "|"" (pipe) the left part is the displayed content and
+// the right part is the href.
+func parseLink(text string) (string) {
+	if len(text) == 0 {
+		return ""
+	}
+	var link, display string
+	var attrib HTMLAttrib
+	i := strings.Index(text, "|")
+	if i == -1 {
+		link = text
+		display = link
+	} else {
+		display = text[:i]
+		link = text[i+1:]
+	}
+	attrib = HTMLAttrib{ "href": link, }
+	return surroundWithHTMLTagWithAttributes("a", display, attrib)  // tag string, s string, attrib HTMLAttrib)
 }
 
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
@@ -374,11 +410,11 @@ func parseInLine(rawLine string) (parsedLine string) {
 		parsedLine = t1 + surroundWithHTMLTag("code", t2) + t3
 	}
 
-	// TODO check link
-	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-LINK-1"), siteVars.GetVal("ASWSG-LINK-2"), siteVars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func // TOFIX implement link func
+	// check link
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-LINK-1"), siteVars.GetVal("ASWSG-LINK-2"), siteVars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
 	if len(t2) > 0 {
 		didParse = true
-		parsedLine = t1 + surroundWithHTMLTag("a", t2) + t3 // TOFIX implement link func
+		parsedLine = t1 + parseLink(t2) + t3
 	}
 
 
