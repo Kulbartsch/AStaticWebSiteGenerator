@@ -45,7 +45,6 @@ $</article>
 
 Footer
 
-(dump-vars)
-
-(choobie-do asd
-(anything to be done)
+(dump-vars
+(choobie-do will not work)
+(Message this is the end)
