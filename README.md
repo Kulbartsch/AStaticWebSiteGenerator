@@ -25,7 +25,7 @@ may vary
 
 ### Release 1
 
-* [ ] Simple markup parsing
+* [X] Simple markup parsing
   * [x] line based
     * [X] headers
     * [X] paragraphs
@@ -33,11 +33,11 @@ may vary
     * [x] ordered lists (~~1 level~~ nested)
     * [X] cites
     * [X] raw lines
-  * [ ] inline based
+  * [X] inline based
     * [X] bold
     * [X] emphasised
     * [X] strike trough
-    * [ ] links
+    * [X] links
     * [X] code
 * [ ] Include file processing
   * [X] include parsed files
@@ -64,7 +64,7 @@ may vary
   * [ ] interactive  (enter interactive mode = read from io.stdin)
   * [ ] execute-shell-command  <command with parameters>
   * [ ] execute-script <filename>  (run a script ... maybe in the future)
-* [ ] Include raw files ?
+* [ ] Log Filter
 * [ ] Inherit of HTML code (without using raw command)
 * [ ] Simple markup parsing
   * [ ] multi line
@@ -78,7 +78,8 @@ may vary
 * [ ] More link types
   * [ ] camelCase links
   * [ ] automatic URL detection
-  * [ ] more features for [[ ]] links
+  * [ ] ``[[ ]]`` links without URL, auto generates internal links
+  * [ ] link type ``[name](link)``
 * [ ] individual HTML tag IDs and classes
 * [ ] increased markup features like
   * [ ] Tables
@@ -221,4 +222,3 @@ Default character: "=!"
 Special: number of header characters define the depth of the header
 
 Format: ```== header level 2```
-

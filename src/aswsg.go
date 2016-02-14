@@ -64,7 +64,8 @@ var siteVars = SimpleVars{
 	// line level formating (for paragraphs) at begin of line, using one of the characters
 	"ASWSG-DEFINE":  "@",  // special: define var
 	"ASWSG-INCLUDE": "+",  // special: include parsed file
-	"ASWSG-RAWFILE": "<",  // special: include raw file
+	// "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
+	"ASWSG-RAWHMTL": "<",  // TODO special: ram html line (this may have leading white spaces)
 	"ASWSG-RAWLINE": "$",  // special: raw (html) line
 	"ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
 	// ... paragraph: initial state: __ (empty)
@@ -77,9 +78,9 @@ var siteVars = SimpleVars{
 	"ASWSG-HEADER": "=!", // one liner: header
 	// single multi char in one line alone, at least 3
 	"ASWSG-LINE":    "-", // special: horizontal line
-	"ASWSG-ML-CODE": "%", // start/end block: code c_O_de
-	"ASWSG-ML-CITE": ">", // start/end block: cite _M_ention
-	"ASWSG-ML-RAW":  "$", // start/end block: raw line (i.e. for HTML code)
+	"ASWSG-ML-CODE": "%", // TODO start/end block: code c_O_de
+	"ASWSG-ML-CITE": ">", // TODO start/end block: cite _M_ention
+	"ASWSG-ML-RAW":  "$", // TODO start/end block: raw line (i.e. for HTML code)
 }
 
 var paragraphTags = map[string]string{
@@ -176,7 +177,7 @@ func parseCommands(command string) (result []string) {
 	case "MESSAGE":
 		result = commandMessage(parameter)
 	default:
-		Message("", 0, "E", "unknown command (function/parameter): " + function + "/" + parameter + " = " + cmd)
+		Message("", 0, "W", "unknown command ignored (function/parameter): " + function + "/" + parameter + " = " + cmd)
 		break
 	}
 	return
@@ -198,7 +199,7 @@ func commandMessage(p string) (r []string) {
 	Message("", 0, "I", p)
 	return
 }
-
+// TODO command include-raw-file <filename>  (include a raw file)
 
 // TODO command interactive  (enter interactive mode = read from io.stdin)
 
@@ -332,7 +333,7 @@ func surroundWithHTMLTagWithAttributes(tag string, s string, attrib HTMLAttrib) 
 }
 
 func surroundWithHTMLTag(tag string, s string) string {
-	return generateHTMLTag(tag, true) + s + generateHTMLTag(tag, false)
+	return surroundWithHTMLTagWithAttributes(tag, s, HTMLAttrib{})
 }
 
 func generateTag(tagKind string, openTag bool) (resultTag string) {
@@ -391,7 +392,7 @@ func parseInLine(rawLine string) (parsedLine string) {
 
 	// check emphasised
 	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-EMP-1"), siteVars.GetVal("ASWSG-EMP-2"), siteVars.GetVal("ASWSG-ESCAPE"))
-	if len(t2) > 0 {
+	if len(t2) > 0  && Right(t1, 1) != ":" {  // TOFIX: Workaround to not mess with HTML links containing "://"
 		didParse = true
 		parsedLine = t1 + surroundWithHTMLTag("em", t2) + t3
 	}
