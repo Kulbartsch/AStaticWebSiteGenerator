@@ -45,22 +45,24 @@ type siteContextType struct {
 type SimpleVars map[string]string
 
 var siteVars = SimpleVars{
-	"ASWSG-VERSION": "0.1",
+	"ASWSG-VERSION": "0.2",
 	"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 	"ASWSG-LICENSE": "GPL V3",
 	// inline formating, pairs end on -1 respective -2
-	"ASWSG-VAR-1":    "{{", // special: variable to be replaced
-	"ASWSG-VAR-2":    "}}",
-	"ASWSG-LINK-1":   "[[", // special: link
-	"ASWSG-LINK-2":   "]]",
-	"ASWSG-BOLD-1":   "*", // inline: bold
-	"ASWSG-BOLD-2":   "*",
-	"ASWSG-EMP-1":    "//", // inline: emphasised
-	"ASWSG-EMP-2":    "//",
-	"ASWSG-CODE-1":   "``", // inline: code
-	"ASWSG-CODE-2":   "``",
-	"ASWSG-STRIKE-1": "~~", // inline: strike through
-	"ASWSG-STRIKE-2": "~~",
+	"ASWSG-VAR-1":     "{{", // special: variable to be replaced
+	"ASWSG-VAR-2":     "}}",
+	"ASWSG-LINK-1":    "[[", // special: link
+	"ASWSG-LINK-2":    "]]",
+	"ASWSG-BOLD-1":    "*", // inline: bold
+	"ASWSG-BOLD-2":    "*",
+	"ASWSG-EMP-1":     "//", // inline: emphasised
+	"ASWSG-EMP-2":     "//",
+	"ASWSG-CODE-1":    "``", // inline: code
+	"ASWSG-CODE-2":    "``",
+	"ASWSG-STRIKE-1":  "~~", // inline: strike through
+	"ASWSG-STRIKE-2":  "~~",
+	"ASWSG-UNDERL-1":  "__", // TODO inline: underline
+	"ASWSG-UNDERL-2":  "__",
 	// line level formating (for paragraphs) at begin of line, using one of the characters
 	"ASWSG-DEFINE":  "@",  // special: define var
 	"ASWSG-INCLUDE": "+",  // special: include parsed file
@@ -192,6 +194,8 @@ func commandDumpVars(p string) (r []string) {
 	return
 }
 
+// TODO command comment (name?)
+
 // TODO command dump-context  (to log)
 
 // command message  (to log)
@@ -199,11 +203,13 @@ func commandMessage(p string) (r []string) {
 	Message("", 0, "I", p)
 	return
 }
-// TODO command include-raw-file <filename>  (include a raw file)
-
 // TODO command interactive  (enter interactive mode = read from io.stdin)
 
 // TODO command execute-shell-command  <command with parameters>
+
+// TODO command include-raw-file <filename>  (include a raw file)
+
+// TODO command include-raw-files-with-vars  (include raw files, but with with variable parsing and replacing)
 
 // TODO command execute-script <filename>  (run a script ... maybe in the future)
 
@@ -361,6 +367,9 @@ func parseLink(text string) (string) {
 		display = text[:i]
 		link = text[i+1:]
 	}
+	if display == "" {
+		display = link
+	}
 	attrib = HTMLAttrib{ "href": link, }
 	return surroundWithHTMLTagWithAttributes("a", display, attrib)  // tag string, s string, attrib HTMLAttrib)
 }
@@ -440,7 +449,7 @@ func replaceInlineVars(line string) string {
 	if !siteVars.ExistsVal(t2) {
 		return line
 	}
-	return t1 + siteVars.GetVal(t2) + t3
+	return replaceInlineVars(t1 + siteVars.GetVal(t2) + t3)
 }
 
 // line
