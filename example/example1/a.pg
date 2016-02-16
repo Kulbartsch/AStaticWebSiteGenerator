@@ -1,9 +1,9 @@
 @Title: In The Beginning
 @Author: Peter Pan
-@Created: 2016-02-13
+@Created: 2016-01-22
 +header.in
 
-## Lorem ipsum dolor sit amet
+!!! Lorem ipsum dolor sit amet
 
 consectetur adipiscing elit. Quisque eu justo nec tellus molestie ultrices vitae
 id quam. Nulla ultrices purus id est lacinia, in congue massa porttitor. Cras
@@ -17,14 +17,14 @@ Sed laoreet velit vel elit congue dictum. Duis volutpat lacus massa.
 Etiam facilisis pharetra nulla et commodo. Proin luctus ligula at justo
 consectetur, non lobortis ex semper. Curabitur sit amet sapien porttitor,
 gravida quam ut, interdum elit. Vestibulum efficitur nisi ac vestibulum mattis.
-Integer vitae metus ut mauris pellentesque eleifend. **Aliquam eu dolor** quis
+Integer vitae metus ut mauris pellentesque eleifend. *Aliquam eu dolor* quis
 lectus blandit aliquam id vitae arcu. In at malesuada arcu. Aenean mi justo,
 cursus vel semper eu, molestie sollicitudin diam. Etiam volutpat rutrum velit
 eu pretium. Donec at ante ut ligula rhoncus bibendum eget nec massa. Maecenas
 sem diam, tincidunt sit amet ex sed, bibendum vestibulum eros. Suspendisse
 varius arcu ut volutpat mattis. Phasellus mollis dignissim arcu ac vulputate.
 
-## Mauris nec efficitur nisl
+!!! Mauris nec efficitur nisl
 
 Integer sollicitudin purus et eros egestas, ac vulputate risus mattis.
 Nam id eros mauris.

@@ -39,9 +39,7 @@ may vary
     * [X] strike trough
     * [X] links
     * [X] code
-* [ ] Include file processing
-  * [X] include parsed files
-  * [ ] include raw files
+* [X] include parsed files
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
     1. [X] static
@@ -55,14 +53,17 @@ may vary
 * [X] redefine markup tags
 * [X] *make* friendly
 * [X] go tests (partly)
-* [ ] An example
+* [X] An example
 
 ### Future Releases
 
-* [ ] Commands
+* Commands
+  * [ ] comments
   * [ ] dump-context  (to log)
   * [ ] interactive  (enter interactive mode = read from io.stdin)
   * [ ] execute-shell-command  <command with parameters>
+  * [ ] include raw files
+  * [ ] include raw files, but with with variable parsing and replacing
   * [ ] execute-script <filename>  (run a script ... maybe in the future)
 * [ ] Log Filter
 * [ ] Inherit of HTML code (without using raw command)
