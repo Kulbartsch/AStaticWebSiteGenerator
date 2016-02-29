@@ -209,7 +209,7 @@ func commandMessage(p string) (r []string) {
 
 // TODO command include-raw-file <filename>  (include a raw file)
 
-// TODO command include-raw-files-with-vars  (include raw files, but with with variable parsing and replacing)
+// TODO command include-crude-file <filename>  (include raw files, but with with variable replacing)
 
 // TODO command execute-script <filename>  (run a script ... maybe in the future)
 
