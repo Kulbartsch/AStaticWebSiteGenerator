@@ -52,7 +52,5 @@ src/aswsg
 
 *.exe
 
-src/aswsg.exe
-
 sample/test.html
-*.exe
+
