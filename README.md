@@ -19,7 +19,7 @@ All variables can be used subsequent, also in included files. (i.E. using the ar
 
 This tool will generate new HTML code, which -- of course -- may contain dynamic code.
 
-## Planned Features
+## (Planned) Features
 
 may vary
 

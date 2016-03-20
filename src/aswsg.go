@@ -285,7 +285,7 @@ func parseAndSetCommandLineVars() {
 			}
 		} else {
 			if siteVars.SetVar(destinationVar, arg) != true {
-				Message("", i, "w", "Can't parse variable: "+arg)
+				Message("", i, "w", "Can't set '"+destinationVar+"' to '"+arg+"'")
 			} else {
 				if destinationVar == "IN-FILE" {
 					destinationVar = "OUT-FILE"
