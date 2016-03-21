@@ -6,7 +6,7 @@ ASWSG behaves just like a compiler parsing a Markup file and generating a new HT
 ASWSG will not generate a file structure or an HTML frame, but you can do so using includes and
 use it with a build system like *make*.
 
-**Please note: This is under development. The output code must currently be manually be cleaned before use.**
+**Please note: This is under development.**
 
 HTML and Markup can be mixed, reusable includes may be used for headers, footers and other repeating code blocks.
 Most benefits come from using dynamic variables, which are partly set dynamically by aswsg,
@@ -90,6 +90,12 @@ may vary
 * [ ] Basic markdown features
 
 ## Usage
+
+aswsg [IN_FILE=]
+
+Checkout the example.
+
+## Formating
 
 Description of the markup formating.
 

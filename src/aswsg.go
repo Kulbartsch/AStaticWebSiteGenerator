@@ -14,10 +14,10 @@
 // A {{variable}} in the text will be replaced by the named variable
 //
 
-// TODO Bugs:
 // TODO: remember line number for meta Message (will be done with context type)
-// FIXME: use stderr for messages
+// TODO: use OUT-FILE (will be done with context type)
 // TODO: inherit of html lines(/blocks?). identified by starting with an "<". (Ending with a empty line?)
+
 
 package main
 
@@ -48,6 +48,8 @@ var siteVars = SimpleVars{
 	"ASWSG-VERSION": "0.2",
 	"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 	"ASWSG-LICENSE": "GPL V3",
+	// control vars
+	"ASWSG-MESSAGE-FILTER":  "Dd",
 	// inline formating, pairs end on -1 respective -2
 	"ASWSG-VAR-1":     "{{", // special: variable to be replaced
 	"ASWSG-VAR-2":     "}}",
@@ -259,8 +261,9 @@ func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 // message handling
 
 func Message(filename string, line int, severity string, messagetext string) {
-	// TODO check message level
-	log.Println(filename, ":", line, ":", severity, ":", messagetext)
+	if ! strings.ContainsAny(severity, siteVars.GetVal("ASWSG-MESSAGE-FILTER")) {
+		log.Println(filename, ":", line, ":", severity, ":", messagetext)
+	}
 }
 
 // main
@@ -283,14 +286,17 @@ func parseAndSetCommandLineVars() {
 			if siteVars.ParseAndSetVar(arg) != true {
 				Message("", i, "w", "Can't parse variable: "+arg)
 			}
-		} else {
-			if siteVars.SetVar(destinationVar, arg) != true {
-				Message("", i, "w", "Can't set '"+destinationVar+"' to '"+arg+"'")
+		} else {  // doesn't seem to be a variable
+			if destinationVar == "" {
+				Message("$CMDLINEARG$", i, "W", "To much non variable parameters (ignored): "+arg)
 			} else {
+				if siteVars.SetVar(destinationVar, arg) != true {
+				  Message("", i, "w", "Can't set '"+destinationVar+"' to '"+arg+"'")
+				}
 				if destinationVar == "IN-FILE" {
 					destinationVar = "OUT-FILE"
 				} else {
-					Message("$CMDLINEARG$", i, "W", "To much non variable parameters (ignored): "+arg)
+					destinationVar = ""
 				}
 			}
 		}
@@ -714,7 +720,7 @@ func main() {
 		fmt.Println(l)
 	}
 
-	Message("",0,"I","---- bye ----")
+	Message("",0,"D","---- bye ----")
 
 }
 
