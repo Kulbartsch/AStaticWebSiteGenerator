@@ -91,7 +91,7 @@ may vary
 
 ## Usage
 
-```aswsg [IN_FILE=]*filname* > file.html````
+```aswsg [IN_FILE=]sourcefile > file.html```
 
 Checkout the example.
 
