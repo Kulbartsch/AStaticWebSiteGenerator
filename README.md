@@ -65,7 +65,7 @@ may vary
   * [ ] include raw files
   * [ ] include raw files, but with with variable parsing and replacing
   * [ ] execute-script <filename>  (run a script ... maybe in the future)
-* [ ] Log Filter
+* [x] Log Filter
 * [ ] Inherit of HTML code (without using raw command)
 * [ ] Simple markup parsing
   * [ ] multi line
@@ -94,6 +94,14 @@ may vary
 aswsg [IN_FILE=]
 
 Checkout the example.
+
+## Controll
+
+### Messages
+
+Which messages will be logged, respectivly not logged, can be controlled thru the
+variable ASWSG-MESSAGE-FILTER.
+Messages with severity in ASWSG-MESSAGE-FILTER will not be send to *stderr*.
 
 ## Formating
 
