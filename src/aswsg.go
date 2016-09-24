@@ -1,5 +1,5 @@
 // Another|Alexanders Static WebSite Generator
-// (c) 2015 Alexander Kulbartsch
+// (c) 2016 Alexander Kulbartsch
 //
 // Lines beginning with "@" (and no further white space)
 // are interpreted as variables in the form "@var: value".
@@ -14,10 +14,11 @@
 // A {{variable}} in the text will be replaced by the named variable
 //
 
-// TODO Bugs:
 // TODO: remember line number for meta Message (will be done with context type)
-// FIXME: use stderr for messages
+// TODO: use OUT-FILE (will be done with context type)
 // TODO: inherit of html lines(/blocks?). identified by starting with an "<". (Ending with a empty line?)
+// TODO: extract tools
+// TODO: extract var handling
 
 package main
 
@@ -29,17 +30,17 @@ import (
 	"strings"
 	"time"
 	//"regexp"
-	"strconv"
 	"io"
+	"strconv"
 )
 
 type siteContextType struct {
-	vars            SimpleVars
-	inStream        io.Reader   // ???
-	outStream       io.Writer   // ???
-	paragraphState  string
-	lineNumber      uint32
-	blockMode       string
+	vars           SimpleVars
+	inStream       io.Reader // ???
+	outStream      io.Writer // ???
+	paragraphState string
+	lineNumber     uint32
+	blockMode      string
 }
 
 type SimpleVars map[string]string
@@ -48,24 +49,30 @@ var siteVars = SimpleVars{
 	"ASWSG-VERSION": "0.2",
 	"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 	"ASWSG-LICENSE": "GPL V3",
+	// control vars
+	"ASWSG-MESSAGE-FILTER": "Dd",
 	// inline formating, pairs end on -1 respective -2
-	"ASWSG-VAR-1":     "{{", // special: variable to be replaced
-	"ASWSG-VAR-2":     "}}",
-	"ASWSG-LINK-1":    "[[", // special: link
-	"ASWSG-LINK-2":    "]]",
-	"ASWSG-BOLD-1":    "*", // inline: bold
-	"ASWSG-BOLD-2":    "*",
-	"ASWSG-EMP-1":     "//", // inline: emphasised
-	"ASWSG-EMP-2":     "//",
-	"ASWSG-CODE-1":    "``", // inline: code
-	"ASWSG-CODE-2":    "``",
-	"ASWSG-STRIKE-1":  "~~", // inline: strike through
-	"ASWSG-STRIKE-2":  "~~",
-	"ASWSG-UNDERL-1":  "__", // TODO inline: underline
-	"ASWSG-UNDERL-2":  "__",
+	"ASWSG-VAR-1":    "{{", // special: variable to be replaced
+	"ASWSG-VAR-2":    "}}",
+	"ASWSG-LINK-1-1": "[[", // special: link
+	"ASWSG-LINK-1-2": "]]",
+	"ASWSG-LINK-1-3": "|",
+	"ASWSG-LINK-2-1": "[", // special: link
+	"ASWSG-LINK-2-2": ")",
+	"ASWSG-LINK-2-3": "](",
+	"ASWSG-BOLD-1":   "*", // inline: bold
+	"ASWSG-BOLD-2":   "*",
+	"ASWSG-EMP-1":    "//", // inline: emphasised
+	"ASWSG-EMP-2":    "//",
+	"ASWSG-CODE-1":   "``", // inline: code
+	"ASWSG-CODE-2":   "``",
+	"ASWSG-STRIKE-1": "~~", // inline: strike through
+	"ASWSG-STRIKE-2": "~~",
+	"ASWSG-UNDERL-1": "__", // TODO inline: underline
+	"ASWSG-UNDERL-2": "__",
 	// line level formating (for paragraphs) at begin of line, using one of the characters
-	"ASWSG-DEFINE":  "@",  // special: define var
-	"ASWSG-INCLUDE": "+",  // special: include parsed file
+	"ASWSG-DEFINE":  "@", // special: define var
+	"ASWSG-INCLUDE": "+", // special: include parsed file
 	// "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
 	"ASWSG-RAWHMTL": "<",  // TODO special: ram html line (this may have leading white spaces)
 	"ASWSG-RAWLINE": "$",  // special: raw (html) line
@@ -77,7 +84,7 @@ var siteVars = SimpleVars{
 	"ASWSG-NUMERATION": "#0123456789", // paragraph: _N_umbered list and _B_ullets
 	"ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")", should not be changed // TODO implement commands
 	"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata // TODO implement table
-	"ASWSG-HEADER": "=!", // one liner: header
+	"ASWSG-HEADER":     "=!",          // one liner: header
 	// single multi char in one line alone, at least 3
 	"ASWSG-LINE":    "-", // special: horizontal line
 	"ASWSG-ML-CODE": "%", // TODO start/end block: code c_O_de
@@ -99,7 +106,6 @@ var paragraphTags = map[string]string{
 	"T": "table",
 	"b": "b",
 }
-
 
 // general tool functions
 
@@ -174,12 +180,14 @@ func parseCommands(command string) (result []string) {
 		parameter = WhiteSpaceTrim(cmd[i:])
 	}
 	switch function {
+        case "COMMENT":
+                // nothing
 	case "DUMP-VARS":
 		result = commandDumpVars(parameter)
 	case "MESSAGE":
 		result = commandMessage(parameter)
 	default:
-		Message("", 0, "W", "unknown command ignored (function/parameter): " + function + "/" + parameter + " = " + cmd)
+		Message("", 0, "W", "unknown command ignored (function/parameter): "+function+"/"+parameter+" = "+cmd)
 		break
 	}
 	return
@@ -189,12 +197,17 @@ func parseCommands(command string) (result []string) {
 func commandDumpVars(p string) (r []string) {
 	Message("", 0, "I", "---- my vars ----")
 	for key, value := range siteVars {
-		Message("", 0, "I", key + ":" + value)
+		Message("", 0, "I", key+":"+value)
 	}
 	return
 }
 
-// TODO command comment (name?)
+// command comment (name?) 
+/* func commandComment(p string) (r []string) {
+        // maybe some implementation later
+	return
+} */
+
 
 // TODO command dump-context  (to log)
 
@@ -203,6 +216,7 @@ func commandMessage(p string) (r []string) {
 	Message("", 0, "I", p)
 	return
 }
+
 // TODO command interactive  (enter interactive mode = read from io.stdin)
 
 // TODO command execute-shell-command  <command with parameters>
@@ -212,8 +226,6 @@ func commandMessage(p string) (r []string) {
 // TODO command include-crude-file <filename>  (include raw files, but with with variable replacing)
 
 // TODO command execute-script <filename>  (run a script ... maybe in the future)
-
-
 
 // simpleVar handling
 
@@ -244,6 +256,67 @@ func (v SimpleVars) ExistsVal(key string) (result bool) {
 		return false
 	}
 	_, result = v[strings.ToUpper(key)]
+	return
+}
+
+func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
+	dp := strings.Index(toparse, ":")
+	if dp < 1 || dp == len(toparse) {
+		return false
+	}
+	v.SetVar(toparse[0:(dp)], toparse[(dp+1):])
+	return true
+}
+
+// message handling
+
+func Message(filename string, line int, severity string, messagetext string) {
+	if !strings.ContainsAny(severity, siteVars.GetVal("ASWSG-MESSAGE-FILTER")) {
+		log.Println(filename, ":", line, ":", severity, ":", messagetext)
+	}
+}
+
+// main
+
+func setDefaultSiteVars() {
+	_ = siteVars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
+	_ = siteVars.SetVar("DateFormat", "2006-01-02")
+	_ = siteVars.SetVar("TimeFormat", "15:04:05")
+	_ = siteVars.SetVar("now", time.Now().Format(siteVars.GetVal("TimeStampFormat")))
+	_ = siteVars.SetVar("today", time.Now().Format(siteVars.GetVal("DateFormat")))
+	_ = siteVars.SetVar("time", time.Now().Format(siteVars.GetVal("TimeFormat")))
+}
+
+func parseAndSetCommandLineVars() {
+	destinationVar := "IN-FILE"
+	for i := 1; i < len(os.Args); i++ {
+		arg := os.Args[i]
+		Message("$CMDLINEARG$", i, "D", arg)
+		if strings.Index(arg, ":") >= 0 {
+			if siteVars.ParseAndSetVar(arg) != true {
+				Message("", i, "w", "Can't parse variable: "+arg)
+			}
+		} else { // doesn't seem to be a variable
+			if destinationVar == "" {
+				Message("$CMDLINEARG$", i, "W", "To much non variable parameters (ignored): "+arg)
+			} else {
+				if siteVars.SetVar(destinationVar, arg) != true {
+					Message("", i, "w", "Can't set '"+destinationVar+"' to '"+arg+"'")
+				}
+				if destinationVar == "IN-FILE" {
+					destinationVar = "OUT-FILE"
+				} else {
+					destinationVar = ""
+				}
+			}
+		}
+	}
+}
+
+// site context helper functions
+
+func (c siteContextType) addStringToOutput(s string) (err error) {
+	// ToDo implement
 	return
 }
 
@@ -321,7 +394,7 @@ func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) 
 		close = "/"
 	} else {
 		close = ""
-		for k,v := range attrib {
+		for k, v := range attrib {
 			attributes = " "
 			attributes += k + "=\"" + v + "\" "
 		}
@@ -331,7 +404,7 @@ func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) 
 }
 
 func generateHTMLTag(tag string, openTag bool) (resultHTMLTag string) {
-	return generateHTMLTagWithAttributes(tag, openTag, HTMLAttrib{} )
+	return generateHTMLTagWithAttributes(tag, openTag, HTMLAttrib{})
 }
 
 func surroundWithHTMLTagWithAttributes(tag string, s string, attrib HTMLAttrib) string {
@@ -350,16 +423,16 @@ func generateTag(tagKind string, openTag bool) (resultTag string) {
 	return
 }
 
-// Proceeses the inner part of an [[text]] (ASWSG-LINK-x) an generates a complete <a> tag.
+// Proceeses the inner part of an [[text]] (ASWSG-LINK-1-x) an generates a complete <a> tag.
 // If text contains a "|"" (pipe) the left part is the displayed content and
 // the right part is the href.
-func parseLink(text string) (string) {
+func parseLink1(text string) string {
 	if len(text) == 0 {
 		return ""
 	}
 	var link, display string
 	var attrib HTMLAttrib
-	i := strings.Index(text, "|")
+	i := strings.Index(text, siteVars.GetVal("ASWSG-LINK-1-3"))
 	if i == -1 {
 		link = text
 		display = link
@@ -370,8 +443,32 @@ func parseLink(text string) (string) {
 	if display == "" {
 		display = link
 	}
-	attrib = HTMLAttrib{ "href": link, }
-	return surroundWithHTMLTagWithAttributes("a", display, attrib)  // tag string, s string, attrib HTMLAttrib)
+
+	attrib = HTMLAttrib{"href": link}
+	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
+}
+
+// Proceeses the inner part of an [text](link) format (ASWSG-LINK-2-x) an generates a complete <a> tag.
+// If text contains no "](" (ASWSG-LINK-2-3) the link processing will be canceled 
+// and the complete inner text returned.
+func parseLink2(text string) string {
+	if len(text) == 0 {
+		return ""
+	}
+	var link, display string
+	var attrib HTMLAttrib
+	i := strings.Index(text, siteVars.GetVal("ASWSG-LINK-2-3"))
+	if i == -1 {
+                return siteVars.GetVal("ASWSG-LINK-2-1") + text + siteVars.GetVal("ASWSG-LINK-2-2")
+	} else {
+		display = text[:i]
+		link = text[i+2:]
+	}
+	if display == "" {
+		display = link
+	}
+	attrib = HTMLAttrib{"href": link}
+	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
 }
 
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
@@ -401,7 +498,7 @@ func parseInLine(rawLine string) (parsedLine string) {
 
 	// check emphasised
 	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-EMP-1"), siteVars.GetVal("ASWSG-EMP-2"), siteVars.GetVal("ASWSG-ESCAPE"))
-	if len(t2) > 0  && Right(t1, 1) != ":" {  // TOFIX: Workaround to not mess with HTML links containing "://"
+	if len(t2) > 0 && Right(t1, 1) != ":" { // TOFIX: Workaround to not mess with HTML links containing "://"
 		didParse = true
 		parsedLine = t1 + surroundWithHTMLTag("em", t2) + t3
 	}
@@ -420,13 +517,20 @@ func parseInLine(rawLine string) (parsedLine string) {
 		parsedLine = t1 + surroundWithHTMLTag("code", t2) + t3
 	}
 
-	// check link
-	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-LINK-1"), siteVars.GetVal("ASWSG-LINK-2"), siteVars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
+	// check link (1)
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-LINK-1-1"), siteVars.GetVal("ASWSG-LINK-1-2"), siteVars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
 	if len(t2) > 0 {
 		didParse = true
-		parsedLine = t1 + parseLink(t2) + t3
+		parsedLine = t1 + parseLink1(t2) + t3
 	}
 
+	// check link (2)
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-LINK-2-1"), siteVars.GetVal("ASWSG-LINK-2-2"), siteVars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
+	l2 := strings.Index(t2, siteVars.GetVal("ASWSG-LINK-2-3"),)
+	if len(t2) > 0 && l2 >= 0 {
+		didParse = true
+		parsedLine = t1 + parseLink2(t2) + t3
+	}
 
 	if didParse == true {
 		parsedLine = parseInLine(parsedLine)
@@ -595,7 +699,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	// TODO block mode cite
 
-
 	// parse Markup one liner
 
 	// parse one liner: header
@@ -617,7 +720,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<hr \\>")
 		return resultLines, newParagraphState
 	}
-
 
 	// TODO parse Table
 
@@ -703,7 +805,7 @@ func main() {
 		fmt.Println("Error:", err.Error())
 	}
 
-	Message("",9999,"D","---- Resulting paragraph style :" + paragraphState)
+	Message("", 9999, "D", "---- Resulting paragraph style :"+paragraphState)
 
 	// cleanup unclosed paragraphs
 	parsedText = append(parsedText, changeParagraphs(paragraphState, "", false)...)
@@ -714,7 +816,7 @@ func main() {
 		fmt.Println(l)
 	}
 
-	Message("",0,"I","---- bye ----")
+	Message("", 0, "D", "---- bye ----")
 
 }
 

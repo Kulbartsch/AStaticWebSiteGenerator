@@ -88,8 +88,8 @@ func TestChangeParagraphs(t *testing.T) {
 	}
 }
 
-//  Testing parseLink(text) (result string)
-func TestParseLink(t *testing.T) {
+//  Testing parseLink1(text) (result string)
+func TestParseLink1(t *testing.T) {
 	var tests = []struct {
 		text      string    // old paragraph state
 		html      string    // new paragraph state
@@ -98,13 +98,34 @@ func TestParseLink(t *testing.T) {
 		{"example.org",                    "<a href=\"example.org\" >example.org</a>" },
 		{"click|example.org",              "<a href=\"example.org\" >click</a>" },
 		{"c|",                             "<a href=\"\" >c</a>" },
-		{"|e",                             "<a href=\"e\" ></a>" },
+		{"|e",                             "<a href=\"e\" >e</a>" },
 		{"|",                              "<a href=\"\" ></a>" },
 	}
 	for _, test := range tests {
-		a := parseLink(test.text)
+		a := parseLink1(test.text)
 		if len(a) != len(test.html) {
-			t.Errorf("parseLink(%q) = %q; want %q", test.text, a, test.html)
+			t.Errorf("parseLink1(%q) = %q; want %q", test.text, a, test.html)
+		}
+	}
+}
+
+//  Testing parseLink2(text) (result string)
+func TestParseLink2(t *testing.T) {
+	var tests = []struct {
+		text      string    // old paragraph state
+		html      string    // new paragraph state
+	}{
+		{"",                               "" },
+		{"example.org",                    "[example.org)" },
+		{"click](example.org",              "<a href=\"example.org\" >click</a>" },
+		{"c](",                             "<a href=\"\" >c</a>" },
+		{"](e",                             "<a href=\"e\" >e</a>" },
+		{"](",                              "<a href=\"\" ></a>" },
+	}
+	for _, test := range tests {
+		a := parseLink2(test.text)
+		if len(a) != len(test.html) {
+			t.Errorf("parseLink2(%q) = %q; want %q", test.text, a, test.html)
 		}
 	}
 }

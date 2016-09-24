@@ -6,7 +6,7 @@ ASWSG behaves just like a compiler parsing a Markup file and generating a new HT
 ASWSG will not generate a file structure or an HTML frame, but you can do so using includes and
 use it with a build system like *make*.
 
-**Please note: This is under development. The output code must currently be manually be cleaned before use.**
+**Please note: This is under development.**
 
 HTML and Markup can be mixed, reusable includes may be used for headers, footers and other repeating code blocks.
 Most benefits come from using dynamic variables, which are partly set dynamically by aswsg,
@@ -19,7 +19,7 @@ All variables can be used subsequent, also in included files. (i.E. using the ar
 
 This tool will generate new HTML code, which -- of course -- may contain dynamic code.
 
-## Planned Features
+## (Planned) Features
 
 may vary
 
@@ -65,7 +65,7 @@ may vary
   * [ ] include raw files
   * [ ] include raw files, but with with variable parsing and replacing
   * [ ] execute-script <filename>  (run a script ... maybe in the future)
-* [ ] Log Filter
+* [x] Log Filter
 * [ ] Inherit of HTML code (without using raw command)
 * [ ] Simple markup parsing
   * [ ] multi line
@@ -90,6 +90,20 @@ may vary
 * [ ] Basic markdown features
 
 ## Usage
+
+```aswsg [IN_FILE=]sourcefile > file.html```
+
+Checkout the example.
+
+## Controll
+
+### Messages
+
+Which messages will be logged, respectivly not logged, can be controlled thru the
+variable ASWSG-MESSAGE-FILTER.
+Messages with severity in ASWSG-MESSAGE-FILTER will not be send to *stderr*.
+
+## Formating
 
 Description of the markup formating.
 
