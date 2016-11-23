@@ -71,8 +71,9 @@ var siteVars = SimpleVars{
 	"ASWSG-UNDERL-1": "__", // TODO inline: underline
 	"ASWSG-UNDERL-2": "__",
 	// line level formating (for paragraphs) at begin of line, using one of the characters
-	"ASWSG-DEFINE":  "@", // special: define var
-	"ASWSG-INCLUDE": "+", // special: include parsed file
+	"ASWSG-DEFINE":   "@",  // special: define var
+	"ASWSG-INCLUDE":  "+",  // special: include parsed file
+	"ASWSG-CONTINUE": "\\", // special: if at end of line, continue (join) with next line
 	// "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
 	"ASWSG-RAWHMTL": "<",  // TODO special: ram html line (this may have leading white spaces)
 	"ASWSG-RAWLINE": "$",  // special: raw (html) line
@@ -180,8 +181,8 @@ func parseCommands(command string) (result []string) {
 		parameter = WhiteSpaceTrim(cmd[i:])
 	}
 	switch function {
-        case "COMMENT":
-                // nothing
+	case "COMMENT":
+		// nothing
 	case "DUMP-VARS":
 		result = commandDumpVars(parameter)
 	case "MESSAGE":
@@ -202,12 +203,11 @@ func commandDumpVars(p string) (r []string) {
 	return
 }
 
-// command comment (name?) 
+// command comment (name?)
 /* func commandComment(p string) (r []string) {
         // maybe some implementation later
 	return
 } */
-
 
 // TODO command dump-context  (to log)
 
@@ -278,65 +278,12 @@ func Message(filename string, line int, severity string, messagetext string) {
 
 // main
 
-func setDefaultSiteVars() {
-	_ = siteVars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
-	_ = siteVars.SetVar("DateFormat", "2006-01-02")
-	_ = siteVars.SetVar("TimeFormat", "15:04:05")
-	_ = siteVars.SetVar("now", time.Now().Format(siteVars.GetVal("TimeStampFormat")))
-	_ = siteVars.SetVar("today", time.Now().Format(siteVars.GetVal("DateFormat")))
-	_ = siteVars.SetVar("time", time.Now().Format(siteVars.GetVal("TimeFormat")))
-}
-
-func parseAndSetCommandLineVars() {
-	destinationVar := "IN-FILE"
-	for i := 1; i < len(os.Args); i++ {
-		arg := os.Args[i]
-		Message("$CMDLINEARG$", i, "D", arg)
-		if strings.Index(arg, ":") >= 0 {
-			if siteVars.ParseAndSetVar(arg) != true {
-				Message("", i, "w", "Can't parse variable: "+arg)
-			}
-		} else { // doesn't seem to be a variable
-			if destinationVar == "" {
-				Message("$CMDLINEARG$", i, "W", "To much non variable parameters (ignored): "+arg)
-			} else {
-				if siteVars.SetVar(destinationVar, arg) != true {
-					Message("", i, "w", "Can't set '"+destinationVar+"' to '"+arg+"'")
-				}
-				if destinationVar == "IN-FILE" {
-					destinationVar = "OUT-FILE"
-				} else {
-					destinationVar = ""
-				}
-			}
-		}
-	}
-}
-
 // site context helper functions
 
 func (c siteContextType) addStringToOutput(s string) (err error) {
 	// ToDo implement
 	return
 }
-
-func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
-	dp := strings.Index(toparse, ":")
-	if dp < 1 || dp == len(toparse) {
-		return false
-	}
-	v.SetVar(toparse[0:(dp)], toparse[(dp+1):])
-	return true
-}
-
-// message handling
-
-func Message(filename string, line int, severity string, messagetext string) {
-	// TODO check message level
-	log.Println(filename, ":", line, ":", severity, ":", messagetext)
-}
-
-// main
 
 func setDefaultSiteVars() {
 	_ = siteVars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
@@ -369,15 +316,6 @@ func parseAndSetCommandLineVars() {
 		}
 	}
 }
-
-
-// site context helper functions
-
-func (c siteContextType) addStringToOutput(s string) (err error) {
-    // ToDo implement
-	return
-}
-
 
 // inline
 
@@ -449,7 +387,7 @@ func parseLink1(text string) string {
 }
 
 // Proceeses the inner part of an [text](link) format (ASWSG-LINK-2-x) an generates a complete <a> tag.
-// If text contains no "](" (ASWSG-LINK-2-3) the link processing will be canceled 
+// If text contains no "](" (ASWSG-LINK-2-3) the link processing will be canceled
 // and the complete inner text returned.
 func parseLink2(text string) string {
 	if len(text) == 0 {
@@ -459,7 +397,7 @@ func parseLink2(text string) string {
 	var attrib HTMLAttrib
 	i := strings.Index(text, siteVars.GetVal("ASWSG-LINK-2-3"))
 	if i == -1 {
-                return siteVars.GetVal("ASWSG-LINK-2-1") + text + siteVars.GetVal("ASWSG-LINK-2-2")
+		return siteVars.GetVal("ASWSG-LINK-2-1") + text + siteVars.GetVal("ASWSG-LINK-2-2")
 	} else {
 		display = text[:i]
 		link = text[i+2:]
@@ -526,7 +464,7 @@ func parseInLine(rawLine string) (parsedLine string) {
 
 	// check link (2)
 	t1, t2, t3 = StringBracketsSplit(parsedLine, siteVars.GetVal("ASWSG-LINK-2-1"), siteVars.GetVal("ASWSG-LINK-2-2"), siteVars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
-	l2 := strings.Index(t2, siteVars.GetVal("ASWSG-LINK-2-3"),)
+	l2 := strings.Index(t2, siteVars.GetVal("ASWSG-LINK-2-3"))
 	if len(t2) > 0 && l2 >= 0 {
 		didParse = true
 		parsedLine = t1 + parseLink2(t2) + t3
@@ -774,11 +712,28 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 
 	var result []string
 
+	var continued string
+
+	// stream scanner
 	for scanner.Scan() {
 		// TODO check for errors
 		// TODO handle line numbers
-		lines, paragraphState = parseLine(scanner.Text(), paragraphState)
+
+		_ = "breakpoint"
+
+		var oneInputLine string
+
+		oneInputLine = continued + scanner.Text() // TODO check for Error
+
+		if Right(oneInputLine, 1) == siteVars.GetVal("ASWSG-CONTINUE") {
+			continued = oneInputLine[:len(oneInputLine)-1]
+			continue
+		}
+		continued = ""
+
+		lines, paragraphState = parseLine(oneInputLine, paragraphState)
 		result = append(result, lines...)
+
 	}
 
 	return result, paragraphState, scanner.Err()
@@ -790,6 +745,8 @@ func main() {
 	var parsedText []string
 	var err error
 
+	_ = "breakpoint"
+
 	Message("", 0, "D", "---- ASWSG start ----")
 
 	setDefaultSiteVars()
@@ -799,6 +756,8 @@ func main() {
 	parseAndSetCommandLineVars()
 
 	// TODO set original file name
+
+	_ = "breakpoint"
 
 	parsedText, paragraphState, err = parseFile(siteVars.GetVal("IN-FILE"), paragraphState)
 	if err != nil {

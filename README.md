@@ -1,12 +1,14 @@
 # ASWSG - Another|Alexanders Static WebSite Generator
 
 ASWSG allows you to generate Websites using Markup Syntax and HTML.
+
+* *make friendly* - to be integrated in your workflow
+* *adaptable syntax* - to match different markup dialects
+
 It is build with the idea of classical unix tools to do one job.
 ASWSG behaves just like a compiler parsing a Markup file and generating a new HTML output.
 ASWSG will not generate a file structure or an HTML frame, but you can do so using includes and
 use it with a build system like *make*.
-
-**Please note: This is under development.**
 
 HTML and Markup can be mixed, reusable includes may be used for headers, footers and other repeating code blocks.
 Most benefits come from using dynamic variables, which are partly set dynamically by aswsg,
@@ -18,6 +20,8 @@ But it is even possible to redefine markup symbols due to different markup diale
 All variables can be used subsequent, also in included files. (i.E. using the article name in a header include.)
 
 This tool will generate new HTML code, which -- of course -- may contain dynamic code.
+
+**Note: This is under development but usable.**
 
 ## (Planned) Features
 
@@ -54,12 +58,13 @@ may vary
 * [X] *make* friendly
 * [X] go tests (partly)
 * [X] An example
+* [X] continued lines (for long text)
 
 ### Future Releases
 
 * Commands
-  * [ ] comments
-  * [ ] dump-context  (to log)
+  * [X] comments
+  * [X] dump-context  (to log)
   * [ ] interactive  (enter interactive mode = read from io.stdin)
   * [ ] execute-shell-command  <command with parameters>
   * [ ] include raw files
@@ -80,7 +85,7 @@ may vary
   * [ ] camelCase links
   * [ ] automatic URL detection
   * [ ] ``[[ ]]`` links without URL, auto generates internal links
-  * [ ] link type ``[name](link)``
+  * [X] link type ``[name](link)``
 * [ ] individual HTML tag IDs and classes
 * [ ] increased markup features like
   * [ ] Tables

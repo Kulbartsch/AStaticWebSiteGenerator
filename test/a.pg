@@ -1,7 +1,7 @@
 @Foo:Baa
 @Foo=Koo
-@Title:A test page
-
+@Title:A test page \
+continued
 
 +h.in
 $
@@ -13,7 +13,7 @@ This is a simple paragraph.
 It spans several line.
 But contains just nonsense.
 
-Another parapraph.
+Another paragraph.
 The time is
 \{{now}}
 
@@ -32,6 +32,9 @@ Now we have a list here.
 *## or not
 *## or maybe
 *# test some ``code`` inside a line
+* btw this is avery long continued line \
+  which is followed by another bullet
+* and this is this bullet point
 
 == inline foo ==
 I can haz *cookies* with //Milk//!
