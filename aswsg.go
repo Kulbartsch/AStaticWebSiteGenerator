@@ -43,6 +43,7 @@ type siteContextType struct {
 	blockMode      string
 }
 
+// "SimpleVars is a Structure holding vars"
 type SimpleVars map[string]string
 
 var siteVars = SimpleVars{
@@ -110,7 +111,7 @@ var paragraphTags = map[string]string{
 
 // general tool functions
 
-// WhiteSpaceTrim
+// "WhiteSpaceTrim from s"
 func WhiteSpaceTrim(in string) string {
 	return strings.Trim(in, " \t\n")
 }
@@ -153,7 +154,7 @@ func ContainsOnly(s, only string) bool {
 	return true
 }
 
-// right returns the right most l char(s) of s in r
+// "Right returns the right most l char(s) of s in r"
 func Right(s string, l int) (r string) {
 	le := len(s)
 	if le == 0 || l == 0 {
@@ -229,6 +230,7 @@ func commandMessage(p string) (r []string) {
 
 // simpleVar handling
 
+// "SimpleVars.SetVar key to val"
 func (v SimpleVars) SetVar(key, val string) (ok bool) {
 	tkey := WhiteSpaceTrim(key)
 	if len(tkey) == 0 {
@@ -390,7 +392,7 @@ func parseLink1(text string) string {
 // If text contains no "](" (ASWSG-LINK-2-3) the link processing will be canceled
 // and the complete inner text returned.
 func parseLink2(text string) string {
-	if len(text) == 0 {
+	if len(text) == 0 || len(siteVars.GetVal("ASWSG-LINK-2-1")) == 0 || len(siteVars.GetVal("ASWSG-LINK-2-2")) == 0 || len(siteVars.GetVal("ASWSG-LINK-2-3")) == 0 {
 		return ""
 	}
 	var link, display string
@@ -409,6 +411,7 @@ func parseLink2(text string) string {
 	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
 }
 
+// StringBracketsSplit splits a string into a part before the brackets (b1) in the brackets and after the brackets (b2)
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
 	m := strings.Index(text, b1)
 	if m == -1 { // TODO: maybe Check for code rune

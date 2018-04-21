@@ -91,8 +91,9 @@ may vary
   * [ ] Tables
   * [ ] Pictures / embeded documents
 * [x] nested lists
-* [ ] multi line lists
-* [ ] Basic markdown features
+* [X] continued lines
+* [ ] multi line lists (but you can use "continued Lines")
+* [ ] Basic markdown features (in addition to markup)
 
 ## Usage
 
