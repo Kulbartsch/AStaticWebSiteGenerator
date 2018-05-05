@@ -18,7 +18,6 @@
 // TODO: use OUT-FILE (will be done with context type)
 // TODO: inherit of html lines(/blocks?). identified by starting with an "<". (Ending with a empty line?)
 // TODO: extract tools
-// TODO: extract var handling
 
 package main
 
@@ -43,8 +42,6 @@ type siteContextType struct {
 	blockMode      string
 }
 
-// "SimpleVars is a Structure holding vars"
-type SimpleVars map[string]string
 
 var siteVars = SimpleVars{
 	"ASWSG-VERSION": "0.2",
@@ -228,47 +225,6 @@ func commandMessage(p string) (r []string) {
 
 // TODO command execute-script <filename>  (run a script ... maybe in the future)
 
-// simpleVar handling
-
-// "SimpleVars.SetVar key to val"
-func (v SimpleVars) SetVar(key, val string) (ok bool) {
-	tkey := WhiteSpaceTrim(key)
-	if len(tkey) == 0 {
-		return false
-	}
-	v[strings.ToUpper(tkey)] = WhiteSpaceTrim(val)
-	return true
-}
-
-func (v SimpleVars) GetVal(key string) (result string) {
-	tkey := WhiteSpaceTrim(key)
-	if len(tkey) == 0 {
-		return ""
-	}
-	s, r := v[strings.ToUpper(key)]
-	if r == false {
-		Message("", 0, "W", "Key '"+key+"' does not exist.")
-	}
-	return s
-}
-
-func (v SimpleVars) ExistsVal(key string) (result bool) {
-	tkey := WhiteSpaceTrim(key)
-	if len(tkey) == 0 {
-		return false
-	}
-	_, result = v[strings.ToUpper(key)]
-	return
-}
-
-func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
-	dp := strings.Index(toparse, ":")
-	if dp < 1 || dp == len(toparse) {
-		return false
-	}
-	v.SetVar(toparse[0:(dp)], toparse[(dp+1):])
-	return true
-}
 
 // message handling
 
@@ -329,17 +285,17 @@ func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) 
 	if len(tag) == 0 {
 		return
 	}
-	var close string
+	var closeTag string
 	if openTag == false {
-		close = "/"
+		closeTag = "/"
 	} else {
-		close = ""
+		closeTag = ""
 		for k, v := range attrib {
 			attributes = " "
 			attributes += k + "=\"" + v + "\" "
 		}
 	}
-	resultHTMLTag = "<" + close + tag + attributes + ">"
+	resultHTMLTag = "<" + closeTag + tag + attributes + ">"
 	return
 }
 

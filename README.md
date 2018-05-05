@@ -87,6 +87,7 @@ may vary
   * [ ] ``[[ ]]`` links without URL, auto generates internal links
   * [X] link type ``[name](link)``
 * [ ] individual HTML tag IDs and classes
+* [ ] HTML classes for microformats http://microformats.org/
 * [ ] increased markup features like
   * [ ] Tables
   * [ ] Pictures / embeded documents
@@ -109,14 +110,17 @@ Which messages will be logged, respectivly not logged, can be controlled thru th
 variable ASWSG-MESSAGE-FILTER.
 Messages with severity in ASWSG-MESSAGE-FILTER will not be send to *stderr*.
 
+
 ## Formating
 
 Description of the markup formating.
+
 
 ### Line level formating
 
 Used at begin the beginning line, using one of the characters.
 Some characters are can be cascaded.
+
 
 #### Defining a variable
 
@@ -128,15 +132,17 @@ Special: Define a variable.
 
 Format: @variablename:value
 
+
 #### Include a file
 
 Variable: "ASWSG-INCLUDE"
 
 Default character: "+"
 
-special: include a text
+special: include a file
 
 Format: +filename
+
 
 #### raw (html) line
 
@@ -188,6 +194,7 @@ Format:
 
 Bulltes and numbered Lists may be nested.
 
+
 #### Cite
 
 Variable: "ASWSG-CITE"
@@ -195,6 +202,7 @@ Variable: "ASWSG-CITE"
 Default character: ">"
 
 Format: > To be or not to be.
+
 
 #### Numbered list
 
