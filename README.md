@@ -5,7 +5,7 @@ ASWSG allows you to generate Websites using Markup Syntax and HTML.
 * *make friendly* - to be integrated in your workflow
 * *adaptable syntax* - to match different markup dialects
 
-It is build with the idea of classical unix tools to do one job.
+It is build with the idea of classical UNIX tools to do one job.
 ASWSG behaves just like a compiler parsing a Markup file and generating a new HTML output.
 ASWSG will not generate a file structure or an HTML frame, but you can do so using includes and
 use it with a build system like *make*.
