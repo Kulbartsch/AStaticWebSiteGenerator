@@ -65,10 +65,12 @@ may vary
 * Commands
   * [X] comments
   * [X] dump-context  (to log)
+  * [X] Anchor
   * [ ] interactive  (enter interactive mode = read from io.stdin)
   * [ ] execute-shell-command  <command with parameters>
   * [ ] include raw files
-  * [ ] include raw files, but with with variable parsing and replacing
+  * [ ] include raw/crude files, but with with variable parsing and replacing
+  * [ ] include CSV file as table
   * [ ] execute-script <filename>  (run a script ... maybe in the future)
 * [x] Log Filter
 * [ ] Inherit of HTML code (without using raw command)
@@ -77,7 +79,7 @@ may vary
     * [ ] raw
     * [ ] cite
     * [ ] code
-* [ ] Anchor for headers
+* [X] Anchor for headers
 * [ ] more examples
 * [ ] more tests
 * [ ] Index of page (based on header)
@@ -85,7 +87,9 @@ may vary
   * [ ] camelCase links
   * [ ] automatic URL detection
   * [ ] ``[[ ]]`` links without URL, auto generates internal links
+  * [X] link type ``[[name|link]]`` 
   * [X] link type ``[name](link)``
+  * [ ] support link relationship attribute https://www.w3schools.com/tags/att_a_rel.asp
 * [ ] individual HTML tag IDs and classes
 * [ ] HTML classes for microformats http://microformats.org/
 * [ ] increased markup features like
