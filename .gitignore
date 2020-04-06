@@ -51,11 +51,9 @@ Temporary Items
 src/aswsg
 *.exe
 src/aswsg.exe
-
 sample/test.html
-*.exe
-
 example/example1/*.html
-
 AStaticWebSiteGenerator
 aswsg
+*~
+
