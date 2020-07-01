@@ -23,11 +23,9 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
 
 **Note: This is under development but usable.**
 
-## (Planned) Features
+## Features
 
-may vary
-
-### Release 1
+### Released
 
 * [X] Simple markup parsing
   * [x] line based
@@ -42,8 +40,11 @@ may vary
     * [X] emphasised
     * [X] strike trough
     * [X] links
+      * [X] link type ``[[name|link]]`` 
+      * [X] link type ``[name](link)``
     * [X] code
 * [X] include parsed files
+* [X] continued lines
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
     1. [X] static
@@ -54,32 +55,33 @@ may vary
 * [X] Commands
   * [X] dump-vars  (to log)
   * [X] message  (to log)
+  * [X] comments
+  * [X] dump-context  (to log)
+  * [X] Anchor
 * [X] redefine markup tags
 * [X] *make* friendly
 * [X] go tests (partly)
 * [X] An example
 * [X] continued lines (for long text)
+* [x] Log Filter
+* [X] Anchor for headers
 
-### Future Releases
+### Future Releases (maybe)
 
 * Commands
-  * [X] comments
-  * [X] dump-context  (to log)
-  * [X] Anchor
   * [ ] interactive  (enter interactive mode = read from io.stdin)
-  * [ ] execute-shell-command  <command with parameters>
+  * [ ] Execute an external command  <command with parameters>
+  * [ ] Execute an external command and insert its output
   * [ ] include raw files
   * [ ] include raw/crude files, but with with variable parsing and replacing
   * [ ] include CSV file as table
-  * [ ] execute-script <filename>  (run a script ... maybe in the future)
-* [x] Log Filter
+  * [ ] execute-script <filename>  (run a script)
 * [ ] Inherit of HTML code (without using raw command)
 * [ ] Simple markup parsing
   * [ ] multi line
     * [ ] raw
     * [ ] cite
     * [ ] code
-* [X] Anchor for headers
 * [ ] more examples
 * [ ] more tests
 * [ ] Index of page (based on header)
@@ -87,16 +89,12 @@ may vary
   * [ ] camelCase links
   * [ ] automatic URL detection
   * [ ] ``[[ ]]`` links without URL, auto generates internal links
-  * [X] link type ``[[name|link]]`` 
-  * [X] link type ``[name](link)``
   * [ ] support link relationship attribute https://www.w3schools.com/tags/att_a_rel.asp
 * [ ] individual HTML tag IDs and classes
 * [ ] HTML classes for microformats http://microformats.org/
 * [ ] increased markup features like
   * [ ] Tables
   * [ ] Pictures / embeded documents
-* [x] nested lists
-* [X] continued lines
 * [ ] multi line lists (but you can use "continued Lines")
 * [ ] Basic markdown features (in addition to markup)
 
@@ -119,103 +117,83 @@ Messages with severity in ASWSG-MESSAGE-FILTER will not be send to *stderr*.
 
 Description of the markup formating.
 
+You can use the mentioned variables to redefine the characters used for a formating.
 
 ### Line level formating
 
 Used at begin the beginning line, using one of the characters.
 Some characters are can be cascaded.
 
+| Function | Default Char | Variable | Example |
+| -------- | ------------ | -------- | ------- |
+| Defining a variable | ```@``` | ```ASWSG-DEFINE``` | ```@variablename:value``` |
+| Include a file | ```+``` | ```ASWSG-INCLUDE``` | ```+filename``` |
+| Raw (html) line to be inserted | ```$``` | ```ASWSG-RAWLINE``` | ```$<article>``` |
+| Escape for a paragraph char | ```\``` | ```ASWSG-ESCAPE``` | ```\* this is no bullet list``` |
+| Paragraph | (none) | (none) | ```Any text not starting not with a line level special. Empty lines start a new |paragraph.```
+| Header. The number of header characters define the depth of the header. | ```=``` or ```!``` | ```ASWSG-HEADER``` | ```== header level 2``` |
+| Bullet list | ```*``` or ```-``` | ```ASWSG-LIST``` | ```* Bulltes and numbered Lists may be nested.``` |
+| Numbered list | any off ```#0123456789``` | ```ASWSG-NUMERATION``` | ```2# a level 2 indented list element``` |
+| Cite | ```>``` | ```ASWSG-CITE``` | > To be or not to be. |
+| Single line command, optionally closed by an ")", should not be changed | ```(``` | ```ASWSG-COMMAND``` | ```(command parameter ...)``` |
+| Defining a Table (not implemented yet) | ```|``` | ```ASWSG-TABLE``` | ```|a 2 cell|table|``` |
 
-#### Defining a variable
-
-Variable: "ASWSG-DEFINE"
-
-Default character: "@",
-
-Special: Define a variable.
-
-Format: @variablename:value
-
-
-#### Include a file
-
-Variable: "ASWSG-INCLUDE"
-
-Default character: "+"
-
-special: include a file
-
-Format: +filename
+To continue a long line (i.e. a long header split over two lines) add an ```\``` to the end of the first line.
 
 
-#### raw (html) line
+## Inline formating
 
-Variable: "ASWSG-RAWLINE"
-
-Default character: "$"
-
-Special: line will be inserted as is
-
-Format: ```$<article>```
+Used to format text within a line line, using 2 or 3 characters for begin, end and middle when needed.
 
 
-#### Escape
+| Function | Default Char | Variables | Example |
+| -------- | ------------ | -------- | ------- |
+| Bold | ```*```...```*``` | ```ASWSG-BOLD-1```...```ASWSG-BOLD-2``` | ```*```bold text```*```  |
+| Emphasised | ```//```...```//``` | ```ASWSG-EMP-1```...```ASWSG-EMP-2``` | ```//```italic text```//```  |
+| Code | ``` `` ```...``` `` ``` | ```ASWSG-CODE-1```...```ASWSG-CODE-2``` | ``` `` ```text``` `` ```  |
+| Strike through | ```~~```...```~~``` | ```ASWSG-STRIKE-1```...```ASWSG-STRIKE-2``` | ```~~```text```~~```  |
+| Underline | ```__```...```__``` | ```ASWSG-UNDERL-1```...```ASWSG-UNDERL-2``` | ```__```text```__```  |
+| Bold | ```*```...```*``` | ```ASWSG-BOLD-1```...```ASWSG-BOLD-2``` | ```*```text```*```  |
+|  | `````` | `````` | `````` |
+|  | `````` | `````` | `````` |
+|  | `````` | `````` | `````` |
+|  | `````` | `````` | `````` |
+|  | `````` | `````` | `````` |
 
-Variable: "ASWSG-ESCAPE"
+### Multi-Line/Block formating
 
-Default character: "\"
+A line just containing at least three characters to enter a special block. Ends with the same characters. 
 
-Special: special: escape char for paragraph
+| Function | Default Char | Variable | Example |
+| -------- | ------------ | -------- | ------- |
+| Citeation | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
+| Raw Lines | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
+| Code | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
+| Horizontal line (just one line) | ```-``` | ```ASWSG-LINE``` | ```----``` |
 
-Format: ```\* this is no bullet list```
+## Commands
 
+| Function | Form | Example |
+| -------- | ------------ | -------- | 
+| Comment that will not be in the output HTML file | ```COMMENT any text``` | `````` | 
+| Dump variables to log | ```DUMP-VARS ignored``` | `````` | 
+| Write a message to the log | ```MESSAGE any text``` | `````` | 
+| Set an  | ```ANCHOR anchor-name``` | `````` | 
+| Execute an external command (not implemented yet)  | ```EXEC shell command with parameters``` | `````` | 
+| Execute an external command and insert it's output here (not implemented yet) | ```CALL shell command with parameters``` | `````` | 
 
-#### paragraph
+## More Variables
 
-Variable: (none)
+...
 
-Default character: (none)
+## Example
 
-Special: (none)
-
-Format: any text not starting not with a line level special.
-
-Empty lines start a new paragraph.
-
-
-#### Bullet list
-
-Variable: "ASWSG-LIST"
-
-Default characters: "*" and "-"
-
-Format:
 
     * This is
     * just a simple List
     *- with four entries
     *- in two levels
-
-Bulltes and numbered Lists may be nested.
-
-
-#### Cite
-
-Variable: "ASWSG-CITE"
-
-Default character: ">"
-
-Format: > To be or not to be.
-
-
-#### Numbered list
-
-Variable: "ASWSG-NUMERATION"
-
-Default character: "#0123456789"
-
-Format:
-
+    
    	# A numbered list
    	1 can be made with the numbers 0-9
    	1 for your convenience
@@ -223,35 +201,3 @@ Format:
    	22 it will be handeled like a nested list
    	5## numbers and # sign can be mixed
    	1 numbers don't have to be in sequence
-
-#### Commands (not implemented yet)
-
-Variable: "ASWSG-COMMAND"
-
-Default character: "("
-
-Special: single line command, optionally closed by an ")", should not be changed
-
-Format: ```(command)```
-
-
-#### Defining a Table (not implemented yet)
-
-Variable: "ASWSG-TABLE"
-
-Default character: "|"
-
-Special:
-
-Format:
-
-
-#### Header
-
-Variable: "ASWSG-HEADER"
-
-Default character: "=!"
-
-Special: number of header characters define the depth of the header
-
-Format: ```== header level 2```
