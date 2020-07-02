@@ -1,5 +1,5 @@
 // Another|Alexanders Static WebSite Generator
-// (c) 2016 Alexander Kulbartsch
+// (c) 2016-2020 Alexander Kulbartsch
 //
 // Lines beginning with "@" (and no further white space)
 // are interpreted as variables in the form "@var: value".
@@ -24,15 +24,13 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
-	//"regexp"
-	"io"
-	"strconv"
 )
-
 
 type siteContextType struct {
 	vars           SimpleVars
@@ -44,7 +42,6 @@ type siteContextType struct {
 }
 
 var siteContext siteContextType
-
 
 var paragraphTags = map[string]string{
 	" ": "",
@@ -61,6 +58,13 @@ var paragraphTags = map[string]string{
 	"b": "b",
 }
 
+type indexedLinksType struct {
+	index string
+	link  string
+}
+
+var indexedLinks []indexedLinksType
+var linkIndex int = 1
 
 // Commands
 
@@ -82,8 +86,10 @@ func parseCommands(command string) (result []string) {
 		result = commandDumpVars(parameter)
 	case "MESSAGE":
 		result = commandMessage(parameter)
-    case "ANCHOR":
-        result = append(result, "<a name=\"" + parameter + "\"></a>")
+	case "ANCHOR":
+		result = append(result, "<a id=\""+parameter+"\"></a>")
+	case "LINK-INDEX":
+		result = commandLinkIndex(parameter)
 	default:
 		Message("", 0, "W", "unknown command ignored (function/parameter): "+function+"/"+parameter+" = "+cmd)
 		break
@@ -114,6 +120,16 @@ func commandMessage(p string) (r []string) {
 	return
 }
 
+// command link-index
+func commandLinkIndex(p string) (r []string) {
+	for _, il := range indexedLinks {
+		attrib := HTMLAttrib{"href": il.link, "rel": "external"}
+		r = append(r, il.index+" "+surroundWithHTMLTagWithAttributes("a", il.link, attrib)+"<br />")
+	}
+	indexedLinks = nil
+	return
+}
+
 // TODO command interactive  (enter interactive mode = read from io.stdin)
 
 // TODO command execute-shell-command  <command with parameters>
@@ -124,9 +140,9 @@ func commandMessage(p string) (r []string) {
 
 // TODO command execute-script <filename>  (run a OS script ... maybe in the future)
 
-
 // message handling
 
+// Message logs to stderr
 func Message(filename string, line int, severity string, messagetext string) {
 	if !strings.ContainsAny(severity, siteContext.vars.GetVal("ASWSG-MESSAGE-FILTER")) {
 		log.Println(filename, ":", line, ":", severity, ":", messagetext)
@@ -143,58 +159,60 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 }
 
 func setDefaultSiteVars() {
-    siteContext.vars = SimpleVars{  // was: var siteVars
-        "ASWSG-VERSION": "0.2",
-        "ASWSG-AUTHOR":  "Alexander Kulbartsch",
-        "ASWSG-LICENSE": "GPL V3",
-        
-        // control vars
-        "ASWSG-MESSAGE-FILTER": "Dd",
-        "ASWSG-AUTO-GENERATE-ANCHOR" : "T", // T = true, everything else is false 
-        
-        // inline formating, pairs end on -1 respective -2
-        "ASWSG-VAR-1":    "{{", // special: variable to be replaced
-        "ASWSG-VAR-2":    "}}",
-        "ASWSG-LINK-1-1": "[[", // special: link
-        "ASWSG-LINK-1-2": "]]",
-        "ASWSG-LINK-1-3": "|",
-        "ASWSG-LINK-2-1": "[", // special: link
-        "ASWSG-LINK-2-2": ")",
-        "ASWSG-LINK-2-3": "](",
-        "ASWSG-BOLD-1":   "*", // inline: bold
-        "ASWSG-BOLD-2":   "*",
-        "ASWSG-EMP-1":    "//", // inline: emphasised
-        "ASWSG-EMP-2":    "//",
-        "ASWSG-CODE-1":   "``", // inline: code
-        "ASWSG-CODE-2":   "``",
-        "ASWSG-STRIKE-1": "~~", // inline: strike through
-        "ASWSG-STRIKE-2": "~~",
-        "ASWSG-UNDERL-1": "__", // TODO inline: underline
-        "ASWSG-UNDERL-2": "__",
-        
-        // line level formating (for paragraphs) at begin of line, using one of the characters
-        "ASWSG-DEFINE":   "@",  // special: define var
-        "ASWSG-INCLUDE":  "+",  // special: include parsed file
-        "ASWSG-CONTINUE": "\\", // special: if at end of line, continue (join) with next line
-        // "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
-        "ASWSG-RAWHMTL": "<",  // TODO special: ram html line (this may have leading white spaces)
-        "ASWSG-RAWLINE": "$",  // special: raw (html) line
-        "ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
-        // ... paragraph: initial state: __ (empty)
-        // ... paragraph: _P_aragraph
-        "ASWSG-LIST":       "*-",          // paragraph: _L_ist and _B_ullets
-        "ASWSG-CITE":       ">",           // paragraph: _C_ite
-        "ASWSG-NUMERATION": "#0123456789", // paragraph: _N_umbered list and _B_ullets
-        "ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")", should not be changed // TODO implement commands
-        "ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata // TODO implement table
-        "ASWSG-HEADER":     "=!",          // one liner: header
-        
-        // single multi char in one line alone, at least 3
-        "ASWSG-LINE":    "-", // special: horizontal line
-        "ASWSG-ML-CODE": "%", // TODO start/end block: code c_O_de
-        "ASWSG-ML-CITE": ">", // TODO start/end block: cite _M_ention
-        "ASWSG-ML-RAW":  "$", // TODO start/end block: raw line (i.e. for HTML code)
-    }   
+	siteContext.vars = SimpleVars{ // was: var siteVars
+		"ASWSG-VERSION": "0.3",
+		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
+		"ASWSG-LICENSE": "GPL V3",
+
+		// control vars
+		"ASWSG-MESSAGE-FILTER":       "Dd",
+		"ASWSG-AUTO-GENERATE-ANCHOR": "T", // T = true, everything else is false
+
+		// inline formating, pairs end on -1 respective -2
+		"ASWSG-VAR-1":    "{{", // special: variable to be replaced
+		"ASWSG-VAR-2":    "}}",
+		"ASWSG-LINK-1-1": "[[", // special: link internal
+		"ASWSG-LINK-1-2": "]]",
+		"ASWSG-LINK-1-3": "|",
+		"ASWSG-LINK-2-1": "[", // special: link
+		"ASWSG-LINK-2-2": ")",
+		"ASWSG-LINK-2-3": "](",
+		"ASWSG-LINK-3-1": "[[", // special: indexed-link
+		"ASWSG-LINK-3-2": "]]",
+		"ASWSG-BOLD-1":   "*", // inline: bold
+		"ASWSG-BOLD-2":   "*",
+		"ASWSG-EMP-1":    "//", // inline: emphasised
+		"ASWSG-EMP-2":    "//",
+		"ASWSG-CODE-1":   "``", // inline: code
+		"ASWSG-CODE-2":   "``",
+		"ASWSG-STRIKE-1": "~~", // inline: strike through
+		"ASWSG-STRIKE-2": "~~",
+		"ASWSG-UNDERL-1": "__", // TODO inline: underline
+		"ASWSG-UNDERL-2": "__",
+
+		// line level formating (for paragraphs) at begin of line, using one of the characters
+		"ASWSG-DEFINE":   "@",  // special: define var
+		"ASWSG-INCLUDE":  "+",  // special: include parsed file
+		"ASWSG-CONTINUE": "\\", // special: if at end of line, continue (join) with next line
+		// "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
+		"ASWSG-RAWHMTL": "<",  // TODO special: ram html line (this may have leading white spaces)
+		"ASWSG-RAWLINE": "$",  // special: raw (html) line
+		"ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
+		// ... paragraph: initial state: __ (empty)
+		// ... paragraph: _P_aragraph
+		"ASWSG-LIST":       "*-",          // paragraph: _L_ist and _B_ullets
+		"ASWSG-CITE":       ">",           // paragraph: _C_ite
+		"ASWSG-NUMERATION": "#0123456789", // paragraph: _N_umbered list and _B_ullets
+		"ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")", should not be changed // TODO implement commands
+		"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata // TODO implement table
+		"ASWSG-HEADER":     "=!",          // one liner: header
+
+		// single multi char in one line alone, at least 3
+		"ASWSG-LINE":    "-", // special: horizontal line
+		"ASWSG-ML-CODE": "%", // TODO start/end block: code c_O_de
+		"ASWSG-ML-CITE": ">", // TODO start/end block: cite _M_ention
+		"ASWSG-ML-RAW":  "$", // TODO start/end block: raw line (i.e. for HTML code)
+	}
 	_ = siteContext.vars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
 	_ = siteContext.vars.SetVar("DateFormat", "2006-01-02")
 	_ = siteContext.vars.SetVar("TimeFormat", "15:04:05")
@@ -228,6 +246,7 @@ func parseAndSetCommandLineVars() {
 
 // inline
 
+// HTMLAttrib Tags as map
 type HTMLAttrib map[string]string
 
 func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) (resultHTMLTag string) {
@@ -242,7 +261,7 @@ func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) 
 	} else {
 		closeTag = ""
 		for k, v := range attrib {
-			attributes = " "
+			attributes += " "
 			attributes += k + "=\"" + v + "\" "
 		}
 	}
@@ -270,7 +289,7 @@ func generateTag(tagKind string, openTag bool) (resultTag string) {
 	return
 }
 
-// Proceeses the inner part of an [[text]] (ASWSG-LINK-1-x) an generates a complete <a> tag.
+// Proceeses the inner part of an [[text|URL]] (ASWSG-LINK-1-x) an generates a complete <a> tag.
 // If text contains a "|"" (pipe) the left part is the displayed content and
 // the right part is the href.
 func parseLink1(text string) string {
@@ -307,14 +326,29 @@ func parseLink2(text string) string {
 	i := strings.Index(text, siteContext.vars.GetVal("ASWSG-LINK-2-3"))
 	if i == -1 {
 		return siteContext.vars.GetVal("ASWSG-LINK-2-1") + text + siteContext.vars.GetVal("ASWSG-LINK-2-2")
-	} else {
-		display = text[:i]
-		link = text[i+2:]
 	}
+	display = text[:i]
+	link = text[i+2:]
 	if display == "" {
 		display = link
 	}
-	attrib = HTMLAttrib{"href": link}
+	attrib = HTMLAttrib{"href": link, "rel": "external"}
+	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
+}
+
+// Proceeses the inner part of an [[link]] format (ASWSG-LINK-3-x) and
+// generates a numbered <a> tag refering to an index.
+func parseLink3(text string) string {
+	if len(text) == 0 {
+		return ""
+	}
+	var attrib HTMLAttrib
+	display := "[" + strconv.Itoa(linkIndex) + "]"
+	linkIndex++
+	indxLink := "#" + display
+	destLink := indexedLinksType{display, text}
+	indexedLinks = append(indexedLinks, destLink)
+	attrib = HTMLAttrib{"href": indxLink}
 	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
 }
 
@@ -367,17 +401,25 @@ func parseInLine(rawLine string) (parsedLine string) {
 
 	// check link (1)
 	t1, t2, t3 = StringBracketsSplit(parsedLine, siteContext.vars.GetVal("ASWSG-LINK-1-1"), siteContext.vars.GetVal("ASWSG-LINK-1-2"), siteContext.vars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
-	if len(t2) > 0 {
+	l2 := strings.Index(t2, siteContext.vars.GetVal("ASWSG-LINK-1-3"))
+	if len(t2) > 0 && l2 >= 0 {
 		didParse = true
 		parsedLine = t1 + parseLink1(t2) + t3
 	}
 
 	// check link (2)
 	t1, t2, t3 = StringBracketsSplit(parsedLine, siteContext.vars.GetVal("ASWSG-LINK-2-1"), siteContext.vars.GetVal("ASWSG-LINK-2-2"), siteContext.vars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
-	l2 := strings.Index(t2, siteContext.vars.GetVal("ASWSG-LINK-2-3"))
+	l2 = strings.Index(t2, siteContext.vars.GetVal("ASWSG-LINK-2-3"))
 	if len(t2) > 0 && l2 >= 0 {
 		didParse = true
 		parsedLine = t1 + parseLink2(t2) + t3
+	}
+
+	// check link (3)
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteContext.vars.GetVal("ASWSG-LINK-3-1"), siteContext.vars.GetVal("ASWSG-LINK-3-2"), siteContext.vars.GetVal("ASWSG-ESCAPE")) // TOFIX implement link func
+	if len(t2) > 0 {
+		didParse = true
+		parsedLine = t1 + parseLink3(t2) + t3
 	}
 
 	if didParse == true {
@@ -495,7 +537,7 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 	return
 }
 
-// 
+//
 func parseLine(line string, paragraphState string) (resultLines []string, newParagraphState string) {
 
 	newParagraphState = paragraphState
@@ -562,13 +604,12 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		// ToC ~~~
 		anchor := ""
 		if siteContext.vars.GetVal("ASWSG-AUTO-GENERATE-ANCHOR") == "T" {
-		    anchorText := strings.ReplaceAll(content, "\"", "'")  // remove " in content
-            anchor = surroundWithHTMLTagWithAttributes(tag string, s string, attrib HTMLAttrib)  //  "<n name=\"" + anchorText + "\"></a>"  
-            // toc_line := strings.Repeat(siteContext.vars.GetVal("ASWSG-LIST"), level) + " (" + content + ")[" + anchorText + "]" 
-            // TODO add toc_line anchor to list 
-        }
-        //
-		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<h"+level+">"+anchor+content+"</h"+level+">")
+			anchor = " id=\"" + strings.ReplaceAll(content, "\"", "'") + "\"" // remove " in content
+			// toc_line := strings.Repeat(siteContext.vars.GetVal("ASWSG-LIST"), level) + " (" + content + ")[" + anchorText + "]"
+			// TODO add toc_line anchor to list
+		}
+		//
+		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<h"+level+anchor+">"+content+"</h"+level+">")
 		return resultLines, newParagraphState
 	}
 
@@ -587,7 +628,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 }
 
 //TODO remove ?
-func ReadTextFile(path string) ([]string, error) {
+func readTextFile(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -621,11 +662,11 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	//    - basefn
 	//    - file change date + time
 	//    - file creation date + time
-	file_stat, stat_error := file.Stat()
-	if stat_error != nil {
+	fileStat, statError := file.Stat()
+	if statError != nil {
 		return nil, paragraphState, err
 	}
-	siteContext.vars.SetVar("filename", file_stat.Name())
+	siteContext.vars.SetVar("filename", fileStat.Name())
 
 	scanner := bufio.NewScanner(file)
 	// TODO check for errors
@@ -667,9 +708,9 @@ func main() {
 
 	_ = "breakpoint"
 
-	Message("", 0, "D", "---- ASWSG start ----")
-
 	setDefaultSiteVars()
+
+	Message("", 0, "D", "---- ASWSG start ----")
 
 	paragraphState := ""
 

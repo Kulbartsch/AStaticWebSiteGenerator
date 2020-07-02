@@ -7,6 +7,7 @@ continued
 $
 $<article>
 $
+(ANCHOR top)
 == Here starts the contend
 
 This is a simple paragraph.
@@ -20,7 +21,16 @@ The time is
 > Just do it!
 > Try it out!
 
+Another cite format - but it's not implaemented yet: 
+
+>>>
+The meaning of life is to find your gift. 
+The purpose of life is to give it away.
+\-- Pablo Picasso
+>>> 
+
 == Header 2 - Lists ===
+
 Foo is: {{Foo}}
 
 Now we have a list here.
@@ -39,8 +49,16 @@ Now we have a list here.
 == inline foo ==
 I can haz *cookies* with //Milk//!
 Don't need ~~meat~~ to be happy.
-Ah ... links should do to [[https://wikipedia.org/]] for example.
+Ah ... links should do to [[Wikipedia|https://wikipedia.org/]] for example.
+But external links should be like this [Hackernews](https://news.ycombinator.com/)
+But we can refrence Fefe [[https://blog.fefe.de/]] 
+and Slashdot [[https://slashdot.org/]] 
+like this. 
 
+Numbered Links are inserted with the LINK-INDEX command:
+(LINK-INDEX)
+
+Here we can link to the [[beginning|#top]].
 
 $</article>
 

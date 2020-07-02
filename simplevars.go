@@ -4,12 +4,12 @@ package main
 
 import "strings"
 
-// "SimpleVars is a Structure holding vars"
+// SimpleVars is a Structure holding vars
 type SimpleVars map[string]string
 
 // simpleVar handling
 
-// "SimpleVars.SetVar key to val"
+// SetVar key to val
 func (v SimpleVars) SetVar(key, val string) (ok bool) {
 	tkey := WhiteSpaceTrim(key)
 	if len(tkey) == 0 {
@@ -19,6 +19,7 @@ func (v SimpleVars) SetVar(key, val string) (ok bool) {
 	return true
 }
 
+// GetVal get value for key or empty string
 func (v SimpleVars) GetVal(key string) (result string) {
 	tkey := WhiteSpaceTrim(key)
 	if len(tkey) == 0 {
@@ -27,10 +28,12 @@ func (v SimpleVars) GetVal(key string) (result string) {
 	s, r := v[strings.ToUpper(key)]
 	if r == false {
 		Message("", 0, "W", "Key '"+key+"' does not exist.")
+		// println(  "Key '" + key +"' does not exist." )
 	}
 	return s
 }
 
+// ExistsVal checks key for existence
 func (v SimpleVars) ExistsVal(key string) (result bool) {
 	tkey := WhiteSpaceTrim(key)
 	if len(tkey) == 0 {
@@ -40,6 +43,7 @@ func (v SimpleVars) ExistsVal(key string) (result bool) {
 	return
 }
 
+// ParseAndSetVar parse value setting line and does so.
 func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 	dp := strings.Index(toparse, ":")
 	if dp < 1 || dp == len(toparse) {

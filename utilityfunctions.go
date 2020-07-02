@@ -6,7 +6,7 @@ package main
 
 import "strings"
 
-// "WhiteSpaceTrim from s"
+// WhiteSpaceTrim trimms space, tabs d new lines
 func WhiteSpaceTrim(in string) string {
 	return strings.Trim(in, " \t\n")
 }
@@ -49,7 +49,7 @@ func ContainsOnly(s, only string) bool {
 	return true
 }
 
-// "Right returns the right most l char(s) of s in r"
+// Right returns the right most l char(s) of s in r
 func Right(s string, l int) (r string) {
 	le := len(s)
 	if le == 0 || l == 0 {

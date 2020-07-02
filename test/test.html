@@ -1,4 +1,4 @@
-<h1>H1 Title: A test page</h1>
+<h1 id="H1 Title: A test page continued">H1 Title: A test page continued</h1>
 <p>
 It's all about Baa.
 </p>
@@ -8,22 +8,45 @@ parsing a.pg
 
 <article>
 
-<h2>Here starts the contend</h2>
+<a id="top"></a>
+<h2 id="Here starts the contend">Here starts the contend</h2>
 <p>
 This is a simple paragraph.
 It spans several line.
 But contains just nonsense.
 </p>
 <p>
-Another parapraph.
+Another paragraph.
 The time is
-2016-02-12 16:12:32 UTC+ 07:00
+2020-07-02 13:28:32 UTC+ 07:00
 </p>
 <cite>
 Just do it!
 Try it out!
 </cite>
-<h2>Header 2 - Lists</h2>
+<p>
+Another cite format - but it's not implaemented yet: 
+</p>
+<cite>
+<cite>
+<cite>
+
+</cite>
+</cite>
+</cite>
+<p>
+The meaning of life is to find your gift. 
+The purpose of life is to give it away.
+-- Pablo Picasso
+</p>
+<cite>
+<cite>
+<cite>
+
+</cite>
+</cite>
+</cite>
+<h2 id="Header 2 - Lists">Header 2 - Lists</h2>
 <p>
 Foo is: Baa
 </p>
@@ -45,12 +68,26 @@ Now we have a list here.
 </ol>
 <li>test some <code>code</code> inside a line</li>
 </ol>
+<li>btw this is avery long continued line   which is followed by another bullet</li>
+<li>and this is this bullet point</li>
 </ul>
-<h2>inline foo</h2>
+<h2 id="inline foo">inline foo</h2>
 <p>
 I can haz <b>cookies</b> with <em>Milk</em>!
 Don't need <del>meat</del> to be happy.
-Ah ... links should do to <a href="https://wikipedia.org/" >https://wikipedia.org/</a> for example.
+Ah ... links should do to <a href="https://wikipedia.org/" >Wikipedia</a> for example.
+But external links should be like this <a rel="external"  href="https://news.ycombinator.com/" >Hackernews</a>
+But we can refrence Fefe <a href="#[1]" >[1]</a> 
+and Slashdot <a href="#[2]" >[2]</a> 
+like this. 
+</p>
+<p>
+Numbered Links are inserted with the LINK-INDEX command:
+[1] <a rel="external"  href="https://blog.fefe.de/" >https://blog.fefe.de/</a><br />
+[2] <a rel="external"  href="https://slashdot.org/" >https://slashdot.org/</a><br />
+</p>
+<p>
+Here we can link to the <a href="#top" >beginning</a>.
 </p>
 </article>
 
