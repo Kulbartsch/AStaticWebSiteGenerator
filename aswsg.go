@@ -130,15 +130,20 @@ func commandLinkIndex(p string) (r []string) {
 	return
 }
 
-// TODO command interactive  (enter interactive mode = read from io.stdin)
+// TODO command interactive                          (enter interactive mode = read from io.stdin)
 
-// TODO command execute-shell-command  <command with parameters>
+// TODO command include-files <start-of-filname>     (includes all files beginning with given name, normal parsing)
 
-// TODO command include-raw-file <filename>  (include a raw file)
+// TODO command include-raw-file <filename>          (include a raw file, not parsing anything)
 
-// TODO command include-crude-file <filename>  (include raw files, but with with variable replacing)
+// TODO command include-crude-file <filename>        (include raw files, but with with variable replacing)
 
-// TODO command execute-script <filename>  (run a OS script ... maybe in the future)
+// TODO command include-script                       (run an OS script, including its stdout)
+
+// TODO command include-raw-script                   (run an OS script, including its stdout, not parsing anything)
+
+// TODO command execute-script <filename>            (run a OS script ... maybe in the future)
+
 
 // message handling
 
