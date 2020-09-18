@@ -73,6 +73,15 @@ Including a file with INCLUDE-FILE-CRUDE. Variables are parsed.
 
 (INCLUDE-FILE-CRUDE inc.txt)
 
+This include does not exist
+
+(INCLUDE-FILE-RAW dne.txt)
+
+== including script output
+
+``ls -la``
+
+(include-script ls -la
 
 ---
 

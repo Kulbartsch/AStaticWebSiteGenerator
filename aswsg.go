@@ -87,7 +87,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{ // was: var siteVars
-		"ASWSG-VERSION": "0.3",
+		"ASWSG-VERSION": "0.5",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "GPL V3",
 

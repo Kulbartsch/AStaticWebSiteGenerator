@@ -79,11 +79,11 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
   * [ ] include CSV file as table
 * [ ] Inherit of HTML code (without using raw command)
 * [ ] Automatic conversion of html sensitive chars to html (<>&)
-* [ ] Simple markup parsing
-  * [ ] multi line
-    * [ ] raw
-    * [ ] cite
-    * [ ] code
+* [ ] Option to generate HTML boilerplate <html>,<body>
+* [ ] multi line
+  * [ ] raw
+  * [ ] cite
+  * [ ] code
 * [ ] Index of page (based on header)
 * [ ] More link types
   * [ ] camelCase links
