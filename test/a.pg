@@ -62,6 +62,18 @@ Here we can link to the [[beginning|#top]].
 
 $</article>
 
+== including files
+
+@otto:I am a variable content.
+Including a file with INCLUDE-FILE-RAW. Variables are *not* parsed.
+
+(INCLUDE-FILE-RAW inc.txt)
+
+Including a file with INCLUDE-FILE-CRUDE. Variables are parsed.
+
+(INCLUDE-FILE-CRUDE inc.txt)
+
+
 ---
 
 Footer

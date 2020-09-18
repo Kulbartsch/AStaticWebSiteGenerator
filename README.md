@@ -60,6 +60,8 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
   * [X] comments
   * [X] dump-context  (to log)
   * [X] Anchor
+  * [X] include raw files
+  * [X] include crude files, but with with variable parsing and replacing
 * [X] redefine markup tags
 * [X] *make* friendly
 * [X] go tests (partly)
@@ -74,18 +76,14 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
   * [ ] interactive  (enter interactive mode = read from io.stdin)
   * [ ] Execute an external command  <command with parameters>
   * [ ] Execute an external command and insert its output
-  * [ ] include raw files
-  * [ ] include raw/crude files, but with with variable parsing and replacing
   * [ ] include CSV file as table
-  * [ ] execute-script <filename>  (run a script)
 * [ ] Inherit of HTML code (without using raw command)
+* [ ] Automatic conversion of html sensitive chars to html (<>&)
 * [ ] Simple markup parsing
   * [ ] multi line
     * [ ] raw
     * [ ] cite
     * [ ] code
-* [ ] more examples
-* [ ] more tests
 * [ ] Index of page (based on header)
 * [ ] More link types
   * [ ] camelCase links
@@ -179,9 +177,9 @@ A line just containing at least three characters to enter a special block. Ends 
 | Dump variables to log | ```DUMP-VARS parameters ignored``` |
 | Write a message to the log | ```MESSAGE any text``` |
 | Set an link anchor | ```ANCHOR anchor-name``` |
-| Insert link index  | ```LINK-INDEX parameters ignored```
-| Execute an external command (not implemented yet)  | ```EXEC shell command with parameters``` |
-| Execute an external command and insert it's output here (not implemented yet) | ```CALL shell command with parameters``` |
+| Insert link index  | ```LINK-INDEX parameters ignored``` |
+| Include file raw without variable substitution | ```ìnclude-file-raw``` |
+| Include file crude without variable substitution | ```ìnclude-file-crude``` | 
 
 ## More Variables
 

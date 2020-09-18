@@ -1,0 +1,3 @@
+
+I am an included paragraph.
+Here is a variable named otto: {{otto}}

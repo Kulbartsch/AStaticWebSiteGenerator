@@ -18,7 +18,7 @@ But contains just nonsense.
 <p>
 Another paragraph.
 The time is
-2020-07-02 13:28:32 UTC+ 07:00
+2020-09-18 09:44:10 UTC+ 07:00
 </p>
 <cite>
 Just do it!
@@ -84,12 +84,25 @@ like this.
 <p>
 Numbered Links are inserted with the LINK-INDEX command:
 [1] <a rel="external"  href="https://blog.fefe.de/" >https://blog.fefe.de/</a><br />
-[2] <a rel="external"  href="https://slashdot.org/" >https://slashdot.org/</a><br />
+[2] <a href="https://slashdot.org/"  rel="external" >https://slashdot.org/</a><br />
 </p>
 <p>
 Here we can link to the <a href="#top" >beginning</a>.
 </p>
 </article>
+<h2 id="including files">including files</h2>
+<p>
+Including a file with INCLUDE-FILE-RAW. Variables are <b>not</b> parsed.
+</p>
+
+I am an included paragraph.
+Here is a variable named otto: {{otto}}
+<p>
+Including a file with INCLUDE-FILE-CRUDE. Variables are parsed.
+</p>
+
+I am an included paragraph.
+Here is a variable named otto: I am a variable content.
 
 <hr \>
 
