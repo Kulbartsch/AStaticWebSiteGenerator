@@ -29,6 +29,14 @@ The purpose of life is to give it away.
 \-- Pablo Picasso
 >>> 
 
+== Variables
+
+The input file is {{in-file}}.
+
+Current filename is {{filename}}
+
+Here is line {{linenumber}}
+
 == Header 2 - Lists ===
 
 Foo is: {{Foo}}
@@ -70,10 +78,14 @@ Including a file with INCLUDE-FILE-RAW. Variables are *not* parsed.
 (INCLUDE-FILE-RAW inc.txt)
 
 Including a file with INCLUDE-FILE-CRUDE. Variables are parsed.
-
 (INCLUDE-FILE-CRUDE inc.txt)
 
-This include does not exist
+Regular include. All is parsed.
+Line number before include {{linenumber}}.
++inc.txt
+Line number after include {{linenumber}}.
+
+The following include does not exist
 
 (INCLUDE-FILE-RAW dne.txt)
 

@@ -1,3 +1,6 @@
 
-I am an included paragraph.
-Here is a variable named otto: {{otto}}
+* I am an included list.
+* Here is a variable named otto: {{otto}}
+* This file is named: {{filename}}
+* The linenumber is: {{linenumber}}
+* The input file is {{in-file}}.

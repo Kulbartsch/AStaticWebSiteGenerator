@@ -36,8 +36,9 @@ type siteContextType struct {
 	inStream       io.Reader // ???
 	outStream      io.Writer // ???
 	paragraphState string
-	lineNumber     uint32
+	lineNumber     int
 	blockMode      string
+	tableLine      int
 }
 
 var siteContext siteContextType
@@ -71,7 +72,19 @@ var linkIndex int = 1
 // Message logs to stderr
 func Message(filename string, line int, severity string, messagetext string) {
 	if !strings.ContainsAny(severity, siteContext.vars.GetVal("ASWSG-MESSAGE-FILTER")) {
-		log.Println(filename, ":", line, ":", severity, ":", messagetext)
+		var fn string
+		var ln int
+		if filename == "" {
+			fn = siteContext.vars.GetVal("filename")
+		} else {
+			fn = filename
+		}
+		if line == 0 {
+			ln = siteContext.lineNumber
+		} else {
+			ln = line
+		}
+		log.Println(fn, ":", ln, ":", severity, ":", messagetext)
 	}
 }
 
@@ -92,8 +105,10 @@ func setDefaultSiteVars() {
 		"ASWSG-LICENSE": "GPL V3",
 
 		// control vars
-		"ASWSG-MESSAGE-FILTER":       "Dd",  // D = Debug
-		"ASWSG-AUTO-GENERATE-ANCHOR": "T",   // T = true, everything else is false
+		"ASWSG-MESSAGE-FILTER":       "Dd",     // D = Debug
+		"ASWSG-AUTO-GENERATE-ANCHOR": "T",      // T = true, everything else is false
+		"ASWSG-TABLE-HEADERLINES":    "1",      // number of headers, when parsing a table.
+		"ASWSG-TABLE-ALIGNMENT":      "LL",     // L -> <th style="text-align:left">, C = center, R = right, other/default = left
 
 		// inline formating, pairs end on -1 respective -2
 		"ASWSG-VAR-1":    "{{", // special: variable to be replaced
@@ -467,7 +482,7 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 }
 
 
-//
+// parse one line 
 func parseLine(line string, paragraphState string) (resultLines []string, newParagraphState string) {
 
 	newParagraphState = paragraphState
@@ -508,8 +523,11 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	// process includes
 	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-INCLUDE")) {
+		tmpLine := siteContext.lineNumber
+    tmpFilename := siteContext.vars.GetVal("filename")
 		parsedLines, parsedParagraph, err := parseFile(line[1:], newParagraphState)
-		// TODO restore linenumber and filename
+		siteContext.lineNumber = tmpLine
+		siteContext.vars.SetVar("filename", tmpFilename)
 		if err != nil {
 			Message(line[1:], -1, "E", err.Error())
 		}
@@ -571,7 +589,7 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	}
 	defer file.Close()
 
-	// ToDo set vars
+	// TODO set vars
 	//    - filename        ok
 	//    - fqfn
 	//    - basefn
@@ -587,19 +605,18 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	// TODO check for errors
 
 	var result []string
-
 	var continued string
+	siteContext.lineNumber = 0
 
 	// stream scanner
 	for scanner.Scan() {
-		// TODO check for errors
-		// TODO handle line numbers
-
-		_ = "breakpoint"
+		// TODO check for errors ?
 
 		var oneInputLine string
 
 		oneInputLine = continued + scanner.Text() // TODO check for Error
+		siteContext.lineNumber += 1
+		siteContext.vars.SetVar("linenumber", strconv.Itoa(siteContext.lineNumber))
 
 		if Right(oneInputLine, 1) == siteContext.vars.GetVal("ASWSG-CONTINUE") {
 			continued = oneInputLine[:len(oneInputLine)-1]
@@ -622,8 +639,6 @@ func main() {
 	var parsedText []string
 	var err error
 
-	_ = "breakpoint"
-
 	setDefaultSiteVars()
 
 	Message("", 0, "D", "---- ASWSG start ----")
@@ -631,10 +646,6 @@ func main() {
 	paragraphState := ""
 
 	parseAndSetCommandLineVars()
-
-	// TODO set original file name
-
-	_ = "breakpoint"
 
 	parsedText, paragraphState, err = parseFile(siteContext.vars.GetVal("IN-FILE"), paragraphState)
 	if err != nil {

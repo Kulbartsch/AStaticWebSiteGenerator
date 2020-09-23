@@ -1,6 +1,6 @@
 package main
 
-// TODO: put this in own library
+// TODO: maybe put this in own library
 
 import "strings"
 

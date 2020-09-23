@@ -18,7 +18,7 @@ But contains just nonsense.
 <p>
 Another paragraph.
 The time is
-2020-09-18 14:56:40 UTC+ 07:00
+2020-09-18 23:26:53 UTC+ 07:00
 </p>
 <cite>
 Just do it!
@@ -46,6 +46,16 @@ The purpose of life is to give it away.
 </cite>
 </cite>
 </cite>
+<h2 id="Variables">Variables</h2>
+<p>
+The input file is a.pg.
+</p>
+<p>
+Current filename is a.pg
+</p>
+<p>
+Here is line 38
+</p>
 <h2 id="Header 2 - Lists">Header 2 - Lists</h2>
 <p>
 Foo is: Baa
@@ -95,16 +105,36 @@ Here we can link to the <a href="#top" >beginning</a>.
 Including a file with INCLUDE-FILE-RAW. Variables are <b>not</b> parsed.
 </p>
 
-I am an included paragraph.
-Here is a variable named otto: {{otto}}
+* I am an included list.
+* Here is a variable named otto: {{otto}}
+* This file is named: {{filename}}
+* The linenumber is: {{linenumber}}
+* The input file is {{in-file}}.
 <p>
 Including a file with INCLUDE-FILE-CRUDE. Variables are parsed.
-</p>
 
-I am an included paragraph.
-Here is a variable named otto: I am a variable content.
+* I am an included list.
+* Here is a variable named otto: I am a variable content.
+* This file is named: a.pg
+* The linenumber is: 81
+* The input file is a.pg.
+</p>
 <p>
-This include does not exist
+Regular include. All is parsed.
+Line number before include 84.
+</p>
+<ul>
+<li>I am an included list.</li>
+<li>Here is a variable named otto: I am a variable content.</li>
+<li>This file is named: inc.txt</li>
+<li>The linenumber is: 5</li>
+<li>The input file is a.pg.</li>
+</ul>
+<p>
+Line number after include 86.
+</p>
+<p>
+The following include does not exist
 </p>
 <h2 id="including script output">including script output</h2>
 <p>
@@ -112,11 +142,11 @@ This include does not exist
 </p>
 insgesamt 20
 drwxr-xr-x 2 alexk alexk 4096 18. Sep 09:38 .
-drwxr-xr-x 6 alexk alexk 4096 18. Sep 14:56 ..
--rw-r--r-- 1 alexk alexk 1658 18. Sep 14:28 a.pg
+drwxr-xr-x 6 alexk alexk 4096 18. Sep 23:17 ..
+-rw-r--r-- 1 alexk alexk 1902 18. Sep 23:26 a.pg
 -rw-r--r-- 1 alexk alexk  109 22. Aug 11:25 h.in
--rw-r--r-- 1 alexk alexk   69 18. Sep 09:41 inc.txt
--rw-r--r-- 1 alexk alexk    0 18. Sep 14:56 test.html
+-rw-r--r-- 1 alexk alexk  172 18. Sep 23:21 inc.txt
+-rw-r--r-- 1 alexk alexk    0 18. Sep 23:26 test.html
 
 
 <hr \>
