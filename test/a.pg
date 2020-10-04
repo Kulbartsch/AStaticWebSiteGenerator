@@ -1,5 +1,4 @@
 @Foo:Baa
-@Foo=Koo
 @Title:A test page \
 continued
 
@@ -94,6 +93,32 @@ The following include does not exist
 ``ls -la``
 
 (include-script ls -la
+
+== Tables ==
+
+=== default 
+
+Default table with one header line 
+
+| Rank | Country | Population | 
+| 1    | China   | 1.433.783.692|
+| 2    | India   | 1.366.417.756 |
+| 3    | Europe  | 446.824.564|
+| 4 |USA| 329.064.917|
+|5 | Indonesia|270.625.567
+
+=== aligment
+
+@ASWSG-TABLE-HEADERLINES:2
+@ASWSG-TABLE-ALIGNMENT:CLR
+
+| Rank | Country | Population | 
+|     | or Region | in millions
+| 1    | China   | 1.433|
+| 2    | India   | 1.366 |
+| 3    | Europe  | 447|
+| 4 |USA| 329|
+|5 | Indonesia|271
 
 ---
 

@@ -35,6 +35,7 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
     * [x] ordered lists (~~1 level~~ nested)
     * [X] cites
     * [X] raw lines
+    * [X] tables
   * [X] inline based
     * [X] bold
     * [X] emphasised
@@ -62,6 +63,7 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
   * [X] Anchor
   * [X] include raw files
   * [X] include crude files, but with with variable parsing and replacing
+  * [X] Execute an external command and insert its output
 * [X] redefine markup tags
 * [X] *make* friendly
 * [X] go tests (partly)
@@ -72,10 +74,8 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
 
 ### Future Releases (maybe)
 
-* Commands
-  * [ ] interactive  (enter interactive mode = read from io.stdin)
-  * [ ] Execute an external command  <command with parameters>
-  * [ ] Execute an external command and insert its output
+* [ ] Commands
+  * [ ] Maybe Execute an external command  <command with parameters>
   * [ ] include CSV file as table
 * [ ] Inherit of HTML code (without using raw command)
 * [ ] Automatic conversion of html sensitive chars to html (<>&)
@@ -91,8 +91,7 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
 * [ ] individual HTML tag IDs and classes
 * [ ] HTML classes for microformats http://microformats.org/
 * [ ] increased markup features like
-  * [ ] Tables
-  * [ ] Pictures / embeded documents
+* [ ] Pictures / embeded documents (IMAGE <filename> <Alt Text>)
 * [ ] multi line lists (but you can use "continued Lines")
 * [ ] Basic markdown features (in addition to markup)
 
@@ -164,9 +163,9 @@ A line just containing at least three characters to enter a special block. Ends 
 
 | Function | Default Char | Variable | Example |
 | -------- | ------------ | -------- | ------- |
-| Citeation | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
-| Raw Lines | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
-| Code | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
+| Citeation (tbd) | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
+| Raw Lines (tbd)| ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
+| Code (tbd) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
 | Horizontal line (just one line) | ```-``` | ```ASWSG-LINE``` | ```----``` |
 
 ## Commands
@@ -183,7 +182,26 @@ A line just containing at least three characters to enter a special block. Ends 
 
 ## More Variables
 
-...
+### Control Variables
+
+| Function | Name:Default | 
+| -------- | ------------ | -------- | 
+| Number of header lines when parsing a table. | ```ASWSG-TABLE-HEADERLINES:1``` |
+| Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-HEADERLINES:LL``` |
+| Date format | ```DATEFORMAT:2006-01-02``` |
+| Time format | ```TIMEFORMAT:15:04:05``` |
+| Timestamp format | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
+
+### Info Variables
+
+| Function | Name | 
+| -------- | ------------ | -------- | 
+| Name of the file currently parsed | ```FILENAME``` |
+| Name of the main file | ```IN-FILE``` |
+| Current date | ```DATE``` |
+| Current time | ```TIME``` |
+| Current timestamp (date + time) | ```NOW``` |
+
 
 ## Example
 

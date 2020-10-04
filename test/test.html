@@ -18,7 +18,7 @@ But contains just nonsense.
 <p>
 Another paragraph.
 The time is
-2020-09-18 23:26:53 UTC+ 07:00
+2020-10-04 09:36:44 UTC+ 07:00
 </p>
 <cite>
 Just do it!
@@ -54,7 +54,7 @@ The input file is a.pg.
 Current filename is a.pg
 </p>
 <p>
-Here is line 38
+Here is line 37
 </p>
 <h2 id="Header 2 - Lists">Header 2 - Lists</h2>
 <p>
@@ -116,12 +116,12 @@ Including a file with INCLUDE-FILE-CRUDE. Variables are parsed.
 * I am an included list.
 * Here is a variable named otto: I am a variable content.
 * This file is named: a.pg
-* The linenumber is: 81
+* The linenumber is: 80
 * The input file is a.pg.
 </p>
 <p>
 Regular include. All is parsed.
-Line number before include 84.
+Line number before include 83.
 </p>
 <ul>
 <li>I am an included list.</li>
@@ -131,7 +131,7 @@ Line number before include 84.
 <li>The input file is a.pg.</li>
 </ul>
 <p>
-Line number after include 86.
+Line number after include 85.
 </p>
 <p>
 The following include does not exist
@@ -142,12 +142,35 @@ The following include does not exist
 </p>
 insgesamt 20
 drwxr-xr-x 2 alexk alexk 4096 18. Sep 09:38 .
-drwxr-xr-x 6 alexk alexk 4096 18. Sep 23:17 ..
--rw-r--r-- 1 alexk alexk 1902 18. Sep 23:26 a.pg
+drwxr-xr-x 6 alexk alexk 4096  4. Okt 09:34 ..
+-rw-r--r-- 1 alexk alexk 2389  4. Okt 09:36 a.pg
 -rw-r--r-- 1 alexk alexk  109 22. Aug 11:25 h.in
 -rw-r--r-- 1 alexk alexk  172 18. Sep 23:21 inc.txt
--rw-r--r-- 1 alexk alexk    0 18. Sep 23:26 test.html
+-rw-r--r-- 1 alexk alexk    0  4. Okt 09:36 test.html
 
+<h2 id="Tables">Tables</h2>
+<h3 id="default">default</h3>
+<p>
+Default table with one header line 
+</p>
+<table>
+<tr><th style="text-align:left" >Rank</th><th style="text-align:left" >Country</th><th style="text-align:left" >Population</th></tr>
+<tr><td style="text-align:left" >1</td><td style="text-align:left" >China</td><td style="text-align:left" >1.433.783.692</td></tr>
+<tr><td style="text-align:left" >2</td><td style="text-align:left" >India</td><td style="text-align:left" >1.366.417.756</td></tr>
+<tr><td style="text-align:left" >3</td><td style="text-align:left" >Europe</td><td style="text-align:left" >446.824.564</td></tr>
+<tr><td style="text-align:left" >4</td><td style="text-align:left" >USA</td><td style="text-align:left" >329.064.917</td></tr>
+<tr><td style="text-align:left" >5</td><td style="text-align:left" >Indonesia</td><td style="text-align:left" >270.625.567</td></tr>
+</table>
+<h3 id="aligment">aligment</h3>
+<table>
+<tr><th style="text-align:center" >Rank</th><th style="text-align:left" >Country</th><th style="text-align:right" >Population</th></tr>
+<tr><th style="text-align:center" ></th><th style="text-align:left" >or Region</th><th style="text-align:right" >in millions</th></tr>
+<tr><td style="text-align:center" >1</td><td style="text-align:left" >China</td><td style="text-align:right" >1.433</td></tr>
+<tr><td style="text-align:center" >2</td><td style="text-align:left" >India</td><td style="text-align:right" >1.366</td></tr>
+<tr><td style="text-align:center" >3</td><td style="text-align:left" >Europe</td><td style="text-align:right" >447</td></tr>
+<tr><td style="text-align:center" >4</td><td style="text-align:left" >USA</td><td style="text-align:right" >329</td></tr>
+<tr><td style="text-align:center" >5</td><td style="text-align:left" >Indonesia</td><td style="text-align:right" >271</td></tr>
+</table>
 
 <hr \>
 
