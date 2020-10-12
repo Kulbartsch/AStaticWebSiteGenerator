@@ -54,7 +54,7 @@ Note: This is under development but usable.
     2. [X] dynamically
     3. [X] from command line parameter
     4. [X] in file
-  * [x] Using
+  * [x] Using variables everywhere, also in commands, but not in raw imported files
 * [X] Commands
   * [X] dump-vars  (to log)
   * [X] message  (to log)
@@ -142,7 +142,7 @@ To continue a long line (i.e. a long header split over two lines) add an ```\```
 
 ## Inline formating
 
-Used to format text within a line line, using 2 or 3 characters for begin, end and middle when needed.
+Used to format text within a line line, using 2 or 3 strings for begin, end and middle when needed.
 
 | Function | Default Char | Variables | Example |
 | -------- | ------------ | -------- | ------- |
@@ -159,14 +159,17 @@ Used to format text within a line line, using 2 or 3 characters for begin, end a
 
 ### Multi-Line/Block formating
 
-A line just containing at least three characters to enter a special block. Ends with the same characters. 
+A line just containing at least three characters to enter a special block.
+The block ends with the same characters in a line or a new block formating.
 
 | Function | Default Char | Variable | Example |
 | -------- | ------------ | -------- | ------- |
-| Citeation (tbd) | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
-| Raw Lines (tbd) | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
-| Code (tbd) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
+| Citeation (tbi) | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
+| Raw Lines (tbi) | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
+| Code (tbi) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
 | Horizontal line (just one line) | ```-``` | ```ASWSG-LINE``` | ```----``` |
+
+tbi = to be implemented, does not exist jet.
 
 ## Commands
 
