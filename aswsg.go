@@ -162,6 +162,7 @@ func setDefaultSiteVars() {
 	_ = siteContext.vars.SetVar("time", time.Now().Format(siteContext.vars.GetVal("TimeFormat")))
 }
 
+
 func parseAndSetCommandLineVars() {
 	destinationVar := "IN-FILE"
 	for i := 1; i < len(os.Args); i++ {
@@ -169,11 +170,11 @@ func parseAndSetCommandLineVars() {
 		Message("$CMDLINEARG$", i, "D", arg)
 		if strings.Index(arg, ":") >= 0 {
 			if siteContext.vars.ParseAndSetVar(arg) != true {
-				Message("", i, "w", "Can't parse variable: "+arg)
+				Message("$CMDLINEARG$", i, "w", "Can't parse variable: "+arg)
 			}
 		} else {
 			if siteContext.vars.SetVar(destinationVar, arg) != true {
-				Message("", i, "w", "Can't parse variable: "+arg)
+				Message("$CMDLINEARG$", i, "w", "Can't parse variable: "+arg)
 			} else {
 				if destinationVar == "IN-FILE" {
 					destinationVar = "OUT-FILE"

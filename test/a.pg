@@ -63,6 +63,7 @@ and Slashdot [[https://slashdot.org/]]
 like this. 
 
 Numbered Links are inserted with the LINK-INDEX command:
+
 (LINK-INDEX)
 
 Here we can link to the [[beginning|#top]].
@@ -77,11 +78,14 @@ Including a file with INCLUDE-FILE-RAW. Variables are *not* parsed.
 (INCLUDE-FILE-RAW inc.txt)
 
 Including a file with INCLUDE-FILE-CRUDE. Variables are parsed.
+
 (INCLUDE-FILE-CRUDE inc.txt)
 
 Regular include. All is parsed.
 Line number before include {{linenumber}}.
+
 +inc.txt
+
 Line number after include {{linenumber}}.
 
 The following include does not exist

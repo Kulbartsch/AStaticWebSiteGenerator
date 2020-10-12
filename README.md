@@ -72,33 +72,34 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
 * [x] Log Filter
 * [X] Anchor for headers
 
-### Future Releases (maybe)
+### Future Releases
 
-* [ ] Commands
-  * [ ] Maybe Execute an external command  <command with parameters>
-  * [ ] include CSV file as table
-* [ ] Inherit of HTML code (without using raw command)
+* [ ] Command to import list of files by pattern
+
+### More Ideas
+
 * [ ] Automatic conversion of html sensitive chars to html (<>&)
-* [ ] Option to generate HTML boilerplate <html>,<body>
-* [ ] multi line
-  * [ ] raw
-  * [ ] cite
-  * [ ] code
-* [ ] Index of page (based on header)
-* [ ] More link types
-  * [ ] camelCase links
-  * [ ] automatic URL detection
-* [ ] individual HTML tag IDs and classes
-* [ ] HTML classes for microformats http://microformats.org/
-* [ ] increased markup features like
+* [ ] Option to generate HTML boilerplate <html>,<body> and CSS
 * [ ] Pictures / embeded documents (IMAGE <filename> <Alt Text>)
-* [ ] multi line lists (but you can use "continued Lines")
-* [ ] Basic markdown features (in addition to markup)
+
+* [ ] raw blocks
+* [ ] cite blocks
+* [ ] code blocks
+
+* [ ] individual HTML tag classes
+
+* [ ] Index of page (based on header)
+
+* [ ] Command to Execute an external command  <command with parameters>
+* [ ] Command to include CSV file as table
+* [ ] camelCase links
+* [ ] automatic URL detection
+* [ ] HTML classes for microformats http://microformats.org/
 
 
 ## Usage
 
-```aswsg [IN_FILE=]sourcefile > file.html```
+```aswsg [IN-FILE=]sourcefile [VARIABLE:value] > file.html```
 
 Checkout the example.
 
@@ -170,31 +171,32 @@ A line just containing at least three characters to enter a special block. Ends 
 
 ## Commands
 
-| Function | Form | Example |
-| -------- | ------------ | -------- | 
+| Function | Form |
+| -------- | ------------ |
 | Comment that will not be in the output HTML file | ```COMMENT any text``` |
 | Dump variables to log | ```DUMP-VARS parameters ignored``` |
 | Write a message to the log | ```MESSAGE any text``` |
 | Set an link anchor | ```ANCHOR anchor-name``` |
 | Insert link index  | ```LINK-INDEX parameters ignored``` |
-| Include file raw without variable substitution | ```ìnclude-file-raw``` |
-| Include file crude without variable substitution | ```ìnclude-file-crude``` | 
+| Include file raw without variable substitution | ```INCLUDE-FILE-RAW filename``` |
+| Include file crude without variable substitution | ```INCLUDE-FILE-CRUDE filename``` | 
 
 ## More Variables
 
 ### Control Variables
 
-| Function | Name:Default | 
-| -------- | ------------ | -------- | 
+| Function | Name:Default |
+| -------- | ------------ |
 | Number of header lines when parsing a table. | ```ASWSG-TABLE-HEADERLINES:1``` |
 | Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-HEADERLINES:LL``` |
+| Automatically generate anchors for headers, T = true, everything else is false | ```ASWSG-AUTO-GENERATE-ANCHOR:T``` |
 | Date format | ```DATEFORMAT:2006-01-02``` |
 | Time format | ```TIMEFORMAT:15:04:05``` |
 | Timestamp format | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
 
 ### Info Variables
 
-| Function | Name | 
+| Function | Name |
 | -------- | ------------ | -------- | 
 | Name of the file currently parsed | ```FILENAME``` |
 | Name of the main file | ```IN-FILE``` |
