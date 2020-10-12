@@ -21,7 +21,7 @@ All variables can be used subsequent, also in included files. (i.E. using the ar
 
 This tool will generate new HTML code, which -- of course -- may contain dynamic code.
 
-**Note: This is under development but usable.**
+Note: This is under development but usable.
 
 ## Features
 
@@ -43,7 +43,7 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
     * [X] links
       * [X] link type ``[[name|link]]`` (without rel=external)
       * [X] link type ``[name](link)`` (for external links with rel="external")
-        * [X] support link relationship attribute "external", see https://www.w3schools.com/tags/att_a_rel.asp
+      * [X] support link relationship attribute "external", see https://www.w3schools.com/tags/att_a_rel.asp
       * [x] link type ``[[URL]]``  with link-index
     * [X] code
 * [X] include parsed files
@@ -79,8 +79,8 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
 ### More Ideas
 
 * [ ] Automatic conversion of html sensitive chars to html (<>&)
-* [ ] Option to generate HTML boilerplate <html>,<body> and CSS
-* [ ] Pictures / embeded documents (IMAGE <filename> <Alt Text>)
+* [ ] Option to generate HTML boilerplate &lt;html>,&lt;body> and CSS
+* [ ] Pictures / embeded documents (IMAGE &lt;filename> &lt;Alt Text>)
 
 * [ ] raw blocks
 * [ ] cite blocks
@@ -90,7 +90,7 @@ This tool will generate new HTML code, which -- of course -- may contain dynamic
 
 * [ ] Index of page (based on header)
 
-* [ ] Command to Execute an external command  <command with parameters>
+* [ ] Command to Execute an external command  &lt;command with parameters>
 * [ ] Command to include CSV file as table
 * [ ] camelCase links
 * [ ] automatic URL detection
@@ -135,7 +135,7 @@ Some characters are can be cascaded.
 | Numbered list | any off ```#0123456789``` | ```ASWSG-NUMERATION``` | ```2# a level 2 indented list element``` |
 | Cite | ```>``` | ```ASWSG-CITE``` | ```> To be or not to be.``` |
 | Single line command, optionally closed by an ")", should not be changed | ```(``` | ```ASWSG-COMMAND``` | ```(command parameter ...)``` |
-| Defining a Table. The table character starts a new cell, so don't use it to end the table row. (not implemented yet) | ```\|``` | ```ASWSG-TABLE``` | ```\|a 2 cell\|table``` |
+| Defining a Table. The table character starts a new cell. One trailing pipe will be removed. | ```\|``` | ```ASWSG-TABLE``` | ```\|a 2 cell\|table``` |
 
 To continue a long line (i.e. a long header split over two lines) add an ```\``` to the end of the first line.
 
@@ -152,10 +152,9 @@ Used to format text within a line line, using 2 or 3 characters for begin, end a
 | Code | ``` `` ```...``` `` ``` | ```ASWSG-CODE-1```...```ASWSG-CODE-2``` | ``` `` ```text``` `` ```  |
 | Strike through | ```~~```...```~~``` | ```ASWSG-STRIKE-1```...```ASWSG-STRIKE-2``` | ```~~```text```~~```  |
 | Underline | ```__```...```__``` | ```ASWSG-UNDERL-1```...```ASWSG-UNDERL-2``` | ```__```text```__```  |
-| Link-1 (internal) | ```[[```...```|```...```]]``` | ```ASWSG-LINK-1-1```...```ASWSG-LINK-1-3```...```ASWSG-LINK-1-2``` | ```[[```text```|```URL```]]```  |
+| Link-1 (internal) | ```[[```...```\|```...```]]``` | ```ASWSG-LINK-1-1```...```ASWSG-LINK-1-3```...```ASWSG-LINK-1-2``` | ```[[```text```\|```URL```]]```  |
 | Link-2 (with rel=external) | ```[```...```](```...```)``` | ```ASWSG-LINK-2-1```...```ASWSG-LINK-2-3```...```ASWSG-LINK-2-2``` | ```[```text```](```URL```)```  |
 | Link-3 (Link Index, to be inserted with commnd (LINK-INDEX)) | ```[[```...```]]``` | ```ASWSG-LINK-3-1```...```ASWSG-LINK-1-2``` | ```[[```URL```]]```  |
-|  | `````` | `````` | `````` |
 
 
 ### Multi-Line/Block formating
@@ -165,7 +164,7 @@ A line just containing at least three characters to enter a special block. Ends 
 | Function | Default Char | Variable | Example |
 | -------- | ------------ | -------- | ------- |
 | Citeation (tbd) | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
-| Raw Lines (tbd)| ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
+| Raw Lines (tbd) | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
 | Code (tbd) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
 | Horizontal line (just one line) | ```-``` | ```ASWSG-LINE``` | ```----``` |
 
@@ -197,7 +196,7 @@ A line just containing at least three characters to enter a special block. Ends 
 ### Info Variables
 
 | Function | Name |
-| -------- | ------------ | -------- | 
+| -------- | ------------ |
 | Name of the file currently parsed | ```FILENAME``` |
 | Name of the main file | ```IN-FILE``` |
 | Current date | ```DATE``` |
@@ -208,6 +207,13 @@ A line just containing at least three characters to enter a special block. Ends 
 ## Example
 
 
+    (comment next line defines a variable title)
+    @title:Test Page
+    
+    +include filename
+
+    == A Header {{title}}
+    
     * This is
     * just a simple List
     *- with four entries
@@ -220,3 +226,8 @@ A line just containing at least three characters to enter a special block. Ends 
    	22 it will be handeled like a nested list
    	5## numbers and # sign can be mixed
    	1 numbers don't have to be in sequence
+
+    | a table | with two columns
+    | and two | rows
+
+    $<! a raw line></bosy></html>
