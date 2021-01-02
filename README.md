@@ -182,6 +182,7 @@ tbi = to be implemented, does not exist jet.
 | Insert link index  | ```LINK-INDEX parameters ignored``` |
 | Include file raw without variable substitution | ```INCLUDE-FILE-RAW filename``` |
 | Include file crude without variable substitution | ```INCLUDE-FILE-CRUDE filename``` | 
+| Include the output of a script/command (no variable substitution) | ```INCLUDE-SCRIPT programm parameters``` | 
 
 ## More Variables
 
