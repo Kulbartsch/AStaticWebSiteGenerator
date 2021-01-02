@@ -123,9 +123,7 @@ func includeScript(p string) (r []string) {
 // TODO command dump-context  (to log)
 
 // TODO command include-files <start-of-filname>     (includes all files beginning with given name, normal parsing)
-
-// TODO command include-script                       (run an OS script, including its stdout)
-
+//      or use the regular "+" include
 
 // include File as raw, or crude with with replacing variables 
 func readTextFile(path string, crude bool) ([]string, error) {
@@ -148,4 +146,4 @@ func readTextFile(path string, crude bool) ([]string, error) {
 }
 
 
-// EOF
+// EOF 
