@@ -3,7 +3,7 @@
 //
 // Lines beginning with "@" (and no further white space)
 // are interpreted as variables in the form "@var: value".
-// White spaces after the dubble colon is optional and gets removed.
+// White spaces after the double colon is optional and gets removed.
 //
 // Lines beginning with a "+" (and no further white space)
 // are interpreted in the form "+filename".

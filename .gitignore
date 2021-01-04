@@ -1,4 +1,4 @@
-.idea/
+idea/
 
 *.exe
 *.swp
@@ -49,11 +49,9 @@ Temporary Items
 .apdisk
 
 src/aswsg
-*.exe
 src/aswsg.exe
 sample/test.html
 example/example1/*.html
 AStaticWebSiteGenerator
 aswsg
 *~
-

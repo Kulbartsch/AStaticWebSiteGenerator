@@ -3,14 +3,14 @@
 package main
 
 import (
-	"strings"
 	"bufio"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
-	// parse commands
+// parse commands
 func parseCommands(command string) (result []string) {
 	var function, parameter string
 	cmd := strings.Trim(command, " \t\n)")
@@ -74,23 +74,23 @@ func commandLinkIndex(p string) (r []string) {
 func commandIncludeFileCrude(p string) (r []string) {
 	var err error
 	r, err = readTextFile(p, true)
-	if err != nil { 
-		Message("", 0, "E", "Problem reading file: " + p)
+	if err != nil {
+		Message("", 0, "E", "Problem reading file: "+p)
 		return nil
-	 }
-	return 
-} 
+	}
+	return
+}
 
 // command include-file-raw <filename>        (include raw files, with NO variable replacing)
 func commandIncludeFileRaw(p string) (r []string) {
 	var err error
 	r, err = readTextFile(p, false)
-	if err != nil { 
-		Message("", 0, "E", "Problem reading file: " + p)
+	if err != nil {
+		Message("", 0, "E", "Problem reading file: "+p)
 		return nil
-	 }
-	return 
-} 
+	}
+	return
+}
 
 // command include-script <script> <parameters...>
 func includeScript(p string) (r []string) {
@@ -105,19 +105,18 @@ func includeScript(p string) (r []string) {
 		parameters = strings.Split(WhiteSpaceTrim(cwp[i:]), " ")
 	}
 	out, err := exec.Command(command, parameters...).Output()
-	if err != nil { 
-		Message("", 0, "E", "Problem executing: " + p)
+	if err != nil {
+		Message("", 0, "E", "Problem executing: "+p)
 		log.Println(err)
-		Message("", 0, "E", "... Command: " + command)
+		Message("", 0, "E", "... Command: "+command)
 		for _, p := range parameters {
-			Message("", 0, "E", "... Parameters: " + p )
+			Message("", 0, "E", "... Parameters: "+p)
 		}
 	} else {
 		r = append(r, string(out[:]))
 	}
 	return
-} 
-
+}
 
 // command template (name?)
 /* func commandTemplate(p string) (r []string) {
@@ -130,7 +129,7 @@ func includeScript(p string) (r []string) {
 // TODO command include-files <start-of-filname>     (includes all files beginning with given name, normal parsing)
 //      or use the regular "+" include
 
-// include File as raw, or crude with with replacing variables 
+// include File as raw, or crude with with replacing variables
 func readTextFile(path string, crude bool) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -143,12 +142,11 @@ func readTextFile(path string, crude bool) ([]string, error) {
 	for scanner.Scan() {
 		if crude {
 			lines = append(lines, replaceInlineVars(scanner.Text()))
-		} else {  // raw
+		} else { // raw
 			lines = append(lines, scanner.Text())
 		}
 	}
 	return lines, scanner.Err()
 }
 
-
-// EOF 
+// EOF

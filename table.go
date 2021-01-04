@@ -14,7 +14,7 @@ func parseTableLine(line string) string {
 		line = line[:len(line)-1]
 	}
 	cells := parseTableCells(line)
-	hl, _ := strconv.Atoi( siteContext.vars.GetVal("ASWSG-TABLE-HEADERLINES") )
+	hl, _ := strconv.Atoi(siteContext.vars.GetVal("ASWSG-TABLE-HEADERLINES"))
 	if siteContext.tableLine <= hl {
 		return bulidTableRow(cells, "th")
 	} else {
@@ -26,9 +26,9 @@ func parseTableCells(line string) []string {
 	fields := strings.Split(line, siteContext.vars.GetVal("ASWSG-TABLE"))
 	var cells []string
 	for _, f := range fields {
-    cells = append(cells, parseInLine(strings.Trim(f, " \t")))	
+		cells = append(cells, parseInLine(strings.Trim(f, " \t")))
 	}
-	return cells 
+	return cells
 }
 
 func getColumnAligmnet(column int) string {
@@ -39,9 +39,9 @@ func getColumnAligmnet(column int) string {
 	}
 	a := ta[column]
 	switch a {
-	case 'C', 'c': 
+	case 'C', 'c':
 		return "center"
-	case 'R', 'r': 
+	case 'R', 'r':
 		return "right"
 	case 'L', 'l':
 		return "left"
@@ -53,7 +53,7 @@ func getColumnAligmnet(column int) string {
 func bulidTableRow(cells []string, tag string) string {
 	row := "<tr>"
 	for i, c := range cells {
-	  a := HTMLAttrib { "style" : "text-align:" + getColumnAligmnet(i) }
+		a := HTMLAttrib{"style": "text-align:" + getColumnAligmnet(i)}
 		row = row + surroundWithHTMLTagWithAttributes(tag, c, a)
 	}
 	return row + "</tr>"

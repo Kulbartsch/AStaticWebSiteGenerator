@@ -43,7 +43,7 @@ Note: This is under development but usable.
     * [X] links
       * [X] link type ``[[name|link]]`` (without rel=external)
       * [X] link type ``[name](link)`` (for external links with rel="external")
-      * [X] support link relationship attribute "external", see https://www.w3schools.com/tags/att_a_rel.asp
+      * [X] support link relationship attribute "external", see https://www.w3schools.com/tags/att_a_rel.asp
       * [x] link type ``[[URL]]``  with link-index
     * [X] code
 * [X] include parsed files
@@ -240,4 +240,4 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
     | a table | with two columns
     | and two | rows
 
-    $<! a raw line></bosy></html>
+    $<! a raw line></body></html>

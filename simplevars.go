@@ -47,8 +47,8 @@ func (v SimpleVars) ExistsVal(key string) (result bool) {
 func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 	dp := strings.Index(toparse, ":")
 	if dp < 1 || dp == len(toparse) {
-		return false
 		Message("", 0, "W", "Could not set variable. Colon missing?")
+		return false
 	}
 	v.SetVar(toparse[0:(dp)], toparse[(dp+1):])
 	return true
