@@ -94,19 +94,24 @@ func commandIncludeFileRaw(p string) (r []string) {
 
 // command include-script <script> <parameters...>
 func includeScript(p string) (r []string) {
-	var command, parameter string
-	cwp := strings.Trim(p, " \t\n)")
+	var command string
+	var parameters []string
+	cwp := strings.Trim(p, " \t\n)") // Command With Parameters
 	i := strings.IndexAny(cwp, " \t")
 	if i == -1 {
 		command = WhiteSpaceTrim(cwp)
 	} else {
 		command = WhiteSpaceTrim(cwp[:i])
-		parameter = WhiteSpaceTrim(cwp[i:])
+		parameters = strings.Split(WhiteSpaceTrim(cwp[i:]), " ")
 	}
-	out, err := exec.Command(command, parameter).Output()
+	out, err := exec.Command(command, parameters...).Output()
 	if err != nil { 
 		Message("", 0, "E", "Problem executing: " + p)
 		log.Println(err)
+		Message("", 0, "E", "... Command: " + command)
+		for _, p := range parameters {
+			Message("", 0, "E", "... Parameters: " + p )
+		}
 	} else {
 		r = append(r, string(out[:]))
 	}

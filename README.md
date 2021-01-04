@@ -191,7 +191,7 @@ tbi = to be implemented, does not exist jet.
 | Function | Name:Default |
 | -------- | ------------ |
 | Number of header lines when parsing a table. | ```ASWSG-TABLE-HEADERLINES:1``` |
-| Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-HEADERLINES:LL``` |
+| Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-ALIGNMENT:LL``` |
 | Automatically generate anchors for headers, T = true, everything else is false | ```ASWSG-AUTO-GENERATE-ANCHOR:T``` |
 | Date format | ```DATEFORMAT:2006-01-02``` |
 | Time format | ```TIMEFORMAT:15:04:05``` |
