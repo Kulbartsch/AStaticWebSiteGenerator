@@ -196,6 +196,9 @@ tbi = to be implemented, does not exist jet.
 | Date format | ```DATEFORMAT:2006-01-02``` |
 | Time format | ```TIMEFORMAT:15:04:05``` |
 | Timestamp format | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
+| Filter out message types, default is "Dd" | ```ASWSG-MESSAGE-FILTER``` |
+
+The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.Format).
 
 ### Info Variables
 
@@ -203,9 +206,12 @@ tbi = to be implemented, does not exist jet.
 | -------- | ------------ |
 | Name of the file currently parsed | ```FILENAME``` |
 | Name of the main file | ```IN-FILE``` |
-| Current date | ```DATE``` |
+| Current date | ```TODAY``` |
 | Current time | ```TIME``` |
 | Current timestamp (date + time) | ```NOW``` |
+| The ASWSG version | ```ASWSG-VERSION``` |
+| The ASWSG authors name | ```ASWSG-AUTHOR``` |
+| The ASWSG license | ```ASWSG-LICENSE``` |
 
 
 ## Example

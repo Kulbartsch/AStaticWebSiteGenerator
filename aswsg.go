@@ -65,7 +65,6 @@ type indexedLinksType struct {
 var indexedLinks []indexedLinksType
 var linkIndex int = 1
 
-
 // message handling
 
 // Message logs to stderr
@@ -87,7 +86,6 @@ func Message(filename string, line int, severity string, messagetext string) {
 	}
 }
 
-
 // main
 
 // site context helper functions
@@ -104,10 +102,10 @@ func setDefaultSiteVars() {
 		"ASWSG-LICENSE": "AGPL V3",
 
 		// control vars
-		"ASWSG-MESSAGE-FILTER":       "Dd",     // D = Debug
-		"ASWSG-AUTO-GENERATE-ANCHOR": "T",      // T = true, everything else is false
-		"ASWSG-TABLE-HEADERLINES":    "1",      // number of headers, when parsing a table.
-		"ASWSG-TABLE-ALIGNMENT":      "LL",     // L -> <th style="text-align:left">, C = center, R = right, other/default = left
+		"ASWSG-MESSAGE-FILTER":       "Dd", // D = Debug
+		"ASWSG-AUTO-GENERATE-ANCHOR": "T",  // T = true, everything else is false
+		"ASWSG-TABLE-HEADERLINES":    "1",  // number of headers, when parsing a table.
+		"ASWSG-TABLE-ALIGNMENT":      "LL", // L -> <th style="text-align:left">, C = center, R = right, other/default = left
 
 		// inline formating, pairs end on -1 respective -2
 		"ASWSG-VAR-1":    "{{", // special: variable to be replaced
@@ -162,7 +160,6 @@ func setDefaultSiteVars() {
 	_ = siteContext.vars.SetVar("time", time.Now().Format(siteContext.vars.GetVal("TimeFormat")))
 }
 
-
 func parseAndSetCommandLineVars() {
 	destinationVar := "IN-FILE"
 	for i := 1; i < len(os.Args); i++ {
@@ -186,7 +183,6 @@ func parseAndSetCommandLineVars() {
 	}
 }
 
-
 // vars
 
 func parseAndSetVar(line string) (varParsed bool) {
@@ -205,7 +201,6 @@ func replaceInlineVars(line string) string {
 	}
 	return replaceInlineVars(t1 + siteContext.vars.GetVal(t2) + t3)
 }
-
 
 // line
 
@@ -240,7 +235,6 @@ func changeParagraphs(oldParagraphState string, newParagraphState string, refres
 	}
 	return
 }
-
 
 // parse paragraph line + parse inline
 func parseCommonParagraphControls(line string, currentParagraphState string) (resultLines []string, resultingParagraphState string) {
@@ -299,8 +293,7 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 	return
 }
 
-
-// parse one line 
+// parse one line
 func parseLine(line string, paragraphState string) (resultLines []string, newParagraphState string) {
 
 	newParagraphState = paragraphState
@@ -342,7 +335,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	// process includes
 	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-INCLUDE")) {
 		tmpLine := siteContext.lineNumber
-    tmpFilename := siteContext.vars.GetVal("filename")
+		tmpFilename := siteContext.vars.GetVal("filename")
 		parsedLines, parsedParagraph, err := parseFile(line[1:], newParagraphState)
 		siteContext.lineNumber = tmpLine
 		siteContext.vars.SetVar("filename", tmpFilename)
@@ -390,7 +383,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return resultLines, newParagraphState
 	}
 
-	
 	// parse one liner: horizontal line
 	if ContainsOnly(strings.TrimRight(line, " \t"), siteContext.vars.GetVal("ASWSG-LINE")) && len(strings.TrimRight(line, " \t")) >= 3 {
 		newParagraphState = " "
@@ -402,7 +394,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	return resultLines, newParagraphState
 }
-
 
 // core logic /////////////////////////
 
@@ -460,7 +451,6 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	return result, paragraphState, scanner.Err()
 
 }
-
 
 func main() {
 
