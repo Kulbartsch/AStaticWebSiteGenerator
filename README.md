@@ -216,7 +216,6 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
 
 ## Example
 
-
     (comment next line defines a variable title)
     @title:Test Page
     
@@ -241,3 +240,35 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
     | and two | rows
 
     $<! a raw line></body></html>
+
+
+## Parsing Logic
+
+* Start (main)
+** setDefaultSiteVars
+** parseAndSetCommandLineVars
+** parseFile, for each line 
+*** process continued lines
+*** parseLine 
+**** replaceInlineVars
+**** parseCondition (TODO)
+**** validateCondition (return if not fullfilled) (TODO)
+**** // block mode raw (return if true) (TODO)
+**** // block mode code (return if true) (TODO)
+**** // block mode cite (continue) (TODO)
+**** parseAndSetVar (return if true)
+**** parseCommands (return if true)
+**** parse raw lines (return if true)
+**** process includes (parseFile, return if true)
+**** parse header (return if true)
+**** parseTableLine
+**** parse horizontal line
+**** parseCommonParagraphControls and regular text lines
+***** parse LIST, CITE and NUMERATION
+***** parse escaped line
+***** parse paragraph / empty line
+***** surroundWithHTMLTag for list, cite, numeration
+***** parseInLine for
+****** bold, emphasised, strike, code, link(1-3)
+
+

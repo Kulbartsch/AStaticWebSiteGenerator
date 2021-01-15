@@ -126,7 +126,7 @@ func includeScript(p string) (r []string) {
 
 // TODO command dump-context  (to log)
 
-// TODO command include-files <start-of-filname>     (includes all files beginning with given name, normal parsing)
+// TODO command include-files <start-of-filename>     (includes all files beginning with given name, normal parsing)
 //      or use the regular "+" include
 
 // include File as raw, or crude with with replacing variables

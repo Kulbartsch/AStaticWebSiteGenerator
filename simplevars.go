@@ -1,3 +1,5 @@
+// variable handling
+
 package main
 
 // TODO: maybe put this in own library
@@ -52,4 +54,9 @@ func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 	}
 	v.SetVar(toparse[0:(dp)], toparse[(dp+1):])
 	return true
+}
+
+//
+func (v SimpleVars) IsVarTrue(key string) (istrue bool) {
+	if
 }

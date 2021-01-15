@@ -314,9 +314,16 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return resultLines, newParagraphState
 	}
 
+	// TODO parseCondition
+
+	// TODO validateCondition (return if not fullfilled)
+
 	// TODO block mode raw/crude
 
 	// TODO block mode code
+
+	// TODO block mode cite
+
 
 	// parse commands
 	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMAND") {
@@ -347,8 +354,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return resultLines, newParagraphState
 	}
 
-	// TODO block mode cite
-
 	// parse Markup one liner
 
 	// parse one liner: header
@@ -368,7 +373,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 			// TODO add toc_line anchor to list
 		}
 		//
-		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<h"+level+anchor+">"+content+"</h"+level+">")
+		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<h"+level+anchor+">"+parseInLine(content)+"</h"+level+">")
 		return resultLines, newParagraphState
 	}
 
