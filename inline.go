@@ -153,6 +153,13 @@ func parseInLine(rawLine string) (parsedLine string) {
 		parsedLine = t1 + surroundWithHTMLTag("del", t2) + t3
 	}
 
+	// check underline
+	t1, t2, t3 = StringBracketsSplit(parsedLine, siteContext.vars.GetVal("ASWSG-UNDERL-1"), siteContext.vars.GetVal("ASWSG-UNDERL-2"), siteContext.vars.GetVal("ASWSG-ESCAPE"))
+	if len(t2) > 0 {
+		didParse = true
+		parsedLine = t1 + surroundWithHTMLTag("u", t2) + t3
+	}
+
 	// check code
 	t1, t2, t3 = StringBracketsSplit(parsedLine, siteContext.vars.GetVal("ASWSG-CODE-1"), siteContext.vars.GetVal("ASWSG-CODE-2"), siteContext.vars.GetVal("ASWSG-ESCAPE"))
 	if len(t2) > 0 {

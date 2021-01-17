@@ -56,7 +56,13 @@ func (v SimpleVars) ParseAndSetVar(toparse string) (ok bool) {
 	return true
 }
 
-//
-func (v SimpleVars) IsVarTrue(key string) (istrue bool) {
-	if
+func IsVarTrue(variable string) bool {
+	val := strings.ToUpper(siteContext.vars.GetVal(variable))
+	if val == "T" || val == "TRUE" {
+		return true
+	} else {
+		return false
+	}
 }
+
+// EOF

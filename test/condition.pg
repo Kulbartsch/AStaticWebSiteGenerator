@@ -1,0 +1,29 @@
+$<html><body>
+== Here's the aswsg condition test!
+
+(cond-if-set clp
+You set the command line parameter CLP to {{clp}}.
+(cond-else
+You might want to try to set command line parameter CLP to something like CLP:Hello!
+(cond-end
+
+Let's try conditions with an include having two parts.
+
+First without having "part" set.  
++condition.in
+
+Setting part to 1 and include. 
+@part:1
++condition.in
+
+Now change part to 2 and include.
+@part:2
++condition.in
+
+Now change part to something and include.
+@part:something
++condition.in
+
+That's it for now.
+
+$</body></html>

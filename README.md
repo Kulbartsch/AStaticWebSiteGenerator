@@ -7,7 +7,7 @@ ASWSG allows you to generate Websites using Markup Syntax and HTML.
 
 It is build with the idea of classical UNIX tools to do one job.
 ASWSG behaves just like a compiler parsing a Markup file and generating a new HTML output.
-ASWSG will not generate a file structure or an HTML frame, but you can do so using includes and
+ASWSG will not generate a filesystem structure, or a HTML frame, but you can do so using includes and
 use it with a build system like *make*.
 
 HTML and Markup can be mixed, reusable includes may be used for headers, footers and other repeating code blocks.
@@ -40,6 +40,7 @@ Note: This is under development but usable.
     * [X] bold
     * [X] emphasised
     * [X] strike trough
+    * [X] underline
     * [X] links
       * [X] link type ``[[name|link]]`` (without rel=external)
       * [X] link type ``[name](link)`` (for external links with rel="external")
@@ -64,6 +65,9 @@ Note: This is under development but usable.
   * [X] include raw files
   * [X] include crude files, but with with variable parsing and replacing
   * [X] Execute an external command and insert its output
+* [X] Conditions 
+  * [X] variable does (not) exist
+  * [X] variable does (not) have *value*
 * [X] redefine markup tags
 * [X] *make* friendly
 * [X] go tests (partly)
@@ -72,30 +76,6 @@ Note: This is under development but usable.
 * [x] Log Filter
 * [X] Anchor for headers
 
-### Future Releases
-
-* [ ] Command to import list of files by pattern
-
-### More Ideas
-
-* [ ] Automatic conversion of html sensitive chars to html (<>&)
-* [ ] Option to generate HTML boilerplate &lt;html>,&lt;body> and CSS
-* [ ] Pictures / embeded documents (IMAGE &lt;filename> &lt;Alt Text>)
-
-* [ ] raw blocks
-* [ ] cite blocks
-* [ ] code blocks
-
-* [ ] individual HTML tag classes
-
-* [ ] Index of page (based on header)
-
-* [ ] Command to Execute an external command  &lt;command with parameters>
-* [ ] Command to include CSV file as table
-* [ ] camelCase links
-* [ ] automatic URL detection
-* [ ] HTML classes for microformats http://microformats.org/
-
 
 ## Usage
 
@@ -103,22 +83,22 @@ Note: This is under development but usable.
 
 Checkout the example.
 
-## Controll
+## Control
 
 ### Messages
 
-Which messages will be logged, respectivly not logged, can be controlled thru the
+Which messages will be logged, respectively not logged, can be controlled through the
 variable ASWSG-MESSAGE-FILTER.
-Messages with severity in ASWSG-MESSAGE-FILTER will not be send to *stderr*.
+Messages with severity in ASWSG-MESSAGE-FILTER will not be sent to *stderr*.
 
 
 ## Formating
 
 Description of the markup formating.
 
-You can use the mentioned variables to redefine the characters used for a formating.
+You can use the mentioned variables to redefine the characters used for a formatting.
 
-### Line level formating
+### Line level formatting
 
 Used at begin the beginning line, using one of the characters.
 Some characters are can be cascaded.
@@ -142,7 +122,7 @@ To continue a long line (i.e. a long header split over two lines) add an ```\```
 
 ## Inline formating
 
-Used to format text within a line line, using 2 or 3 strings for begin, end and middle when needed.
+Used to format text within a line, using 2 or 3 strings for begin, end and middle when needed.
 
 | Function | Default Char | Variables | Example |
 | -------- | ------------ | -------- | ------- |
@@ -157,14 +137,14 @@ Used to format text within a line line, using 2 or 3 strings for begin, end and 
 | Link-3 (Link Index, to be inserted with commnd (LINK-INDEX)) | ```[[```...```]]``` | ```ASWSG-LINK-3-1```...```ASWSG-LINK-1-2``` | ```[[```URL```]]```  |
 
 
-### Multi-Line/Block formating
+### Multi-Line/Block formatting
 
 A line just containing at least three characters to enter a special block.
-The block ends with the same characters in a line or a new block formating.
+The block ends with the same characters in a line or a new block formatting.
 
 | Function | Default Char | Variable | Example |
 | -------- | ------------ | -------- | ------- |
-| Citeation (tbi) | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
+| Citation (tbi) | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
 | Raw Lines (tbi) | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
 | Code (tbi) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
 | Horizontal line (just one line) | ```-``` | ```ASWSG-LINE``` | ```----``` |
@@ -172,6 +152,8 @@ The block ends with the same characters in a line or a new block formating.
 tbi = to be implemented, does not exist jet.
 
 ## Commands
+
+All commands start with the ```ASWSG-COMMAND``` character which default is ```(```.
 
 | Function | Form |
 | -------- | ------------ |
@@ -183,6 +165,24 @@ tbi = to be implemented, does not exist jet.
 | Include file raw without variable substitution | ```INCLUDE-FILE-RAW filename``` |
 | Include file crude without variable substitution | ```INCLUDE-FILE-CRUDE filename``` | 
 | Include the output of a script/command (no variable substitution) | ```INCLUDE-SCRIPT programm parameters``` | 
+
+## Conditional commands
+
+If a condition is set the following lines are only parsed if the condition criteria are true. 
+This is valid until a new condition is set, a ```COND-ELSE``` or ```COND-END``` clause changes this.
+There is only one condition valid at a time. 
+There is no nesting, a new ```COND-IF-...``` just changes the condition.
+
+All conditions start with the ```ASWSG-COMMAND``` character which default is ```(```.
+
+| Function | Form |
+| -------- | ------------ |
+| Check if Variable is set | ```COND-IF-SET variable-name``` |
+| Check if Variable is not set | ```COND-IF-NOT-SET variable-name``` |
+| Check if Variable has the value | ```COND-IF-EQUAL variable-name value...``` |
+| Check if Variable has not the value | ```COND-IF-NOT-EQUAL variable-name value...``` |
+| Condition else case (last condition inverted) | ```COND-ELSE``` |
+| End condition validation | ```COND-END``` |
 
 ## More Variables
 
@@ -251,8 +251,8 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
 *** process continued lines
 *** parseLine 
 **** replaceInlineVars
-**** parseCondition (TODO)
-**** validateCondition (return if not fullfilled) (TODO)
+**** parseCondition
+**** validateCondition (return if not fulfilled)
 **** // block mode raw (return if true) (TODO)
 **** // block mode code (return if true) (TODO)
 **** // block mode cite (continue) (TODO)

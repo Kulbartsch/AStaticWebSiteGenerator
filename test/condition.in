@@ -1,0 +1,18 @@
+
+=== This the include
+
+(cond-if-not-set part
+Variable "part" has not been set.
+
+(cond-else
+Variable "part" has been set to {{part}}.
+
+(cond-if-equal part 1
+You reached part one.
+(cond-if-equal part 2
+You reached part two.
+(cond-end
+
+Thank you for including!
+
+----

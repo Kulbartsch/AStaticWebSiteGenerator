@@ -38,6 +38,7 @@ type siteContextType struct {
 	lineNumber     int
 	blockMode      string
 	tableLine      int
+	conditionFulfilled bool
 }
 
 var siteContext siteContextType
@@ -126,7 +127,7 @@ func setDefaultSiteVars() {
 		"ASWSG-CODE-2":   "``",
 		"ASWSG-STRIKE-1": "~~", // inline: strike through
 		"ASWSG-STRIKE-2": "~~",
-		"ASWSG-UNDERL-1": "__", // TODO inline: underline
+		"ASWSG-UNDERL-1": "__", // inline: underline
 		"ASWSG-UNDERL-2": "__",
 
 		// line level formating (for paragraphs) at begin of line, using one of the characters
@@ -314,9 +315,17 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return resultLines, newParagraphState
 	}
 
-	// TODO parseCondition
+	// parseCondition
+	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMAND") {
+		if parseCondition(line[1:]) {
+			return resultLines, newParagraphState
+		}
+	}
 
-	// TODO validateCondition (return if not fullfilled)
+	// validateCondition (return if not fulfilled)
+	if ! siteContext.conditionFulfilled {
+		return resultLines, newParagraphState
+	}
 
 	// TODO block mode raw/crude
 
@@ -467,6 +476,7 @@ func main() {
 	Message("", 0, "D", "---- ASWSG start ----")
 
 	paragraphState := ""
+	siteContext.conditionFulfilled = true
 
 	parseAndSetCommandLineVars()
 
