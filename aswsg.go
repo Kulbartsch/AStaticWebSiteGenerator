@@ -31,13 +31,13 @@ import (
 )
 
 type siteContextType struct {
-	vars           SimpleVars
-	inStream       io.Reader // ???
-	outStream      io.Writer // ???
-	paragraphState string
-	lineNumber     int
-	blockMode      string
-	tableLine      int
+	vars               SimpleVars
+	inStream           io.Reader // ???
+	outStream          io.Writer // ???
+	paragraphState     string
+	lineNumber         int
+	blockMode          string
+	tableLine          int
 	conditionFulfilled bool
 }
 
@@ -98,7 +98,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{ // was: var siteVars
-		"ASWSG-VERSION": "0.7",
+		"ASWSG-VERSION": "0.8",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "AGPL V3",
 
@@ -323,7 +323,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	}
 
 	// validateCondition (return if not fulfilled)
-	if ! siteContext.conditionFulfilled {
+	if !siteContext.conditionFulfilled {
 		return resultLines, newParagraphState
 	}
 
@@ -332,7 +332,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	// TODO block mode code
 
 	// TODO block mode cite
-
 
 	// parse commands
 	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMAND") {
