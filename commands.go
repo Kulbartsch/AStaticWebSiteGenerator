@@ -4,6 +4,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -133,6 +134,7 @@ func includeScript(p string) (r []string) {
 func readTextFile(path string, crude bool) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
+		fmt.Println("Opening file error", err)
 		return nil, err
 	}
 	defer file.Close()
