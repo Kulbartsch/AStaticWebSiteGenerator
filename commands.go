@@ -4,6 +4,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"log"
 	"os"
 	"os/exec"
@@ -36,6 +37,8 @@ func parseCommands(command string) (result []string) {
 		result = commandIncludeFileCrude(parameter)
 	case "INCLUDE-FILE-RAW":
 		result = commandIncludeFileRaw(parameter)
+	case "INCLUDE-CSV":
+		result = commandIncludeCSV(parameter)
 	case "INCLUDE-SCRIPT":
 		result = includeScript(parameter)
 	default:
@@ -89,6 +92,37 @@ func commandIncludeFileRaw(p string) (r []string) {
 		Message("", 0, "E", "Problem reading file: "+p)
 		return nil
 	}
+	return
+}
+
+// command include-csv <filename>        (include a csv file, with NO variable replacing)
+func commandIncludeCSV(p string) (r []string) {
+	f, err := os.Open(p)
+	if err != nil {
+		Message("", 0, "E", "Problem reading CSV-file: "+p)
+		return nil
+	}
+	crdr := csv.NewReader(f)
+	crdr.Comma   = []rune(siteContext.vars.GetVal("ASWSG-CSV-COMMA"))[0]
+	crdr.Comment = []rune(siteContext.vars.GetVal("ASWSG-CSV-COMMENT"))[0]
+	records, err2 := crdr.ReadAll()
+
+	//TODO: implement
+
+	//func parseTableLine(line string) string {
+	//	siteContext.tableLine += 1
+	//	if Right(line, 1) == siteContext.vars.GetVal("ASWSG-TABLE") {
+	//	line = line[:len(line)-1]
+	//	}
+	//		cells := parseTableCells(line)
+	//		hl, _ := strconv.Atoi(siteContext.vars.GetVal("ASWSG-TABLE-HEADERLINES"))
+	//		if siteContext.tableLine <= hl {
+	//			return bulidTableRow(cells, "th")
+	//		} else {
+	//			return bulidTableRow(cells, "td")
+	//		}
+	//	}
+
 	return
 }
 

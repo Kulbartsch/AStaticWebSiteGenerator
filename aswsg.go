@@ -107,6 +107,8 @@ func setDefaultSiteVars() {
 		"ASWSG-AUTO-GENERATE-ANCHOR": "T",  // T = true, everything else is false
 		"ASWSG-TABLE-HEADERLINES":    "1",  // number of headers, when parsing a table.
 		"ASWSG-TABLE-ALIGNMENT":      "LL", // L -> <th style="text-align:left">, C = center, R = right, other/default = left
+		"ASWSG-CSV-COMMA":            ";",  // CSV field separator
+		"ASWSG-CSV-COMMENT":          "#",  // CSV comment line
 
 		// inline formating, pairs end on -1 respective -2
 		"ASWSG-VAR-1":    "{{", // special: variable to be replaced
