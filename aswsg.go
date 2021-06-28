@@ -1,5 +1,26 @@
-// Another|Alexanders Static WebSite Generator
-// (c) 2016-2020 Alexander Kulbartsch
+// Another|Alexanders Static WebSite Generator (aka aswsg)
+// Dynamically generate HTML pages from markdown
+// Copyright © 2016-2021 Alexander Kulbartsch
+// License: AGPL-3.0-or-later (GNU Affero General Public License 3 or later)
+
+/*
+   This file is part of "Another|Alexanders Static WebSite Generator",
+   also called "aswsg".
+
+   aswsg is free software: you can redistribute it and/or modify it under the
+   terms of the GNU Affero General Public License as published by the Free
+   Software Foundation, either version 3 of the License, or any later version.
+
+   aswsg is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+   FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for
+   more details.
+
+   You should have received a copy of the GNU Affero General Public License
+   along with aswsg.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// Basic function:
 //
 // Lines beginning with "@" (and no further white space)
 // are interpreted as variables in the form "@var: value".
@@ -12,10 +33,9 @@
 // \ escapes the special line characters (and will be removed)
 //
 // A {{variable}} in the text will be replaced by the named variable
-//
+
 
 // TODO: use OUT-FILE (will be done with context type)
-// TODO: inherit of html lines(/blocks?). identified by starting with an "<". (Ending with a empty line?)
 
 package main
 
@@ -97,7 +117,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 }
 
 func setDefaultSiteVars() {
-	siteContext.vars = SimpleVars{ // was: var siteVars
+	siteContext.vars = SimpleVars{
 		"ASWSG-VERSION": "0.8",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "AGPL V3",
@@ -137,23 +157,25 @@ func setDefaultSiteVars() {
 		"ASWSG-INCLUDE":  "+",  // special: include parsed file
 		"ASWSG-CONTINUE": "\\", // special: if at end of line, continue (join) with next line
 		// "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
-		"ASWSG-RAWHMTL": "<",  // TODO special: ram html line (this may have leading white spaces)
-		"ASWSG-RAWLINE": "$",  // special: raw (html) line
-		"ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
+		"ASWSG-RAWHMTL": "<",   // TODO special: raw html line (this may have leading white spaces)
+		"ASWSG-RAWLINE": "$",   // special: raw (html) line
+		"ASWSG-ESCAPE":  "\\",  // special: escape char for paragraph
 		// ... paragraph: initial state: __ (empty)
 		// ... paragraph: _P_aragraph
 		"ASWSG-LIST":       "*-",          // paragraph: _L_ist and _B_ullets
 		"ASWSG-CITE":       ">",           // paragraph: _C_ite
 		"ASWSG-NUMERATION": "#0123456789", // paragraph: _N_umbered list and _B_ullets
-		"ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")", should not be changed // TODO implement commands
-		"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata // TODO implement table
+		"ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")". Symbold should not be changed
+		"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata
 		"ASWSG-HEADER":     "=!",          // one liner: header
+		"ASWSG-COMMENT":	";",		   // TODO implement comment line
 
 		// single multi char in one line alone, at least 3
-		"ASWSG-LINE":    "-", // special: horizontal line
-		"ASWSG-ML-CODE": "%", // TODO start/end block: code c_O_de
-		"ASWSG-ML-CITE": ">", // TODO start/end block: cite _M_ention
-		"ASWSG-ML-RAW":  "$", // TODO start/end block: raw line (i.e. for HTML code)
+		"ASWSG-LINE":       "-",           // special: horizontal line
+		"ASWSG-ML-CODE":    "%",           // TODO start/end block: code c_O_de
+		"ASWSG-ML-CITE":    ">",           // TODO start/end block: cite _M_ention
+		"ASWSG-ML-RAW":     "$",           // TODO start/end block: raw line (i.e. for HTML code)
+		"ASWSG-ML-COMMENT":	";",		   // TODO implement comment line
 	}
 	_ = siteContext.vars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
 	_ = siteContext.vars.SetVar("DateFormat", "2006-01-02")

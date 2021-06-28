@@ -97,8 +97,8 @@ func parseLink2(text string) string {
 	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
 }
 
-// Proceeses the inner part of an [[link]] format (ASWSG-LINK-3-x) and
-// generates a numbered <a> tag refering to an index.
+// Processes the inner part of an [[link]] format (ASWSG-LINK-3-x) and
+// generates a numbered <a> tag referring to an index.
 func parseLink3(text string) string {
 	if len(text) == 0 {
 		return ""

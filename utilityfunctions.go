@@ -6,7 +6,7 @@ package main
 
 import "strings"
 
-// WhiteSpaceTrim trimms space, tabs d new lines
+// WhiteSpaceTrim trims space, tabs and new lines
 func WhiteSpaceTrim(in string) string {
 	return strings.Trim(in, " \t\n")
 }
