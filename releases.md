@@ -1,6 +1,8 @@
 # Releases
 ## Version - Released - Features
 
+### V0.9 - 2021-07
+- Include CSV files as tables
 ### V0.8 - 2021-01 
 - Conditional parsing with (COND-... 
 ### V0.7 - 2020-10

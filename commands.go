@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -104,26 +105,24 @@ func commandIncludeCSV(p string) (r []string) {
 		return nil
 	}
 	crdr := csv.NewReader(f)
-	crdr.Comma   = []rune(siteContext.vars.GetVal("ASWSG-CSV-COMMA"))[0]
+	crdr.Comma = []rune(siteContext.vars.GetVal("ASWSG-CSV-COMMA"))[0]
 	crdr.Comment = []rune(siteContext.vars.GetVal("ASWSG-CSV-COMMENT"))[0]
 	records, err2 := crdr.ReadAll()
-
-	//TODO: implement
-
-	//func parseTableLine(line string) string {
-	//	siteContext.tableLine += 1
-	//	if Right(line, 1) == siteContext.vars.GetVal("ASWSG-TABLE") {
-	//	line = line[:len(line)-1]
-	//	}
-	//		cells := parseTableCells(line)
-	//		hl, _ := strconv.Atoi(siteContext.vars.GetVal("ASWSG-TABLE-HEADERLINES"))
-	//		if siteContext.tableLine <= hl {
-	//			return bulidTableRow(cells, "th")
-	//		} else {
-	//			return bulidTableRow(cells, "td")
-	//		}
-	//	}
-
+	if err2 != nil {
+		Message("", 0, "E", "Problem parsing CSV-file: "+p)
+		return nil
+	}
+	r = append(r, generateHTMLTag("table", true))
+	for i, cells := range records {
+		hl, _ := strconv.Atoi(siteContext.vars.GetVal("ASWSG-TABLE-HEADERLINES"))
+		siteContext.tableLine *= 1
+		if hl >= i+1 {
+			r = append(r, bulidTableRow(cells, "th"))
+		} else {
+			r = append(r, bulidTableRow(cells, "td"))
+		}
+	}
+	r = append(r, generateHTMLTag("table", false))
 	return
 }
 
@@ -171,7 +170,12 @@ func readTextFile(path string, crude bool) ([]string, error) {
 		fmt.Println("Opening file error", err)
 		return nil, err
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Closing file error", err)
+		}
+	}(file)
 
 	var lines []string
 	scanner := bufio.NewScanner(file)

@@ -18,7 +18,7 @@
 
    You should have received a copy of the GNU Affero General Public License
    along with aswsg.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 // Basic function:
 //
@@ -33,7 +33,6 @@
 // \ escapes the special line characters (and will be removed)
 //
 // A {{variable}} in the text will be replaced by the named variable
-
 
 // TODO: use OUT-FILE (will be done with context type)
 
@@ -118,9 +117,9 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{
-		"ASWSG-VERSION": "0.8",
+		"ASWSG-VERSION": "0.9",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
-		"ASWSG-LICENSE": "AGPL V3",
+		"ASWSG-LICENSE": "AGPL V3 or later",
 
 		// control vars
 		"ASWSG-MESSAGE-FILTER":       "Dd", // D = Debug
@@ -157,9 +156,9 @@ func setDefaultSiteVars() {
 		"ASWSG-INCLUDE":  "+",  // special: include parsed file
 		"ASWSG-CONTINUE": "\\", // special: if at end of line, continue (join) with next line
 		// "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
-		"ASWSG-RAWHMTL": "<",   // TODO special: raw html line (this may have leading white spaces)
-		"ASWSG-RAWLINE": "$",   // special: raw (html) line
-		"ASWSG-ESCAPE":  "\\",  // special: escape char for paragraph
+		"ASWSG-RAWHMTL": "<",  // TODO special: raw html line (this may have leading white spaces)
+		"ASWSG-RAWLINE": "$",  // special: raw (html) line
+		"ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
 		// ... paragraph: initial state: __ (empty)
 		// ... paragraph: _P_aragraph
 		"ASWSG-LIST":       "*-",          // paragraph: _L_ist and _B_ullets
@@ -168,14 +167,14 @@ func setDefaultSiteVars() {
 		"ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")". Symbold should not be changed
 		"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata
 		"ASWSG-HEADER":     "=!",          // one liner: header
-		"ASWSG-COMMENT":	";",		   // TODO implement comment line
+		"ASWSG-COMMENT":    ";",           // TODO implement comment line
 
 		// single multi char in one line alone, at least 3
-		"ASWSG-LINE":       "-",           // special: horizontal line
-		"ASWSG-ML-CODE":    "%",           // TODO start/end block: code c_O_de
-		"ASWSG-ML-CITE":    ">",           // TODO start/end block: cite _M_ention
-		"ASWSG-ML-RAW":     "$",           // TODO start/end block: raw line (i.e. for HTML code)
-		"ASWSG-ML-COMMENT":	";",		   // TODO implement comment line
+		"ASWSG-LINE":       "-", // special: horizontal line
+		"ASWSG-ML-CODE":    "%", // TODO start/end block: code c_O_de
+		"ASWSG-ML-CITE":    ">", // TODO start/end block: cite _M_ention
+		"ASWSG-ML-RAW":     "$", // TODO start/end block: raw line (i.e. for HTML code)
+		"ASWSG-ML-COMMENT": ";", // TODO implement comment line
 	}
 	_ = siteContext.vars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
 	_ = siteContext.vars.SetVar("DateFormat", "2006-01-02")
@@ -413,8 +412,8 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-TABLE")) {
 		if paragraphState != "T" {
 			siteContext.tableLine = 0
+			newParagraphState = "T"
 		}
-		newParagraphState = "T"
 		tline := parseTableLine(WhiteSpaceTrim(line[1:]))
 		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), tline)
 		return resultLines, newParagraphState
