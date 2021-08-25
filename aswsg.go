@@ -34,7 +34,7 @@
 //
 // A {{variable}} in the text will be replaced by the named variable
 
-// TODO: use OUT-FILE (will be done with context type)
+// TODO: use OUT-FILE (will be done with context type) - maybe
 
 package main
 
@@ -67,8 +67,8 @@ var paragraphTags = map[string]string{
 	"B": "li",
 	"C": "cite",
 	"D": "td",
-	"L": "ul", // "ul style=\"list-style-type:circle\"",
-	"M": "cite",
+	"L": "ul",   // "ul style=\"list-style-type:circle\"",
+	"M": "cite", // can be changed to blockquote with command
 	"N": "ol",
 	"O": "pre",
 	"P": "p",
@@ -117,7 +117,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{
-		"ASWSG-VERSION": "0.9",
+		"ASWSG-VERSION": "0.10",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "AGPL V3 or later",
 
@@ -155,7 +155,7 @@ func setDefaultSiteVars() {
 		"ASWSG-DEFINE":   "@",  // special: define var
 		"ASWSG-INCLUDE":  "+",  // special: include parsed file
 		"ASWSG-CONTINUE": "\\", // special: if at end of line, continue (join) with next line
-		// "ASWSG-RAWFILE": "<",  // special: include raw file - won't implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
+		// "ASWSG-RAWFILE": "<",  // special: include raw file - will not be implemented this way, but as command. This special character will be used to identify raw HTML code. See ASWSG-RAWHMTL.
 		"ASWSG-RAWHMTL": "<",  // TODO special: raw html line (this may have leading white spaces)
 		"ASWSG-RAWLINE": "$",  // special: raw (html) line
 		"ASWSG-ESCAPE":  "\\", // special: escape char for paragraph
@@ -167,14 +167,14 @@ func setDefaultSiteVars() {
 		"ASWSG-COMMAND":    "(",           // single line command, optionally closed by an ")". Symbold should not be changed
 		"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata
 		"ASWSG-HEADER":     "=!",          // one liner: header
-		"ASWSG-COMMENT":    ";",           // TODO implement comment line
+		"ASWSG-COMMENT":    ";",           // comment line
 
-		// single multi char in one line alone, at least 3
+		// Block level formatting: unique multi characters in one line alone, at least 3
 		"ASWSG-LINE":       "-", // special: horizontal line
-		"ASWSG-ML-CODE":    "%", // TODO start/end block: code c_O_de
-		"ASWSG-ML-CITE":    ">", // TODO start/end block: cite _M_ention
-		"ASWSG-ML-RAW":     "$", // TODO start/end block: raw line (i.e. for HTML code)
-		"ASWSG-ML-COMMENT": ";", // TODO implement comment line
+		"ASWSG-ML-CODE":    "%", // start/end block: code code
+		"ASWSG-ML-CITE":    ">", // start/end block: cite mention
+		"ASWSG-ML-CRUDE":   "$", // start/end block: raw line (for HTML code)
+		"ASWSG-ML-COMMENT": ";", // start/end block: comment lines
 	}
 	_ = siteContext.vars.SetVar("TimeStampFormat", "2006-01-02 15:04:05 UTC+ 07:00")
 	_ = siteContext.vars.SetVar("DateFormat", "2006-01-02")
@@ -323,6 +323,76 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	newParagraphState = paragraphState
 	lineLength := len(line)
 
+	// block modes
+
+	blockToggle := checkBlockModeToggle(line)
+
+	// block mode comment - "ASWSG-ML-COMMENT": ";"
+	checkBlock := siteContext.vars.GetVal("ASWSG-ML-COMMENT")
+	if siteContext.blockMode == checkBlock { // in this block
+		if blockToggle == siteContext.blockMode { // end of this block
+			siteContext.blockMode = ""
+		} else { // normal in this block
+			// comment does nothing
+		}
+		return
+	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
+		siteContext.blockMode = checkBlock
+		return
+	}
+
+	// block mode crude - "ASWSG-ML-CRUDE":     "$"
+	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CRUDE")
+	if siteContext.blockMode == checkBlock { // in this block
+		if blockToggle == checkBlock { // end of this block
+			// resultLines = append(resultLines, "</code>")
+			siteContext.blockMode = ""
+		} else { // normal in this block
+			resultLines = append(resultLines, line)
+		}
+		return
+	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
+		siteContext.blockMode = checkBlock
+		return
+	}
+
+	// block mode code - "ASWSG-ML-CODE":    "%"
+	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CODE")
+	if siteContext.blockMode == checkBlock { // in this block
+		if blockToggle == checkBlock { // end of this block
+			resultLines = append(resultLines, "</pre>")
+			siteContext.blockMode = ""
+		} else { // normal in this block
+			resultLines = append(resultLines, "<code>"+line+"</code>")
+		}
+		return
+	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
+		siteContext.blockMode = checkBlock
+		resultLines = append(resultLines, "<pre>")
+		return
+	}
+
+	// block mode cite - "ASWSG-ML-CITE":    ">"
+	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CITE")
+	if siteContext.blockMode == checkBlock { // in this block
+		if blockToggle == checkBlock { // end of this block
+			resultLines = append(resultLines, "</blockquote>")
+			siteContext.blockMode = ""
+			return
+		} else { // normal in this block
+			// continue normal processing of line
+		}
+	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
+		siteContext.blockMode = checkBlock
+		resultLines = append(resultLines, "<blockquote>")
+		return
+	}
+
+	// ignore ; comment line
+	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMENT") {
+		return
+	}
+
 	// empty line
 	if lineLength == 0 {
 		newParagraphState = ""
@@ -350,13 +420,8 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return resultLines, newParagraphState
 	}
 
-	// TODO block mode raw/crude
-
-	// TODO block mode code
-
-	// TODO block mode cite
-
 	// parse commands
+
 	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMAND") {
 		resultLines = append(resultLines, parseCommands(line[1:])...)
 		return
@@ -364,7 +429,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	// Entering Markup Mode
 
-	// parse raw/crude (variables where allready replaced)
+	// parse raw/crude (variables where already replaced)
 	if line[0:1] == siteContext.vars.GetVal("ASWSG-RAWLINE") {
 		resultLines = append(resultLines, line[1:])
 		return
@@ -498,7 +563,9 @@ func main() {
 	Message("", 0, "D", "---- ASWSG start ----")
 
 	paragraphState := ""
+	siteContext.paragraphState = ""
 	siteContext.conditionFulfilled = true
+	siteContext.blockMode = ""
 
 	parseAndSetCommandLineVars()
 

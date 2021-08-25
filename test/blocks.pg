@@ -1,0 +1,26 @@
+== Blocks Test 
+; just a comment
+normal text 
+>>>
+a cite  
+over lines
+$$$
+not raq
+>>>
+$$$
+* raw html
+$$ just 2 dollars
+$$$
+hä
+;;; 
+this 
+is all 
+commented
+;;;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+; some code
+func any(bla) {
+	return "blub"
+}
+%%%%
+that's it.

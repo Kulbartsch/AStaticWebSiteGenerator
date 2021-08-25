@@ -31,11 +31,11 @@ Note: This is under development but usable.
   * [x] line based
     * [X] headers
     * [X] paragraphs
-    * [X] unordered lists (~~1 level~~ nested)
-    * [x] ordered lists (~~1 level~~ nested)
+    * [X] ordered and unordered lists
     * [X] cites
     * [X] raw lines
     * [X] tables
+    * [X] comments
   * [X] inline based
     * [X] bold
     * [X] emphasised
@@ -44,37 +44,30 @@ Note: This is under development but usable.
     * [X] links
       * [X] link type ``[[name|link]]`` (without rel=external)
       * [X] link type ``[name](link)`` (for external links with rel="external")
-      * [X] support link relationship attribute "external", see https://www.w3schools.com/tags/att_a_rel.asp
+         * support link relationship attribute "external", see https://www.w3schools.com/tags/att_a_rel.asp
       * [x] link type ``[[URL]]``  with link-index
-    * [X] code
-* [X] include parsed files
-* [X] continued lines
+    * [X] block based
+      * [X] quotes
+      * [X] preformatted (code)
+      * [X] raw html
+      * [x] comments
+* [X] include files
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
-    1. [X] static
-    2. [X] dynamically
-    3. [X] from command line parameter
-    4. [X] in file
+    1. static defaults
+    2. dynamically like filename
+    3. from command line parameter
+    4. in parsed file
   * [x] Using variables everywhere, also in commands, but not in raw imported files
 * [X] Commands
   * [X] dump-vars  (to log)
   * [X] message  (to log)
-  * [X] comments
-  * [X] dump-context  (to log)
-  * [X] Anchor
-  * [X] include raw files
-  * [X] include crude files, but with with variable parsing and replacing
+  * [X] include raw or crude files (with variable parsing and replacing)
   * [X] Execute an external command and insert its output
-* [X] Conditions 
-  * [X] variable does (not) exist
-  * [X] variable does (not) have *value*
+* [X] Conditional parsing based on variables
 * [X] redefine markup tags
-* [X] *make* friendly
-* [X] go tests (partly)
-* [X] An example
-* [X] continued lines (for long text)
 * [x] Log Filter
-* [X] Anchor for headers
+* [X] Anchor command (for headers)
 * [X] Import CSV-file as table
 
 ## Usage
@@ -92,9 +85,9 @@ variable ASWSG-MESSAGE-FILTER.
 Messages with severity in ASWSG-MESSAGE-FILTER will not be sent to *stderr*.
 
 
-## Formating
+## Formatting
 
-Description of the markup formating.
+Description of the markup formatting.
 
 You can use the mentioned variables to redefine the characters used for a formatting.
 
@@ -144,9 +137,9 @@ The block ends with the same characters in a line or a new block formatting.
 
 | Function | Default Char | Variable | Example |
 | -------- | ------------ | -------- | ------- |
-| Citation (tbi) | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
-| Raw Lines (tbi) | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
-| Code (tbi) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
+| Citation | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
+| Raw Lines | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
+| Preformatted (code) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
 | Horizontal line (just one line) | ```-``` | ```ASWSG-LINE``` | ```----``` |
 
 tbi = to be implemented, does not exist jet.
@@ -165,7 +158,8 @@ All commands start with the ```ASWSG-COMMAND``` character which default is ```(`
 | Include file raw without variable substitution | ```INCLUDE-FILE-RAW filename``` |
 | Include file crude without variable substitution | ```INCLUDE-FILE-CRUDE filename``` | 
 | Include the output of a script/command (no variable substitution) | ```INCLUDE-SCRIPT programm parameters``` |
-| Include CSV-file as table | ````INCLUDE-CSV filename.csv````
+| Include CSV-file as table | ```INCLUDE-CSV filename.csv``` |
+| Use the line formatter ```>``` as ```<blockquote>``` instead off ```<cite>```. Activate this with the parameter "TRUE", "T" or no parameter. Every other parameter will be interpreted as false. (Default is ```cite```.) | ```GT-AS-BLOCKQUOTE``` | 
 
 ## Conditional commands
 
@@ -248,30 +242,33 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
 ## Parsing Logic
 
 * Start (main)
-** setDefaultSiteVars
-** parseAndSetCommandLineVars
-** parseFile, for each line 
-*** process continued lines
-*** parseLine 
-**** replaceInlineVars
-**** parseCondition
-**** validateCondition (return if not fulfilled)
-**** // block mode raw (return if true) (TODO)
-**** // block mode code (return if true) (TODO)
-**** // block mode cite (continue) (TODO)
-**** parseAndSetVar (return if true)
-**** parseCommands (return if true)
-**** parse raw lines (return if true)
-**** process includes (parseFile, return if true)
-**** parse header (return if true)
-**** parseTableLine
-**** parse horizontal line
-**** parseCommonParagraphControls and regular text lines
-***** parse LIST, CITE and NUMERATION
-***** parse escaped line
-***** parse paragraph / empty line
-***** surroundWithHTMLTag for list, cite, numeration
-***** parseInLine for
-****** bold, emphasised, strike, code, link(1-3)
+   * setDefaultSiteVars
+   * parseAndSetCommandLineVars
+   * parseFile, for each line 
+       * process continued lines
+       * parseLine 
+            * block mode comment (return if true) (TODO)
+            * block mode raw (return if true) (TODO)
+            * block mode code (return if true) (TODO)
+            * block mode cite (continue) (TODO)
+            * ignore comment line
+            * empty Line (new paragraph state)
+            * replaceInlineVars
+            * parseCondition
+            * validateCondition (return if not fulfilled)
+            * parseAndSetVar (return if true)
+            * parseCommands (return if true)
+            * parse raw lines (return if true)
+            * process includes (parseFile, return if true)
+            * parse header (return if true)
+            * parseTableLine
+            * parse horizontal line
+            * parseCommonParagraphControls and regular text lines
+                * parse LIST, CITE and NUMERATION
+                * parse escaped line
+                * parse paragraph / empty line
+                * surroundWithHTMLTag for list, cite, numeration
+                * parseInLine for
+                    * bold, emphasised, strike, code, link(1-3)
 
 

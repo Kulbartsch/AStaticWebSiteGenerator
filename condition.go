@@ -111,10 +111,10 @@ func conditionValidate() {
 			condi = false
 		}
 	case Equal:
-		if  siteContext.vars.ExistsVal(siteContext.vars.GetVal("aswsg-cond-var")) &&
+		if siteContext.vars.ExistsVal(siteContext.vars.GetVal("aswsg-cond-var")) &&
 			siteContext.vars.ExistsVal("aswsg-cond-val") &&
 			siteContext.vars.GetVal(siteContext.vars.GetVal("aswsg-cond-var")) ==
-			siteContext.vars.GetVal("aswsg-cond-val") {
+				siteContext.vars.GetVal("aswsg-cond-val") {
 			condi = true
 		} else {
 			condi = false

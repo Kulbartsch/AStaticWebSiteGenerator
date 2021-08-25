@@ -63,4 +63,19 @@ func Right(s string, l int) (r string) {
 	return
 }
 
+func checkBlockModeToggle(line string) string {
+	l := strings.TrimRight(line, " \t")
+	if len(l) < 3 {
+		return ""
+	}
+	blockModes := siteContext.vars.GetVal("ASWSG-ML-CODE") +
+		siteContext.vars.GetVal("ASWSG-ML-CITE") +
+		siteContext.vars.GetVal("ASWSG-ML-CRUDE") +
+		siteContext.vars.GetVal("ASWSG-ML-COMMENT")
+	if ContainsOnly(l, blockModes) && ContainsOnly(l, l[0:1]) {
+		return l[0:1]
+	}
+	return ""
+}
+
 //EOF

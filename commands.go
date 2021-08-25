@@ -26,7 +26,7 @@ func parseCommands(command string) (result []string) {
 	}
 	switch function {
 	case "COMMENT":
-		// nothing
+		// do nothing
 	case "DUMP-VARS":
 		result = commandDumpVars(parameter)
 	case "MESSAGE":
@@ -42,7 +42,9 @@ func parseCommands(command string) (result []string) {
 	case "INCLUDE-CSV":
 		result = commandIncludeCSV(parameter)
 	case "INCLUDE-SCRIPT":
-		result = includeScript(parameter)
+		result = commandIncludeScript(parameter)
+	case "GT-AS-BLOCKQUOTE":
+		result = commandGtAsBlockQuote(parameter)
 	default:
 		Message("", 0, "W", "unknown command ignored (function/parameter): "+function+"/"+parameter+" = "+cmd)
 		break
@@ -127,7 +129,7 @@ func commandIncludeCSV(p string) (r []string) {
 }
 
 // command include-script <script> <parameters...>
-func includeScript(p string) (r []string) {
+func commandIncludeScript(p string) (r []string) {
 	var command string
 	var parameters []string
 	cwp := strings.Trim(p, " \t\n)") // Command With Parameters
@@ -152,6 +154,17 @@ func includeScript(p string) (r []string) {
 	return
 }
 
+// command commandGtAsBlockQuote <true/false>
+func commandGtAsBlockQuote(p string) (r []string) {
+	param := strings.ToUpper(p)
+	if len(param) == 0 || param == "T" || param == "TRUE" {
+		paragraphTags["M"] = "blockquote"
+	} else {
+		paragraphTags["M"] = "cite"
+	}
+	return
+}
+
 // command template (name?)
 /* func commandTemplate(p string) (r []string) {
         // maybe some implementation later
@@ -163,7 +176,7 @@ func includeScript(p string) (r []string) {
 // TODO command include-files <start-of-filename>     (includes all files beginning with given name, normal parsing)
 //      or use the regular "+" include
 
-// include File as raw, or crude with with replacing variables
+// include File as raw, or crude with replacing variables
 func readTextFile(path string, crude bool) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {

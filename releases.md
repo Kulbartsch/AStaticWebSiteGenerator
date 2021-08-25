@@ -1,6 +1,10 @@
 # Releases
 ## Version - Released - Features
 
+###  V0.10 - 2021-08 
+- Command to change use from "cite" to "blockquote" for ">"
+- Ignore comment line (Default starting with ";") 
+- block modes for quotes, comments, code and raw html
 ### V0.9 - 2021-07
 - Include CSV files as tables
 ### V0.8 - 2021-01 
