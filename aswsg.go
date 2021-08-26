@@ -117,7 +117,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{
-		"ASWSG-VERSION": "0.10",
+		"ASWSG-VERSION": "0.10.1",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "AGPL V3 or later",
 
@@ -388,16 +388,16 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return
 	}
 
-	// ignore ; comment line
-	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMENT") {
-		return
-	}
-
 	// empty line
 	if lineLength == 0 {
 		newParagraphState = ""
 		resultLines = changeParagraphs(paragraphState, newParagraphState, false)
 		return resultLines, newParagraphState
+	}
+
+	// ignore ; comment line
+	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMENT") {
+		return
 	}
 
 	// replace inline vars

@@ -1,7 +1,9 @@
 # Releases
 ## Version - Released - Features
 
-###  V0.10 - 2021-08 
+### V0.10.1 - 2102-08-26
+- fix problem with empty lines
+### V0.10 - 2021-08-25
 - Command to change use from "cite" to "blockquote" for ">"
 - Ignore comment line (Default starting with ";") 
 - block modes for quotes, comments, code and raw html
