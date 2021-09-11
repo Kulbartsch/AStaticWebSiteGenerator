@@ -7,8 +7,9 @@ ASWSG allows you to generate Websites using Markup Syntax and HTML.
 
 It is build with the idea of classical UNIX tools to do one job.
 ASWSG behaves just like a compiler parsing a Markup file and generating a new HTML output.
-ASWSG will not generate a filesystem structure, or a HTML frame, but you can do so using includes and
+ASWSG will not generate a filesystem structure, or an HTML frame, but you can do so using includes and
 use it with a build system like *make*.
+
 
 HTML and Markup can be mixed, reusable includes may be used for headers, footers and other repeating code blocks.
 Most benefits come from using dynamic variables, which are partly set dynamically by aswsg,
@@ -21,7 +22,12 @@ All variables can be used subsequent, also in included files. (i.E. using the ar
 
 This tool will generate new HTML code, which -- of course -- may contain dynamic code.
 
-Note: This is under development but usable.
+Note: This is under development, but what's not.
+
+## Why should I use it
+
+You like to create websites, and you want to have the freedom to build and use html the way you like it 
+and don't want 
 
 ## Features
 
@@ -72,7 +78,7 @@ Note: This is under development but usable.
 
 ## Usage
 
-```aswsg [IN-FILE=]sourcefile [VARIABLE:value] > file.html```
+`aswsg [IN-FILE=]sourcefile [VARIABLE:value] > file.html`
 
 Checkout the example.
 
@@ -154,7 +160,7 @@ All commands start with the ```ASWSG-COMMAND``` character which default is ```(`
 | Dump variables to log | ```DUMP-VARS parameters ignored``` |
 | Write a message to the log | ```MESSAGE any text``` |
 | Set an link anchor | ```ANCHOR anchor-name``` |
-| Insert link index  | ```LINK-INDEX parameters ignored``` |
+| Insert link index for Link-3 ```[[<LINK>>]]``` | ```LINK-INDEX parameters ignored``` |
 | Include file raw without variable substitution | ```INCLUDE-FILE-RAW filename``` |
 | Include file crude without variable substitution | ```INCLUDE-FILE-CRUDE filename``` | 
 | Include the output of a script/command (no variable substitution) | ```INCLUDE-SCRIPT programm parameters``` |
@@ -193,7 +199,7 @@ All conditions start with the ```ASWSG-COMMAND``` character which default is ```
 | Date format | ```DATEFORMAT:2006-01-02``` |
 | Time format | ```TIMEFORMAT:15:04:05``` |
 | Timestamp format | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
-| Filter out message types, default is "Dd" | ```ASWSG-MESSAGE-FILTER``` |
+| Filter out message types, default is "Dd" for debug messages | ```ASWSG-MESSAGE-FILTER:Dd``` |
 
 The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.Format).
 
@@ -251,8 +257,8 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
             * block mode raw (return if true) (TODO)
             * block mode code (return if true) (TODO)
             * block mode cite (continue) (TODO)
-            * ignore comment line
             * empty Line (new paragraph state)
+            * ignore comment line
             * replaceInlineVars
             * parseCondition
             * validateCondition (return if not fulfilled)

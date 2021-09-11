@@ -34,6 +34,7 @@
 //
 // A {{variable}} in the text will be replaced by the named variable
 
+// TODO: BUG! two links in one line in the form [[...|...] don't work!
 // TODO: use OUT-FILE (will be done with context type) - maybe
 
 package main
@@ -184,12 +185,15 @@ func setDefaultSiteVars() {
 	_ = siteContext.vars.SetVar("time", time.Now().Format(siteContext.vars.GetVal("TimeFormat")))
 }
 
-func parseAndSetCommandLineVars() {
+func parseAndSetCommandLineVars() (exitAswsg bool) {
 	destinationVar := "IN-FILE"
 	for i := 1; i < len(os.Args); i++ {
 		arg := os.Args[i]
 		Message("$CMDLINEARG$", i, "D", arg)
-		if strings.Index(arg, ":") >= 0 {
+		if arg[0] == '-' {
+			showHelp()
+			return true
+		} else if strings.Index(arg, ":") >= 0 {
 			if siteContext.vars.ParseAndSetVar(arg) != true {
 				Message("$CMDLINEARG$", i, "w", "Can't parse variable: "+arg)
 			}
@@ -205,6 +209,7 @@ func parseAndSetCommandLineVars() {
 			}
 		}
 	}
+	return false
 }
 
 // vars
@@ -502,6 +507,11 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	var lines []string
 
 	paragraphState := startParagraphState
+	if len(filename) == 0 {
+		Message("", 0, "W", "Filename missing!")
+		showHelp()
+		return nil, paragraphState, nil
+	}
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -553,6 +563,14 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 
 }
 
+func showHelp() {
+	println("aswsg - Another Static Website Generator - Version " + siteContext.vars.GetVal("ASWSG-VERSION"))
+	println("Usage: aswsg [IN-FILE=]sourcefile [VARIABLE:value] > file.html")
+	println("© " + siteContext.vars.GetVal("ASWSG-AUTHOR"))
+	println("Licensensed under " + siteContext.vars.GetVal("ASWSG-LICENSE"))
+	println("Find more information in the repo: https://github.com/Kulbartsch/AStaticWebSiteGenerator")
+}
+
 func main() {
 
 	var parsedText []string
@@ -567,7 +585,9 @@ func main() {
 	siteContext.conditionFulfilled = true
 	siteContext.blockMode = ""
 
-	parseAndSetCommandLineVars()
+	if parseAndSetCommandLineVars() {
+		os.Exit(1)
+	}
 
 	parsedText, paragraphState, err = parseFile(siteContext.vars.GetVal("IN-FILE"), paragraphState)
 	if err != nil {

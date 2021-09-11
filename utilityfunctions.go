@@ -8,6 +8,9 @@ import "strings"
 
 // WhiteSpaceTrim trims space, tabs and new lines
 func WhiteSpaceTrim(in string) string {
+	if len(in) == 0 {
+		return ""
+	}
 	return strings.Trim(in, " \t\n")
 }
 

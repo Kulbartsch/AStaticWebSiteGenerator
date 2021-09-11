@@ -1,4 +1,4 @@
-ASWSG      = ../../src/aswsg
+ASWSG      = ../../aswsg
 COMMON     = header.in footer.in
 WEBPAGES   = a.html b.html c.html
 

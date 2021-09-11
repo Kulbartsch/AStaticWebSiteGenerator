@@ -29,8 +29,9 @@ func (v SimpleVars) GetVal(key string) (result string) {
 	}
 	s, r := v[strings.ToUpper(key)]
 	if r == false {
-		Message("", 0, "W", "Key '"+key+"' does not exist.")
-		// println(  "Key '" + key +"' does not exist." )
+		// don't use message to avoid endless loops on error
+		// Message("", 0, "W", "Key '"+key+"' does not exist.") /
+		println("Warning: Key '" + key + "' does not exist.")
 	}
 	return s
 }

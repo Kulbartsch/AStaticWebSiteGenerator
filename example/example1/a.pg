@@ -40,10 +40,11 @@ Proin facilisis vitae arcu vel scelerisque. Nunc a dignissim tortor.
 +footer.in
 
 @Foo:Baa
+;the following is an error
 @Foo=Koo
 @Title:A test page
 
-
+;Another error h.in does not exist
 +h.in
 $
 $<article>
