@@ -1,6 +1,8 @@
 # Releases
 ## Version - Released - Features
 
+### V0.10.2 - 2102-09-11
+- fix problem when no filename to process is give, plus some safeguards and hints
 ### V0.10.1 - 2102-08-26
 - fix problem with empty lines
 ### V0.10 - 2021-08-25
