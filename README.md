@@ -78,7 +78,7 @@ and don't want
 
 ## Usage
 
-`aswsg [IN-FILE=]sourcefile [VARIABLE:value] > file.html`
+`aswsg [IN-FILE:]sourcefile [VARIABLE:value] > file.html`
 
 Checkout the example.
 

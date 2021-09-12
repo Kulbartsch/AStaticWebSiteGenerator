@@ -1,9 +1,11 @@
 # Releases
 ## Version - Released - Features
 
-### V0.10.2 - 2102-09-11
+### V0.10.3 - 2021-09-12
+- Wrong usage text `...[IN-FILE=]...` replaced with `...[IN-FILE:]...` in README and help-function. 
+### V0.10.2 - 2021-09-11
 - fix problem when no filename to process is give, plus some safeguards and hints
-### V0.10.1 - 2102-08-26
+### V0.10.1 - 2021-08-26
 - fix problem with empty lines
 ### V0.10 - 2021-08-25
 - Command to change use from "cite" to "blockquote" for ">"

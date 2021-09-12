@@ -118,7 +118,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{
-		"ASWSG-VERSION": "0.10.2",
+		"ASWSG-VERSION": "0.10.3",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "AGPL V3 or later",
 
@@ -565,7 +565,7 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 
 func showHelp() {
 	println("aswsg - Another Static Website Generator - Version " + siteContext.vars.GetVal("ASWSG-VERSION"))
-	println("Usage: aswsg [IN-FILE=]sourcefile [VARIABLE:value] > file.html")
+	println("Usage: aswsg [IN-FILE:]sourcefile [VARIABLE:value] > file.html")
 	println("© " + siteContext.vars.GetVal("ASWSG-AUTHOR"))
 	println("Licensensed under " + siteContext.vars.GetVal("ASWSG-LICENSE"))
 	println("Find more information in the repo: https://github.com/Kulbartsch/AStaticWebSiteGenerator")
