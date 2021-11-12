@@ -158,9 +158,9 @@ func commandIncludeScript(p string) (r []string) {
 func commandGtAsBlockQuote(p string) (r []string) {
 	param := strings.ToUpper(p)
 	if len(param) == 0 || param == "T" || param == "TRUE" {
-		paragraphTags["M"] = "blockquote"
+		paragraphTags["C"] = "blockquote"
 	} else {
-		paragraphTags["M"] = "cite"
+		paragraphTags["C"] = "cite"
 	}
 	return
 }

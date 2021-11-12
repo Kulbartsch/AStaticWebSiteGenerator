@@ -66,10 +66,9 @@ var siteContext siteContextType
 var paragraphTags = map[string]string{
 	" ": "",
 	"B": "li",
-	"C": "cite",
+	"C": "cite", // can be changed to blockquote with command
 	"D": "td",
-	"L": "ul",   // "ul style=\"list-style-type:circle\"",
-	"M": "cite", // can be changed to blockquote with command
+	"L": "ul", // "ul style=\"list-style-type:circle\"",
 	"N": "ol",
 	"O": "pre",
 	"P": "p",
