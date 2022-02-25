@@ -75,7 +75,7 @@ func parseLink1(text string) string {
 	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
 }
 
-// Proceeses the inner part of an [text](link) format (ASWSG-LINK-2-x) an generates a complete <a> tag.
+// Processes the inner part of a [text](link) format (ASWSG-LINK-2-x) an generates a complete <a> tag.
 // If text contains no "](" (ASWSG-LINK-2-3) the link processing will be canceled
 // and the complete inner text returned.
 func parseLink2(text string) string {
@@ -127,6 +127,9 @@ func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a st
 }
 
 func parseInLine(rawLine string) (parsedLine string) {
+
+	// FIXME: BUG! two links in one line in the form [[...|...]] don't work!
+	// FIXME: Problem using multiple (same?) tags in an a line
 
 	didParse := false
 	parsedLine = rawLine

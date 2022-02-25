@@ -34,7 +34,6 @@
 //
 // A {{variable}} in the text will be replaced by the named variable
 
-// TODO: BUG! two links in one line in the form [[...|...] don't work!
 // TODO: use OUT-FILE (will be done with context type) - maybe
 
 package main
@@ -441,16 +440,17 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	// process includes
 	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-INCLUDE")) {
+		// TODO: Include files by pattern
 		tmpLine := siteContext.lineNumber
 		tmpFilename := siteContext.vars.GetVal("filename")
 		parsedLines, parsedParagraph, err := parseFile(line[1:], newParagraphState)
-		siteContext.lineNumber = tmpLine
-		siteContext.vars.SetVar("filename", tmpFilename)
 		if err != nil {
 			Message(line[1:], -1, "E", err.Error())
 		}
 		resultLines = parsedLines
 		newParagraphState = parsedParagraph
+		siteContext.lineNumber = tmpLine
+		siteContext.vars.SetVar("filename", tmpFilename)
 		return resultLines, newParagraphState
 	}
 
@@ -518,7 +518,7 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 	}
 	defer file.Close()
 
-	// TODO set vars
+	// TODO: set vars
 	//    - filename        ok
 	//    - fqfn
 	//    - basefn
