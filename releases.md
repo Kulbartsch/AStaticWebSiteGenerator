@@ -1,6 +1,8 @@
 # Releases
 ## Version - Released - Features
 
+### V0.10.4 - 2022-05-20
+- Bug fix counting same characters at line beginning
 ### V0.10.3 - 2021-09-12
 - Wrong usage text `...[IN-FILE=]...` replaced with `...[IN-FILE:]...` in README and help-function. 
 ### V0.10.2 - 2021-09-11

@@ -56,3 +56,4 @@ example/example1/*.html
 AStaticWebSiteGenerator
 aswsg
 *~
+/tmp/

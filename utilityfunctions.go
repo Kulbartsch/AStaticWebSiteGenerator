@@ -4,7 +4,10 @@ package main
 
 // MAYBE: put this in own library
 
-import "strings"
+import (
+	"log"
+	"strings"
+)
 
 // WhiteSpaceTrim trims space, tabs and new lines
 func WhiteSpaceTrim(in string) string {
@@ -14,15 +17,25 @@ func WhiteSpaceTrim(in string) string {
 	return strings.Trim(in, " \t\n")
 }
 
-// counts the occurence of the first character of a string at the beginning,
-// and returns the first character, it's count and the string trimmed from
-// leading and ending whitespaces plus first character
+// firstCharCountAndTrim counts the occurrence of the first character of a string at
+// the beginning, and returns the first character, it's count and the string trimmed
+// from leading and ending whitespaces plus first character
 func firstCharCountAndTrim(line string) (firstChar string, count int, content string) {
-	if len(line) == 0 {
+	defer func() {
+		// recover from panic if one occurred. Set err to nil otherwise.
+		r := recover()
+		if r != nil {
+			// err = errors.New("array index out of bounds")
+			Message("", 0, "A", "function firstCharCountAndTrim:")
+			log.Println(r)
+		}
+	}()
+	l := len(line)
+	if l == 0 {
 		return "", 0, ""
 	}
 	firstChar = line[0:1]
-	for count = 1; line[count] == firstChar[0]; count++ {
+	for count = 1; (count < l) && (line[count] == firstChar[0]); count++ {
 	}
 	content = strings.Trim(line[count:], " \t"+firstChar)
 	return firstChar, count, content
