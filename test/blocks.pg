@@ -1,9 +1,8 @@
-===
 =TEST
 == Blocks Test
 ; just a comment
 normal text
-a [link](http://kulbartsch.de) and another [one](https://DLUG.de), ok?
+a [link](http://kulbartsch.de) and another //[one](https://DLUG.de)//, ok?
 >>>
 a cite  
 over //lines// and //more//

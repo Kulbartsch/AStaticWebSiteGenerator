@@ -11,7 +11,7 @@ import (
 type HTMLAttrib map[string]string
 
 func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) (resultHTMLTag string) {
-	// TODO check using HTML library
+	// IDEA: check using HTML library
 	var attributes string
 	if len(tag) == 0 {
 		return
@@ -50,7 +50,7 @@ func generateTag(tagKind string, openTag bool) (resultTag string) {
 	return
 }
 
-// Proceeses the inner part of an [[text|URL]] (ASWSG-LINK-1-x) an generates a complete <a> tag.
+// Processes the inner part of an [[text|URL]] (ASWSG-LINK-1-x) an generates a complete <a> tag.
 // If text contains a "|"" (pipe) the left part is the displayed content and
 // the right part is the href.
 func parseLink1(text string) string {
@@ -116,11 +116,11 @@ func parseLink3(text string) string {
 // StringBracketsSplit splits a string into a part before the brackets (b1) in the brackets and after the brackets (b2)
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
 	m := strings.Index(text, b1)
-	if m == -1 { // TODO: maybe Check for code rune
+	if m == -1 { // IDEA: maybe Check for code rune
 		return text, "", ""
 	}
 	n := strings.Index(text[m+1:], b2) + m + 1
-	if n == -1 || n <= m { // ToDo: maybe Check for Escape rune
+	if n == -1 || n <= m { // IDEA: maybe Check for Escape rune
 		return text, "", ""
 	}
 	return text[0:m], text[m+len(b1) : n], text[n+len(b2):]
@@ -128,8 +128,7 @@ func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a st
 
 func parseInLine(rawLine string) (parsedLine string) {
 
-	// FIXME: BUG! two links in one line in the form [[...|...]] don't work!
-	// FIXME: Problem using multiple (same?) tags in an a line
+	// There is a problem using emphasised default tags (//) and links like "http://..." in an a line
 
 	didParse := false
 	parsedLine = rawLine

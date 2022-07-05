@@ -21,7 +21,6 @@ nisl nec, elementum orci. Duis sollicitudin a est non convallis.
 Sed porttitor fermentum mauris, id ullamcorper urna finibus in. Proin convallis
 vestibulum tristique. Nam aliquet consequat porttitor.
 
-+part1.in
-+part2.in
-+part3.in
+;@ASWSG-INCLUDE-REVERSE:T
++part*.in
 +footer.in

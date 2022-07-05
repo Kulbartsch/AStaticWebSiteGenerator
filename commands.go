@@ -173,9 +173,6 @@ func commandGtAsBlockQuote(p string) (r []string) {
 
 // TODO command dump-context  (to log)
 
-// TODO command include-files <start-of-filename>     (includes all files beginning with given name, normal parsing)
-//      or use the regular "+" include
-
 // include File as raw, or crude with replacing variables
 func readTextFile(path string, crude bool) ([]string, error) {
 	file, err := os.Open(path)

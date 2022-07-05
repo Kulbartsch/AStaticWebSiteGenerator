@@ -58,6 +58,7 @@ and don't want
       * [X] raw html
       * [x] comments
 * [X] include files
+  * [X] include list of files by pattern 
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
     1. static defaults
@@ -102,24 +103,24 @@ You can use the mentioned variables to redefine the characters used for a format
 Used at begin the beginning line, using one of the characters.
 Some characters are can be cascaded.
 
-| Function | Default Char | Variable | Example |
-| -------- | ------------ | -------- | ------- |
-| Defining a variable | ```@``` | ```ASWSG-DEFINE``` | ```@variablename:value``` |
-| Include a file | ```+``` | ```ASWSG-INCLUDE``` | ```+filename``` |
-| Raw (html) line to be inserted | ```$``` | ```ASWSG-RAWLINE``` | ```$<article>``` |
-| Escape for a paragraph char | ```\``` | ```ASWSG-ESCAPE``` | ```\* this is no bullet list``` |
-| Paragraph | (none) | (none) | ```Any text not starting not with a line level special. Empty lines start a new paragraph.``` |
-| Header. The number of header characters define the depth of the header. | ```=``` or ```!``` | ```ASWSG-HEADER``` | ```== header level 2``` |
-| Bullet list | ```*``` or ```-``` | ```ASWSG-LIST``` | ```* Bulltes and numbered Lists may be nested.``` |
-| Numbered list | any off ```#0123456789``` | ```ASWSG-NUMERATION``` | ```2# a level 2 indented list element``` |
-| Cite | ```>``` | ```ASWSG-CITE``` | ```> To be or not to be.``` |
-| Single line command, optionally closed by an ")", should not be changed | ```(``` | ```ASWSG-COMMAND``` | ```(command parameter ...)``` |
-| Defining a Table. The table character starts a new cell. One trailing pipe will be removed. | ```\|``` | ```ASWSG-TABLE``` | ```\|a 2 cell\|table``` |
+| Function                                                                                    | Default Char | Variable | Example                                                                                       |
+|---------------------------------------------------------------------------------------------| ------------ | -------- |-----------------------------------------------------------------------------------------------|
+| Defining a variable                                                                         | ```@``` | ```ASWSG-DEFINE``` | ```@variablename:value```                                                                     |
+| Include a file oder files by pattern                                                        | ```+``` | ```ASWSG-INCLUDE``` | ```+filename``` or ```+file_patern```                                                         |
+| Raw (html) line to be inserted                                                              | ```$``` | ```ASWSG-RAWLINE``` | ```$<article>```                                                                              |
+| Escape for a paragraph char                                                                 | ```\``` | ```ASWSG-ESCAPE``` | ```\* this is no bullet list```                                                               |
+| Paragraph                                                                                   | (none) | (none) | ```Any text not starting not with a line level special. Empty lines start a new paragraph.``` |
+| Header. The number of header characters define the depth of the header.                     | ```=``` or ```!``` | ```ASWSG-HEADER``` | ```== header level 2```                                                                       |
+| Bullet list                                                                                 | ```*``` or ```-``` | ```ASWSG-LIST``` | ```* Bulltes and numbered Lists may be nested.```                                             |
+| Numbered list                                                                               | any off ```#0123456789``` | ```ASWSG-NUMERATION``` | ```2# a level 2 indented list element```                                                      |
+| Cite                                                                                        | ```>``` | ```ASWSG-CITE``` | ```> To be or not to be.```                                                                   |
+| Single line command, optionally closed by an ")", should not be changed                     | ```(``` | ```ASWSG-COMMAND``` | ```(command parameter ...)```                                                                 |
+| Defining a Table. The table character starts a new cell. One trailing pipe will be removed. | ```\|``` | ```ASWSG-TABLE```                                                                             | ```\|a 2 cell\|table``` |
 
 To continue a long line (i.e. a long header split over two lines) add an ```\``` to the end of the first line.
 
 
-## Inline formating
+### Inline formatting
 
 Used to format text within a line, using 2 or 3 strings for begin, end and middle when needed.
 
@@ -135,18 +136,30 @@ Used to format text within a line, using 2 or 3 strings for begin, end and middl
 | Link-2 (with rel=external) | ```[```...```](```...```)``` | ```ASWSG-LINK-2-1```...```ASWSG-LINK-2-3```...```ASWSG-LINK-2-2``` | ```[```text```](```URL```)```  |
 | Link-3 (Link Index, to be inserted with commnd (LINK-INDEX)) | ```[[```...```]]``` | ```ASWSG-LINK-3-1```...```ASWSG-LINK-1-2``` | ```[[```URL```]]```  |
 
+#### Glitches
+
+There is a glitch when using the default markdown for emphasised ```//``` and a HTML link, 
+which usually contains also two dashes, in one line. 
+There is a small fix to avoid, that // will be used as the start of emphasised text, 
+when there is a ```:``` in front of it, but that prevents any later rendering of emphasised in this line.
+
+A good and easy solution in this case is to redefine emphasised. 
+This could be done like this, to use two $-signs instead:
+
+    @ASWSG-EMP-1:$$
+    @ASWSG-EMP-2:$$
 
 ### Multi-Line/Block formatting
 
 A line just containing at least three characters to enter a special block.
 The block ends with the same characters in a line or a new block formatting.
 
-| Function | Default Char | Variable | Example |
-| -------- | ------------ | -------- | ------- |
-| Citation | ```>``` | ```ASWSG-ML-CITE``` | ```>>>``` |
-| Raw Lines | ```$``` | ```ASWSG-ML-RAW``` | ```$$$``` |
-| Preformatted (code) | ```%``` | ```ASWSG-ML-CODE``` | ```%%%``` |
-| Horizontal line (just one line) | ```-``` | ```ASWSG-LINE``` | ```----``` |
+| Function                        | Default Char | Variable            | Example    |
+|---------------------------------|--------------|---------------------|------------|
+| Citation                        | ```>```      | ```ASWSG-ML-CITE``` | ```>>>```  |
+| Raw Lines                       | ```$```      | ```ASWSG-ML-RAW```  | ```$$$```  |
+| Preformatted (code)             | ```%```      | ```ASWSG-ML-CODE``` | ```%%%```  |
+| Horizontal line (just one line) | ```-```      | ```ASWSG-LINE```    | ```----``` |
 
 tbi = to be implemented, does not exist jet.
 
@@ -189,17 +202,18 @@ All conditions start with the ```ASWSG-COMMAND``` character which default is ```
 
 ### Control Variables
 
-| Function | Name:Default |
-| -------- | ------------ |
-| Number of header lines when parsing a table. | ```ASWSG-TABLE-HEADERLINES:1``` |
-| Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-ALIGNMENT:LL``` |
-| CSV field separator | ```ASWSG-CSV-COMMA:;``` | 
-| CSV comment line    |	```ASWSG-CSV-COMMENT:#``` | 
-| Automatically generate anchors for headers, T = true, everything else is false | ```ASWSG-AUTO-GENERATE-ANCHOR:T``` |
-| Date format | ```DATEFORMAT:2006-01-02``` |
-| Time format | ```TIMEFORMAT:15:04:05``` |
-| Timestamp format | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
-| Filter out message types, default is "Dd" for debug messages | ```ASWSG-MESSAGE-FILTER:Dd``` |
+| Function                                                                                                                   | Name:Default                                        |
+|----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| Number of header lines when parsing a table.                                                                               | ```ASWSG-TABLE-HEADERLINES:1```                     |
+| Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-ALIGNMENT:LL```                      |
+| CSV field separator                                                                                                        | ```ASWSG-CSV-COMMA:;```                             | 
+| CSV comment line                                                                                                           | ```ASWSG-CSV-COMMENT:#```                           | 
+| Automatically generate anchors for headers, T = true, everything else is false                                             | ```ASWSG-AUTO-GENERATE-ANCHOR:T```                  |
+| Reverse Order of included files, T = true, everything else is false                                                        | ```ASWSG-INCLUDE-REVERSE:F```                       |
+| Date format                                                                                                                | ```DATEFORMAT:2006-01-02```                         |
+| Time format                                                                                                                | ```TIMEFORMAT:15:04:05```                           |
+| Timestamp format                                                                                                           | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
+| Filter out message types, default is "Dd" for debug messages                                                               | ```ASWSG-MESSAGE-FILTER:Dd```                       |
 
 The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.Format).
 
@@ -253,15 +267,15 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
    * parseFile, for each line 
        * process continued lines
        * parseLine 
-            * block mode comment (return if true) (TODO)
-            * block mode raw (return if true) (TODO)
-            * block mode code (return if true) (TODO)
-            * block mode cite (continue) (TODO)
-            * empty Line (new paragraph state)
-            * ignore comment line
             * replaceInlineVars
             * parseCondition
             * validateCondition (return if not fulfilled)
+            * block mode comment (return if true) 
+            * block mode code (return if true) 
+            * block mode crude (return if true) 
+            * block mode cite (continue) (TODO)
+            * empty Line (new paragraph state)
+            * ignore comment line
             * parseAndSetVar (return if true)
             * parseCommands (return if true)
             * parse raw lines (return if true)

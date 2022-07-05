@@ -44,6 +44,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -116,7 +117,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{
-		"ASWSG-VERSION": "0.10.4",
+		"ASWSG-VERSION": "0.11.1",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "AGPL V3 or later",
 
@@ -127,6 +128,7 @@ func setDefaultSiteVars() {
 		"ASWSG-TABLE-ALIGNMENT":      "LL", // L -> <th style="text-align:left">, C = center, R = right, other/default = left
 		"ASWSG-CSV-COMMA":            ";",  // CSV field separator
 		"ASWSG-CSV-COMMENT":          "#",  // CSV comment line
+		"ASWSG-INCLUDE-REVERSE":      "F",  // reverse order of files to be included
 
 		// inline formating, pairs end on -1 respective -2
 		"ASWSG-VAR-1":    "{{", // special: variable to be replaced
@@ -221,7 +223,6 @@ func parseAndSetVar(line string) (varParsed bool) {
 }
 
 func replaceInlineVars(line string) string {
-	// TODO change to use interface Simplevars
 	t1, t2, t3 := StringBracketsSplit(line, siteContext.vars.GetVal("ASWSG-VAR-1"), siteContext.vars.GetVal("ASWSG-VAR-2"), siteContext.vars.GetVal("ASWSG-ESCAPE"))
 	if !siteContext.vars.ExistsVal(t2) {
 		return line
@@ -326,6 +327,21 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	newParagraphState = paragraphState
 	lineLength := len(line)
 
+	// replace inline vars
+	line = replaceInlineVars(line)
+
+	// parseCondition
+	if lineLength > 0 && line[0:1] == siteContext.vars.GetVal("ASWSG-COMMAND") {
+		if parseCondition(line[1:]) {
+			return resultLines, newParagraphState
+		}
+	}
+
+	// validateCondition (return if not fulfilled)
+	if !siteContext.conditionFulfilled {
+		return resultLines, newParagraphState
+	}
+
 	// block modes
 
 	blockToggle := checkBlockModeToggle(line)
@@ -337,21 +353,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 			siteContext.blockMode = ""
 		} else { // normal in this block
 			// comment does nothing
-		}
-		return
-	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
-		siteContext.blockMode = checkBlock
-		return
-	}
-
-	// block mode crude - "ASWSG-ML-CRUDE":     "$"
-	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CRUDE")
-	if siteContext.blockMode == checkBlock { // in this block
-		if blockToggle == checkBlock { // end of this block
-			// resultLines = append(resultLines, "</code>")
-			siteContext.blockMode = ""
-		} else { // normal in this block
-			resultLines = append(resultLines, line)
 		}
 		return
 	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
@@ -372,6 +373,21 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
 		siteContext.blockMode = checkBlock
 		resultLines = append(resultLines, "<pre>")
+		return
+	}
+
+	// block mode crude - "ASWSG-ML-CRUDE":     "$"
+	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CRUDE")
+	if siteContext.blockMode == checkBlock { // in this block
+		if blockToggle == checkBlock { // end of this block
+			// resultLines = append(resultLines, "</code>")
+			siteContext.blockMode = ""
+		} else { // normal in this block
+			resultLines = append(resultLines, line)
+		}
+		return
+	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
+		siteContext.blockMode = checkBlock
 		return
 	}
 
@@ -403,28 +419,12 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		return
 	}
 
-	// replace inline vars
-	line = replaceInlineVars(line)
-
-	// parse vars
+	// parse and set vars
 	if parseAndSetVar(line) == true {
 		return resultLines, newParagraphState
 	}
 
-	// parseCondition
-	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMAND") {
-		if parseCondition(line[1:]) {
-			return resultLines, newParagraphState
-		}
-	}
-
-	// validateCondition (return if not fulfilled)
-	if !siteContext.conditionFulfilled {
-		return resultLines, newParagraphState
-	}
-
 	// parse commands
-
 	if line[0:1] == siteContext.vars.GetVal("ASWSG-COMMAND") {
 		resultLines = append(resultLines, parseCommands(line[1:])...)
 		return
@@ -440,15 +440,26 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	// process includes
 	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-INCLUDE")) {
-		// TODO: Include files by pattern
 		tmpLine := siteContext.lineNumber
 		tmpFilename := siteContext.vars.GetVal("filename")
-		parsedLines, parsedParagraph, err := parseFile(line[1:], newParagraphState)
+
+		files, err := filepath.Glob(line[1:])
 		if err != nil {
-			Message(line[1:], -1, "E", err.Error())
+			Message("", 0, "E", err.Error())
 		}
-		resultLines = parsedLines
-		newParagraphState = parsedParagraph
+		if IsVarTrue("ASWSG-INCLUDE-REVERSE") {
+			files = ReverseStringArray(files)
+		}
+
+		for _, file := range files {
+			parsedLines, parsedParagraph, err := parseFile(file, newParagraphState)
+			if err != nil {
+				Message(line[1:], -1, "E", err.Error())
+			}
+			resultLines = append(resultLines, parsedLines...)
+			newParagraphState = parsedParagraph
+		}
+
 		siteContext.lineNumber = tmpLine
 		siteContext.vars.SetVar("filename", tmpFilename)
 		return resultLines, newParagraphState
@@ -468,7 +479,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		// ToC ~~~
 		anchor := ""
 		if siteContext.vars.GetVal("ASWSG-AUTO-GENERATE-ANCHOR") == "T" {
-			anchor = " id=\"" + strings.ReplaceAll(content, "\"", "'") + "\"" // remove " in content
+			anchor = " id=\"" + ToValidHtmlAnchor(content) + "\""
 			// toc_line := strings.Repeat(siteContext.vars.GetVal("ASWSG-LIST"), level) + " (" + content + ")[" + anchorText + "]"
 			// TODO add toc_line anchor to list
 		}

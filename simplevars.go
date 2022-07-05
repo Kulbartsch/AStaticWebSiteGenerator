@@ -2,7 +2,7 @@
 
 package main
 
-// TODO: maybe put this in own library
+// IDEA: maybe put this in own library
 
 import "strings"
 

@@ -1,6 +1,10 @@
 # Releases
 ## Version - Released - Features
 
+##  V0.11.1 - 2022-05-25
+- process conditions before block mode (fixes two bugs)
+### V0.11 - 2022-05-25
+- Include several files with the `+` line command using pattern 
 ### V0.10.4 - 2022-05-20
 - Bug fix counting same characters at line beginning
 ### V0.10.3 - 2021-09-12

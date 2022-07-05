@@ -94,4 +94,38 @@ func checkBlockModeToggle(line string) string {
 	return ""
 }
 
+// IsValidHtmlAnchorRune check if a rune is a valid HTML-anchor character
+//
+// recommended here https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id
+func IsValidHtmlAnchorRune(r rune) bool {
+	if (r >= 'a' && r <= 'z') ||
+		(r >= 'A' && r <= 'Z') ||
+		(r >= '0' && r <= '9') ||
+		r == '-' || r == '_' {
+		return true
+	} else {
+		return false
+	}
+}
+
+// ToValidHtmlAnchor replaces non valid anchor characters with '_'
+func ToValidHtmlAnchor(s string) string {
+	replace := func(r rune) rune {
+		if IsValidHtmlAnchorRune(r) {
+			return r
+		} else {
+			return '_'
+		}
+	}
+	return strings.Map(replace, s)
+}
+
+// ReverseStringArray - reverse order of an array of strings
+func ReverseStringArray(s []string) []string {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+	return s
+}
+
 //EOF
