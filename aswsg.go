@@ -170,6 +170,8 @@ func setDefaultSiteVars() {
 		"ASWSG-HEADER":     "=!",          // one liner: header
 		"ASWSG-COMMENT":    ";",           // comment line
 
+		"ASWSG-GEMINI-LINK":     "=>",     // gemini-style link
+
 		// Block level formatting: unique multi characters in one line alone, at least 3
 		"ASWSG-LINE":       "-", // special: horizontal line
 		"ASWSG-ML-CODE":    "%", // start/end block: code code
@@ -468,7 +470,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	// parse Markup one liner
 
 	// parse one liner: header
-	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-HEADER")) {
+	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-HEADER")) && (len(line) > 3) {
 		newParagraphState = ""
 		// header parser
 		fc, count, content := firstCharCountAndTrim(line)
@@ -485,6 +487,21 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		}
 		//
 		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<h"+level+anchor+">"+parseInLine(content)+"</h"+level+">")
+		return resultLines, newParagraphState
+	}
+
+	// parse one liner: gemini-style link
+	if line[0:2] == siteContext.vars.GetVal("ASWSG-GEMINI-LINK")) {
+		newParagraphState = ""
+        link, description := parseGeminiLink(line[2:])
+		attrib := HTMLAttrib{"href": link}
+		surroundWithHTMLTagWithAttributes("a", description, attrib) // tag string, s string, attrib HTMLAttrib)
+
+		if IsVarTrue("ASWSG-GEMINI-LINK-SHOW") {
+			resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<a "+level+anchor+">"+parseInLine(content)+"</h"+level+">")
+		} else {
+
+		}
 		return resultLines, newParagraphState
 	}
 
