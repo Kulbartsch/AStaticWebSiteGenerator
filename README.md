@@ -52,6 +52,7 @@ and don't want
       * [X] link type ``[name](link)`` (for external links with rel="external")
          * support link relationship attribute "external", see https://www.w3schools.com/tags/att_a_rel.asp
       * [x] link type ``[[URL]]``  with link-index
+      * [X] link type ``=> URL description`` - a gemini style link
     * [X] block based
       * [X] quotes
       * [X] preformatted (code)
@@ -103,19 +104,20 @@ You can use the mentioned variables to redefine the characters used for a format
 Used at begin the beginning line, using one of the characters.
 Some characters are can be cascaded.
 
-| Function                                                                                    | Default Char | Variable | Example                                                                                       |
-|---------------------------------------------------------------------------------------------| ------------ | -------- |-----------------------------------------------------------------------------------------------|
-| Defining a variable                                                                         | ```@``` | ```ASWSG-DEFINE``` | ```@variablename:value```                                                                     |
-| Include a file oder files by pattern                                                        | ```+``` | ```ASWSG-INCLUDE``` | ```+filename``` or ```+file_patern```                                                         |
-| Raw (html) line to be inserted                                                              | ```$``` | ```ASWSG-RAWLINE``` | ```$<article>```                                                                              |
-| Escape for a paragraph char                                                                 | ```\``` | ```ASWSG-ESCAPE``` | ```\* this is no bullet list```                                                               |
+| Function                                                                                    | Default Char | Variable | Example                                                                  |
+|---------------------------------------------------------------------------------------------|-----| -------- |--------------------------------------------------------------------------|
+| Defining a variable                                                                         | ```@``` | ```ASWSG-DEFINE``` | ```@variablename:value```                                                |
+| Include a file oder files by pattern                                                        | ```+``` | ```ASWSG-INCLUDE``` | ```+filename``` or ```+file_patern```                                    |
+| Raw (html) line to be inserted                                                              | ```$``` | ```ASWSG-RAWLINE``` | ```$<article>```                                                         |
+| Escape for a paragraph char                                                                 | ```\``` | ```ASWSG-ESCAPE``` | ```\* this is no bullet list```                                          |
 | Paragraph                                                                                   | (none) | (none) | ```Any text not starting not with a line level special. Empty lines start a new paragraph.``` |
-| Header. The number of header characters define the depth of the header.                     | ```=``` or ```!``` | ```ASWSG-HEADER``` | ```== header level 2```                                                                       |
-| Bullet list                                                                                 | ```*``` or ```-``` | ```ASWSG-LIST``` | ```* Bulltes and numbered Lists may be nested.```                                             |
-| Numbered list                                                                               | any off ```#0123456789``` | ```ASWSG-NUMERATION``` | ```2# a level 2 indented list element```                                                      |
-| Cite                                                                                        | ```>``` | ```ASWSG-CITE``` | ```> To be or not to be.```                                                                   |
-| Single line command, optionally closed by an ")", should not be changed                     | ```(``` | ```ASWSG-COMMAND``` | ```(command parameter ...)```                                                                 |
-| Defining a Table. The table character starts a new cell. One trailing pipe will be removed. | ```\|``` | ```ASWSG-TABLE```                                                                             | ```\|a 2 cell\|table``` |
+| Header. The number of header characters define the depth of the header.                     | ```=``` or ```!``` | ```ASWSG-HEADER``` | ```== header level 2```                                                  |
+| Bullet list                                                                                 | ```*``` or ```-``` | ```ASWSG-LIST``` | ```* Bulltes and numbered Lists may be nested.```                        |
+| Numbered list                                                                               | any off ```#0123456789``` | ```ASWSG-NUMERATION``` | ```2# a level 2 indented list element```                                 |
+| Cite                                                                                        | ```>``` | ```ASWSG-CITE``` | ```> To be or not to be.```                                              |
+| Single line command, optionally closed by an ")", should not be changed                     | ```(``` | ```ASWSG-COMMAND``` | ```(command parameter ...)```                                            |
+| Defining a Table. The table character starts a new cell. One trailing pipe will be removed. | ```\|``` | ```ASWSG-TABLE```                                                        | ```\|a 2 cell\|table``` |
+ | Gemini style link                                                                           | ```=>``` | ```ASWSG-GEMINI-LINK``` | ```=> http://haniarani.com/ Hania Rani```                                |
 
 To continue a long line (i.e. a long header split over two lines) add an ```\``` to the end of the first line.
 
@@ -189,31 +191,31 @@ There is no nesting, a new ```COND-IF-...``` just changes the condition.
 
 All conditions start with the ```ASWSG-COMMAND``` character which default is ```(```.
 
-| Function | Form |
-| -------- | ------------ |
-| Check if Variable is set | ```COND-IF-SET variable-name``` |
-| Check if Variable is not set | ```COND-IF-NOT-SET variable-name``` |
-| Check if Variable has the value | ```COND-IF-EQUAL variable-name value...``` |
-| Check if Variable has not the value | ```COND-IF-NOT-EQUAL variable-name value...``` |
-| Condition else case (last condition inverted) | ```COND-ELSE``` |
-| End condition validation | ```COND-END``` |
+| Function                                      | Form                                           |
+|-----------------------------------------------|------------------------------------------------|
+| Check if Variable is set                      | ```COND-IF-SET variable-name```                |
+| Check if Variable is not set                  | ```COND-IF-NOT-SET variable-name```            |
+| Check if Variable has the value               | ```COND-IF-EQUAL variable-name value...```     |
+| Check if Variable has not the value           | ```COND-IF-NOT-EQUAL variable-name value...``` |
+| Condition else case (last condition inverted) | ```COND-ELSE```                                |
+| End condition validation                      | ```COND-END```                                 |
 
 ## More Variables
 
 ### Control Variables
 
-| Function                                                                                                                   | Name:Default                                        |
-|----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
-| Number of header lines when parsing a table.                                                                               | ```ASWSG-TABLE-HEADERLINES:1```                     |
-| Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-ALIGNMENT:LL```                      |
-| CSV field separator                                                                                                        | ```ASWSG-CSV-COMMA:;```                             | 
-| CSV comment line                                                                                                           | ```ASWSG-CSV-COMMENT:#```                           | 
-| Automatically generate anchors for headers, T = true, everything else is false                                             | ```ASWSG-AUTO-GENERATE-ANCHOR:T```                  |
-| Reverse Order of included files, T = true, everything else is false                                                        | ```ASWSG-INCLUDE-REVERSE:F```                       |
-| Date format                                                                                                                | ```DATEFORMAT:2006-01-02```                         |
-| Time format                                                                                                                | ```TIMEFORMAT:15:04:05```                           |
+| Function                                                                                                                   | Name:Default                                         |
+|----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|
+| Number of header lines when parsing a table.                                                                               | ```ASWSG-TABLE-HEADERLINES:1```                      |
+| Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-ALIGNMENT:LL```                       |
+| CSV field separator                                                                                                        | ```ASWSG-CSV-COMMA:;```                              | 
+| CSV comment line                                                                                                           | ```ASWSG-CSV-COMMENT:#```                            | 
+| Automatically generate anchors for headers, T = true, everything else is false                                             | ```ASWSG-AUTO-GENERATE-ANCHOR:T```                   |
+| Reverse Order of included files, T = true, everything else is false                                                        | ```ASWSG-INCLUDE-REVERSE:F```                        |
+| Date format                                                                                                                | ```DATEFORMAT:2006-01-02```                          |
+| Time format                                                                                                                | ```TIMEFORMAT:15:04:05```                            |
 | Timestamp format                                                                                                           | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
-| Filter out message types, default is "Dd" for debug messages                                                               | ```ASWSG-MESSAGE-FILTER:Dd```                       |
+| Filter out message types, default is "Dd" for debug messages                                                               | ```ASWSG-MESSAGE-FILTER:Dd```                        |
 
 The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.Format).
 
@@ -280,6 +282,7 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
             * parseCommands (return if true)
             * parse raw lines (return if true)
             * process includes (parseFile, return if true)
+            * parse gemini link (return if true)
             * parse header (return if true)
             * parseTableLine
             * parse horizontal line

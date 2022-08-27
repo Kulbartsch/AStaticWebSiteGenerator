@@ -117,7 +117,7 @@ func (c siteContextType) addStringToOutput(s string) (err error) {
 
 func setDefaultSiteVars() {
 	siteContext.vars = SimpleVars{
-		"ASWSG-VERSION": "0.11.1",
+		"ASWSG-VERSION": "0.12.0",
 		"ASWSG-AUTHOR":  "Alexander Kulbartsch",
 		"ASWSG-LICENSE": "AGPL V3 or later",
 
@@ -169,8 +169,10 @@ func setDefaultSiteVars() {
 		"ASWSG-TABLE":      "|",           // paragraph: _T_able and _R_ows and D_ata
 		"ASWSG-HEADER":     "=!",          // one liner: header
 		"ASWSG-COMMENT":    ";",           // comment line
+		"ASWSG-NEWLINE":    "/",           // TODO: insert a <br /> tag
 
-		"ASWSG-GEMINI-LINK":     "=>",     // gemini-style link
+		"ASWSG-GEMINI-LINK":      "=>", // gemini-style link
+		"ASWSG-GEMINI-LINK-SHOW": "F",  // show the link itself
 
 		// Block level formatting: unique multi characters in one line alone, at least 3
 		"ASWSG-LINE":       "-", // special: horizontal line
@@ -366,16 +368,19 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CODE")
 	if siteContext.blockMode == checkBlock { // in this block
 		if blockToggle == checkBlock { // end of this block
-			resultLines = append(resultLines, "</pre>")
 			siteContext.blockMode = ""
+			newParagraphState = ""
+			resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "</pre>")
+			return resultLines, newParagraphState
 		} else { // normal in this block
 			resultLines = append(resultLines, "<code>"+line+"</code>")
 		}
 		return
 	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
 		siteContext.blockMode = checkBlock
-		resultLines = append(resultLines, "<pre>")
-		return
+		newParagraphState = ""
+		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<pre>")
+		return resultLines, newParagraphState
 	}
 
 	// block mode crude - "ASWSG-ML-CRUDE":     "$"
@@ -397,16 +402,18 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CITE")
 	if siteContext.blockMode == checkBlock { // in this block
 		if blockToggle == checkBlock { // end of this block
-			resultLines = append(resultLines, "</blockquote>")
 			siteContext.blockMode = ""
-			return
+			newParagraphState = ""
+			resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "</blockquote>")
+			return resultLines, newParagraphState
 		} else { // normal in this block
 			// continue normal processing of line
 		}
 	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
 		siteContext.blockMode = checkBlock
-		resultLines = append(resultLines, "<blockquote>")
-		return
+		newParagraphState = ""
+		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<blockquote>")
+		return resultLines, newParagraphState
 	}
 
 	// empty line
@@ -469,6 +476,26 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	// parse Markup one liner
 
+	// parse one liner: gemini-style link =>
+	if len(line) > 2 && line[0:2] == siteContext.vars.GetVal("ASWSG-GEMINI-LINK") {
+		newParagraphState = "L"
+		link, description := parseGeminiLink(line[2:])
+		attrib := HTMLAttrib{"href": link}
+		attribGemlink := HTMLAttrib{"class": "aswsg-gemlink"}
+		var ht string
+		if IsVarTrue("ASWSG-GEMINI-LINK-SHOW") {
+			ht = surroundWithHTMLTagWithAttributes("li",
+				surroundWithHTMLTagWithAttributes("a", link+" - "+description, attrib),
+				attribGemlink)
+		} else {
+			ht = surroundWithHTMLTagWithAttributes("li",
+				surroundWithHTMLTagWithAttributes("a", description, attrib),
+				attribGemlink)
+		}
+		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), ht)
+		return resultLines, newParagraphState
+	}
+
 	// parse one liner: header
 	if strings.ContainsAny(line[0:1], siteContext.vars.GetVal("ASWSG-HEADER")) && (len(line) > 3) {
 		newParagraphState = ""
@@ -487,21 +514,6 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 		}
 		//
 		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<h"+level+anchor+">"+parseInLine(content)+"</h"+level+">")
-		return resultLines, newParagraphState
-	}
-
-	// parse one liner: gemini-style link
-	if line[0:2] == siteContext.vars.GetVal("ASWSG-GEMINI-LINK")) {
-		newParagraphState = ""
-        link, description := parseGeminiLink(line[2:])
-		attrib := HTMLAttrib{"href": link}
-		surroundWithHTMLTagWithAttributes("a", description, attrib) // tag string, s string, attrib HTMLAttrib)
-
-		if IsVarTrue("ASWSG-GEMINI-LINK-SHOW") {
-			resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<a "+level+anchor+">"+parseInLine(content)+"</h"+level+">")
-		} else {
-
-		}
 		return resultLines, newParagraphState
 	}
 

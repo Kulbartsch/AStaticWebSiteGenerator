@@ -37,7 +37,7 @@ func TestToValidHtmlAnchor(t *testing.T) {
 		args args
 		want string
 	}{
-		// TODO: Add test cases.
+		// TODO: Add more test cases.
 		{"empty", args{""}, ""},
 		{"only valid", args{"abc_DEF-123"}, "abc_DEF-123"},
 		{"unvalid chars", args{"Fußnote 123.8$"}, "Fu_note_123_8_"},

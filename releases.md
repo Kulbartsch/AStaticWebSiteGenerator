@@ -1,6 +1,9 @@
 # Releases
 ## Version - Released - Features
 
+## V0.12.0 - 2022-08-23
+- Gemini style links
+- Bug fix in CODE und CITE blocks, HTML tags wrong nesting fixed
 ##  V0.11.1 - 2022-05-25
 - process conditions before block mode (fixes two bugs)
 ### V0.11 - 2022-05-25

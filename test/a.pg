@@ -20,7 +20,7 @@ The time is
 > Just do it!
 > Try it out!
 
-Another cite format - but it's not implaemented yet: 
+Another cite format - it's now implaemented:
 
 >>>
 The meaning of life is to find your gift. 
@@ -60,7 +60,8 @@ Ah ... links should do to [[Wikipedia|https://wikipedia.org/]] for example.
 But external links should be like this [Hackernews](https://news.ycombinator.com/)
 But we can refrence Fefe [[https://blog.fefe.de/]] 
 and Slashdot [[https://slashdot.org/]] 
-like this. 
+like this.
+=> https://gemini.circumlunar.space/ Link to "Project Gemini"
 
 Numbered Links are inserted with the LINK-INDEX command:
 
