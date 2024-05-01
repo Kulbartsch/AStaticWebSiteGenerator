@@ -85,6 +85,15 @@ type indexedLinksType struct {
 var indexedLinks []indexedLinksType
 var linkIndex int = 1
 
+type TocLinksType struct {
+	anchor string
+	text   string
+	level  int
+}
+
+var tocLinks []TocLinksType
+var TocIndex int = 0
+
 // message handling
 
 // Message logs to stderr
@@ -505,7 +514,7 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 			Message("", 0, "A", "should not happen - expected ASWSG-HEADER character")
 		}
 		level := strconv.Itoa(count)
-		// ToC ~~~
+		// TODO: ToC ~~~
 		anchor := ""
 		if siteContext.vars.GetVal("ASWSG-AUTO-GENERATE-ANCHOR") == "T" {
 			anchor = " id=\"" + ToValidHtmlAnchor(content) + "\""

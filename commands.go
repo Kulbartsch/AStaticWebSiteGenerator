@@ -47,7 +47,6 @@ func parseCommands(command string) (result []string) {
 		result = commandGtAsBlockQuote(parameter)
 	default:
 		Message("", 0, "W", "unknown command ignored (function/parameter): "+function+"/"+parameter+" = "+cmd)
-		break
 	}
 	return
 }
@@ -74,6 +73,47 @@ func commandLinkIndex(p string) (r []string) {
 		r = append(r, il.index+" "+surroundWithHTMLTagWithAttributes("a", il.link, attrib)+"<br />")
 	}
 	indexedLinks = nil
+	linkIndex = 0
+	return
+}
+
+// writeTOC to file
+func writeTOC(filename string) {
+	if len(indexedLinks) == 0 {
+		Message("", 0, "W", "No links to write to TOC")
+		return
+	}
+	if len(filename) == 0 {
+		Message("", 0, "E", "No filename given for TOC")
+		return
+	}
+	// open a file with nam p and write the index to it
+	var f *os.File
+	f, err := os.Create(filename)
+	if err != nil {
+		Message("", 0, "E", "Problem creating file: "+filename)
+		return
+	}
+	defer f.Close()
+
+	var r []string
+	for _, il := range tocLinks {
+		attrib := HTMLAttrib{"href": il.anchor}
+		r = append(r, "<li class=\"aswsg-index\">"+
+			surroundWithHTMLTagWithAttributes("a", il.text, attrib)+"<li />")
+	}
+
+	tocLinks = nil
+	TocIndex = 0
+	if f != nil {
+		for _, l := range r {
+			_, err := f.WriteString(l + "\n")
+			if err != nil {
+				Message("", 0, "E", "Problem writing to file: "+filename)
+				return
+			}
+		}
+	}
 	return
 }
 

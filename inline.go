@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -21,9 +22,16 @@ func generateHTMLTagWithAttributes(tag string, openTag bool, attrib HTMLAttrib) 
 		closeTag = "/"
 	} else {
 		closeTag = ""
-		for k, v := range attrib {
+		// sort attributes
+		as := make([]string, 0, len(attrib))
+		for k := range attrib {
+			as = append(as, k)
+		}
+		sort.Strings(as)
+		// generate attributes
+		for _, k := range as {
 			attributes += " "
-			attributes += k + "=\"" + v + "\" "
+			attributes += k + "=\"" + attrib[k] + "\" "
 		}
 	}
 	resultHTMLTag = "<" + closeTag + tag + attributes + ">"

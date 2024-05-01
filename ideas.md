@@ -5,7 +5,7 @@
 * [ ] Make all file attributes available  !
 * [ ] Insert a <br /> when line starts with "/"  !
 
-* [ ] Table of content, based on the header lines, generated as a list !
+* [ ] Table of content, based on the header lines, generated as a <nav> list !
   * [ ] Inserted directly (TOC)
   * [ ] Written to file (TOC-TO-FILE <filename>) !
 

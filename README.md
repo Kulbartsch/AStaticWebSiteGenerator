@@ -3,7 +3,7 @@
 ASWSG allows you to generate Websites using Markup Syntax and HTML.
 
 * *make friendly* - to be integrated in your workflow
-* *adaptable syntax* - to match different markup dialects
+* *configurable syntax* - to match different markup dialects
 
 It is build with the idea of classical UNIX tools to do one job.
 ASWSG behaves just like a compiler parsing a Markup file and generating a new HTML output.
@@ -26,8 +26,9 @@ Note: This is under development, but what's not.
 
 ## Why should I use it
 
-You like to create websites, and you want to have the freedom to build and use html the way you like it 
-and don't want 
+You like to create websites, and you want to have the freedom to build and use
+html the way you like it using your favorite tool chain.
+You are not forced to use a specific framework or project structure.
 
 ## Features
 
@@ -59,7 +60,7 @@ and don't want
       * [X] raw html
       * [x] comments
 * [X] include files
-  * [X] include list of files by pattern 
+  * [X] include list of files by pattern
 * [X] Setting and using of variables
   * [X] Setting variables (in this order, later overwrites former)
     1. static defaults
@@ -104,20 +105,21 @@ You can use the mentioned variables to redefine the characters used for a format
 Used at begin the beginning line, using one of the characters.
 Some characters are can be cascaded.
 
-| Function                                                                                    | Default Char | Variable | Example                                                                  |
-|---------------------------------------------------------------------------------------------|-----| -------- |--------------------------------------------------------------------------|
-| Defining a variable                                                                         | ```@``` | ```ASWSG-DEFINE``` | ```@variablename:value```                                                |
-| Include a file oder files by pattern                                                        | ```+``` | ```ASWSG-INCLUDE``` | ```+filename``` or ```+file_patern```                                    |
-| Raw (html) line to be inserted                                                              | ```$``` | ```ASWSG-RAWLINE``` | ```$<article>```                                                         |
-| Escape for a paragraph char                                                                 | ```\``` | ```ASWSG-ESCAPE``` | ```\* this is no bullet list```                                          |
-| Paragraph                                                                                   | (none) | (none) | ```Any text not starting not with a line level special. Empty lines start a new paragraph.``` |
-| Header. The number of header characters define the depth of the header.                     | ```=``` or ```!``` | ```ASWSG-HEADER``` | ```== header level 2```                                                  |
-| Bullet list                                                                                 | ```*``` or ```-``` | ```ASWSG-LIST``` | ```* Bulltes and numbered Lists may be nested.```                        |
-| Numbered list                                                                               | any off ```#0123456789``` | ```ASWSG-NUMERATION``` | ```2# a level 2 indented list element```                                 |
-| Cite                                                                                        | ```>``` | ```ASWSG-CITE``` | ```> To be or not to be.```                                              |
-| Single line command, optionally closed by an ")", should not be changed                     | ```(``` | ```ASWSG-COMMAND``` | ```(command parameter ...)```                                            |
-| Defining a Table. The table character starts a new cell. One trailing pipe will be removed. | ```\|``` | ```ASWSG-TABLE```                                                        | ```\|a 2 cell\|table``` |
- | Gemini style link                                                                           | ```=>``` | ```ASWSG-GEMINI-LINK``` | ```=> http://haniarani.com/ Hania Rani```                                |
+| Function                                                                                    | Default Char              | Variable                | Example                                                                                       |
+|---------------------------------------------------------------------------------------------|---------------------------|-------------------------|-----------------------------------------------------------------------------------------------|
+| Defining a variable                                                                         | ```@```                   | ```ASWSG-DEFINE```      | ```@variablename:value```                                                                     |
+| Include a file oder files by pattern                                                        | ```+```                   | ```ASWSG-INCLUDE```     | ```+filename``` or ```+file_patern```                                                         |
+| Raw (html) line to be inserted                                                              | ```$```                   | ```ASWSG-RAWLINE```     | ```$<article>```                                                                              |
+| Escape for a paragraph char                                                                 | ```\```                   | ```ASWSG-ESCAPE```      | ```\* this is no bullet list```                                                               |
+| Paragraph                                                                                   | (none)                    | (none)                  | ```Any text not starting not with a line level special. Empty lines start a new paragraph.``` |
+| Header. The number of header characters define the depth of the header.                     | ```=``` or ```!```        | ```ASWSG-HEADER```      | ```== header level 2```                                                                       |
+| Bullet list                                                                                 | ```*``` or ```-```        | ```ASWSG-LIST```        | ```* Bulltes and numbered Lists may be nested.```                                             |
+| Numbered list                                                                               | any off ```#0123456789``` | ```ASWSG-NUMERATION```  | ```2# a level 2 indented list element```                                                      |
+| Cite                                                                                        | ```>```                   | ```ASWSG-CITE```        | ```> To be or not to be.```                                                                   |
+| Single line command, optionally closed by an ")", should not be changed                     | ```(```                   | ```ASWSG-COMMAND```     | ```(command parameter ...)```                                                                 |
+| Defining a Table. The table character starts a new cell. One trailing pipe will be removed. | ```\|```                  | ```ASWSG-TABLE```       | ```\|a 2 cell\|table```                                                                       |
+| Gemini style link                                                                           | ```=>```                  | ```ASWSG-GEMINI-LINK``` | ```=> http://haniarani.com/ Hania Rani```                                                     |
+| Comment                                                                                     | ```;```                   | ```ASWSG-COMMENT```     | ```; this is a comment```                                                                     |
 
 To continue a long line (i.e. a long header split over two lines) add an ```\``` to the end of the first line.
 
@@ -140,12 +142,12 @@ Used to format text within a line, using 2 or 3 strings for begin, end and middl
 
 #### Glitches
 
-There is a glitch when using the default markdown for emphasised ```//``` and a HTML link, 
-which usually contains also two dashes, in one line. 
-There is a small fix to avoid, that // will be used as the start of emphasised text, 
+There is a glitch when using the default markdown for emphasised ```//``` and a HTML link,
+which usually contains also two dashes, in one line.
+There is a small fix to avoid, that // will be used as the start of emphasised text,
 when there is a ```:``` in front of it, but that prevents any later rendering of emphasised in this line.
 
-A good and easy solution in this case is to redefine emphasised. 
+A good and easy solution in this case is to redefine emphasised.
 This could be done like this, to use two $-signs instead:
 
     @ASWSG-EMP-1:$$
@@ -161,32 +163,32 @@ The block ends with the same characters in a line or a new block formatting.
 | Citation                        | ```>```      | ```ASWSG-ML-CITE``` | ```>>>```  |
 | Raw Lines                       | ```$```      | ```ASWSG-ML-RAW```  | ```$$$```  |
 | Preformatted (code)             | ```%```      | ```ASWSG-ML-CODE``` | ```%%%```  |
+| Comment                         | ```;```      | ```ASWSG-ML-COM```  | ```;;;```  |
 | Horizontal line (just one line) | ```-```      | ```ASWSG-LINE```    | ```----``` |
 
-tbi = to be implemented, does not exist jet.
 
 ## Commands
 
 All commands start with the ```ASWSG-COMMAND``` character which default is ```(```.
 
-| Function | Form |
-| -------- | ------------ |
-| Comment that will not be in the output HTML file | ```COMMENT any text``` |
-| Dump variables to log | ```DUMP-VARS parameters ignored``` |
-| Write a message to the log | ```MESSAGE any text``` |
-| Set an link anchor | ```ANCHOR anchor-name``` |
-| Insert link index for Link-3 ```[[<LINK>>]]``` | ```LINK-INDEX parameters ignored``` |
-| Include file raw without variable substitution | ```INCLUDE-FILE-RAW filename``` |
-| Include file crude without variable substitution | ```INCLUDE-FILE-CRUDE filename``` | 
-| Include the output of a script/command (no variable substitution) | ```INCLUDE-SCRIPT programm parameters``` |
-| Include CSV-file as table | ```INCLUDE-CSV filename.csv``` |
-| Use the line formatter ```>``` as ```<blockquote>``` instead off ```<cite>```. Activate this with the parameter "TRUE", "T" or no parameter. Every other parameter will be interpreted as false. (Default is ```cite```.) | ```GT-AS-BLOCKQUOTE``` | 
+| Function                                                                    | Form                                     |
+|-----------------------------------------------------------------------------|------------------------------------------|
+| Comment that will not be in the output HTML file                            | ```COMMENT any text```                   |
+| Dump variables to log                                                       | ```DUMP-VARS parameters ignored```       |
+| Write a message to the log                                                  | ```MESSAGE any text```                   |
+| Set a link anchor with ```name```                                           | ```ANCHOR anchor-name```                 |
+| Insert link index for Link-3 of write it to ```[<file>]```                  | ```LINK-INDEX filename```                |
+| Include file raw without variable substitution                              | ```INCLUDE-FILE-RAW filename```          |
+| Include file crude without variable substitution                            | ```INCLUDE-FILE-CRUDE filename```        |
+| Include the output of a script/command (no variable substitution)           | ```INCLUDE-SCRIPT programm parameters``` |
+| Include CSV-file as table                                                   | ```INCLUDE-CSV filename.csv```           |
+| Use the line formatter ```>``` as ```<blockquote>``` instead off ```<cite>```. Activate this with the parameter "TRUE", "T" or no parameter. Every other parameter will be interpreted as false. (Default is ```cite```.) | ```GT-AS-BLOCKQUOTE``` |
 
 ## Conditional commands
 
-If a condition is set the following lines are only parsed if the condition criteria are true. 
+If a condition is set the following lines are only parsed if the condition criteria are true.
 This is valid until a new condition is set, a ```COND-ELSE``` or ```COND-END``` clause changes this.
-There is only one condition valid at a time. 
+There is only one condition valid at a time.
 There is no nesting, a new ```COND-IF-...``` just changes the condition.
 
 All conditions start with the ```ASWSG-COMMAND``` character which default is ```(```.
@@ -208,45 +210,46 @@ All conditions start with the ```ASWSG-COMMAND``` character which default is ```
 |----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|
 | Number of header lines when parsing a table.                                                                               | ```ASWSG-TABLE-HEADERLINES:1```                      |
 | Alignment of colons when parsing a table. L=left, C=center, R=right. If the value is to short, or unkown it defaults to L. | ```ASWSG-TABLE-ALIGNMENT:LL```                       |
-| CSV field separator                                                                                                        | ```ASWSG-CSV-COMMA:;```                              | 
-| CSV comment line                                                                                                           | ```ASWSG-CSV-COMMENT:#```                            | 
+| CSV field separator                                                                                                        | ```ASWSG-CSV-COMMA:;```                              |
+| CSV comment line                                                                                                           | ```ASWSG-CSV-COMMENT:#```                            |
 | Automatically generate anchors for headers, T = true, everything else is false                                             | ```ASWSG-AUTO-GENERATE-ANCHOR:T```                   |
 | Reverse Order of included files, T = true, everything else is false                                                        | ```ASWSG-INCLUDE-REVERSE:F```                        |
 | Date format                                                                                                                | ```DATEFORMAT:2006-01-02```                          |
 | Time format                                                                                                                | ```TIMEFORMAT:15:04:05```                            |
 | Timestamp format                                                                                                           | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
 | Filter out message types, default is "Dd" for debug messages                                                               | ```ASWSG-MESSAGE-FILTER:Dd```                        |
+| Use Gemini style links ```=>```,T = true, everything else is false                                                         | ```GEMINI-LINK```                        |
 
-The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.Format).
+The date and time format refers to GO's [Time.Format](https://pkg.go.dev/time#pkg-constants).
 
 ### Info Variables
 
-| Function | Name |
-| -------- | ------------ |
-| Name of the file currently parsed | ```FILENAME``` |
-| Name of the main file | ```IN-FILE``` |
-| Current date | ```TODAY``` |
-| Current time | ```TIME``` |
-| Current timestamp (date + time) | ```NOW``` |
-| The ASWSG version | ```ASWSG-VERSION``` |
-| The ASWSG authors name | ```ASWSG-AUTHOR``` |
-| The ASWSG license | ```ASWSG-LICENSE``` |
+| Function                          | Name                |
+|-----------------------------------|---------------------|
+| Name of the file currently parsed | ```FILENAME```      |
+| Name of the main file             | ```IN-FILE```       |
+| Current date                      | ```TODAY```         |
+| Current time                      | ```TIME```          |
+| Current timestamp (date + time)   | ```NOW```           |
+| The ASWSG version                 | ```ASWSG-VERSION``` |
+| The ASWSG authors name            | ```ASWSG-AUTHOR```  |
+| The ASWSG license                 | ```ASWSG-LICENSE``` |
 
 
 ## Example
 
     (comment next line defines a variable title)
     @title:Test Page
-    
+
     +include filename
 
     == A Header {{title}}
-    
+
     * This is
     * just a simple List
     *- with four entries
     *- in two levels
-    
+
    	# A numbered list
    	1 can be made with the numbers 0-9
    	1 for your convenience
@@ -266,15 +269,15 @@ The time format refers to GO's [Time.Format](https://golang.org/pkg/time/#Time.F
 * Start (main)
    * setDefaultSiteVars
    * parseAndSetCommandLineVars
-   * parseFile, for each line 
+   * parseFile, for each line
        * process continued lines
-       * parseLine 
+       * parseLine
             * replaceInlineVars
             * parseCondition
             * validateCondition (return if not fulfilled)
-            * block mode comment (return if true) 
-            * block mode code (return if true) 
-            * block mode crude (return if true) 
+            * block mode comment (return if true)
+            * block mode code (return if true)
+            * block mode crude (return if true)
             * block mode cite (continue) (TODO)
             * empty Line (new paragraph state)
             * ignore comment line
