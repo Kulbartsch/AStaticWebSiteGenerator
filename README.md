@@ -121,8 +121,8 @@ Some characters are can be cascaded.
 | Gemini style link                                                                           | ```=>```                  | ```ASWSG-GEMINI-LINK``` | ```=> http://haniarani.com/ Hania Rani```                                                     |
 | Comment                                                                                     | ```;```                   | ```ASWSG-COMMENT```     | ```; this is a comment```                                                                     |
 
-To continue a long line (i.e. a long header split over two lines) add an ```\``` to the end of the first line.
-
+To continue a long line (i.e. a long header split over two lines) add a ```\``` to the end of the line.
+Use ```ASWSG-CONTINUE``` to redefine the character.  Delete it to disable the feature.
 
 ### Inline formatting
 
@@ -218,9 +218,16 @@ All conditions start with the ```ASWSG-COMMAND``` character which default is ```
 | Time format                                                                                                                | ```TIMEFORMAT:15:04:05```                            |
 | Timestamp format                                                                                                           | ```TIMESTAMPFORMAT:2006-01-02 15:04:05 UTC+ 07:00``` |
 | Filter out message types, default is "Dd" for debug messages                                                               | ```ASWSG-MESSAGE-FILTER:Dd```                        |
-| Use Gemini style links ```=>```,T = true, everything else is false                                                         | ```GEMINI-LINK```                        |
+| Use Gemini style links ```=>```,T = true, everything else is false                                                         | ```GEMINI-LINK```                                    |
+| Every line in a code block is a separate <code> line                                                                       | ```ASWSG-CODE-LINES```                               |
+| Convert ```<``` and ```>``` to ```&lt;``` and ```&gt;```, T = true, everything else is false, default is "F"               | ```ASWSG-LT-GT-TO-HTML```                            |
 
 The date and time format refers to GO's [Time.Format](https://pkg.go.dev/time#pkg-constants).
+
+```ASWSG-LT-GT-TO-HTML``` is set to FALSE by default, assuming that
+the user wants to use HTML code in the text.
+If you want to use ```<``` and ```>``` as text, set it to TRUE.
+Just change it in the source to your needs.
 
 ### Info Variables
 
@@ -296,5 +303,5 @@ The date and time format refers to GO's [Time.Format](https://pkg.go.dev/time#pk
                 * surroundWithHTMLTag for list, cite, numeration
                 * parseInLine for
                     * bold, emphasised, strike, code, link(1-3)
-
+                    * if ASWSG-LT-GT-TO-HTML is TRUE, replace < and > with &lt; and &gt;
 

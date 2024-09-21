@@ -121,22 +121,35 @@ func parseLink3(text string) string {
 	return surroundWithHTMLTagWithAttributes("a", display, attrib) // tag string, s string, attrib HTMLAttrib)
 }
 
-// StringBracketsSplit splits a string into a part before the brackets (b1) in the brackets and after the brackets (b2)
+// StringBracketsSplit splits a string into a part before the brackets (b1)
+// into _a_, in the brackets into _b_ and after the brackets (b2) to _c_.
+// If the brackets are not found, the original string is returned in _a_.
 func StringBracketsSplit(text string, b1 string, b2 string, escape string) (a string, b string, c string) {
-	m := strings.Index(text, b1)
-	if m == -1 { // IDEA: maybe Check for code rune
+	lb1 := len(b1)
+	lb2 := len(b2)
+	ltx := len(text)
+	if lb1 == 0 || lb2 == 0 || ltx == 0 {
 		return text, "", ""
 	}
-	n := strings.Index(text[m+1:], b2) + m + 1
-	if n == -1 || n <= m { // IDEA: maybe Check for Escape rune
+	m := strings.Index(text, b1) // IDEA: maybe Check for code rune
+	if m == -1 || ltx-m < lb2 {
 		return text, "", ""
 	}
+	n := strings.Index(text[m+lb1:], b2) // IDEA: maybe Check for Escape rune
+	if n == -1 {
+		return text, "", ""
+	}
+	n = n + m + lb2
+	if n == ltx {
+		return text[0:m], text[m+len(b1):], ""
+	}
+
 	return text[0:m], text[m+len(b1) : n], text[n+len(b2):]
 }
 
 func parseInLine(rawLine string) (parsedLine string) {
 
-	// There is a problem using emphasised default tags (//) and links like "http://..." in an a line
+	// There is a problem using emphasized default tags (//) and links like "http://..." in an a line
 
 	didParse := false
 	parsedLine = rawLine
@@ -149,7 +162,7 @@ func parseInLine(rawLine string) (parsedLine string) {
 		parsedLine = t1 + surroundWithHTMLTag("b", t2) + t3
 	}
 
-	// check emphasised
+	// check emphasized
 	t1, t2, t3 = StringBracketsSplit(parsedLine, siteContext.vars.GetVal("ASWSG-EMP-1"), siteContext.vars.GetVal("ASWSG-EMP-2"), siteContext.vars.GetVal("ASWSG-ESCAPE"))
 	if len(t2) > 0 && Right(t1, 1) != ":" { // TOFIX: Workaround to not mess with HTML links containing "://"
 		didParse = true
@@ -200,8 +213,15 @@ func parseInLine(rawLine string) (parsedLine string) {
 		parsedLine = t1 + parseLink3(t2) + t3
 	}
 
-	if didParse == true {
+	if didParse {
 		parsedLine = parseInLine(parsedLine)
+	}
+
+	// is ASWSG-LT-GT-TO-HTML is true replace "<" and ">" with "&lt;" and "&gt;"
+	if IsVarTrue("ASWSG-LT-GT-TO-HTML") {
+		// replace "<" with "&lt;" and ">" with "&gt;"
+		parsedLine = strings.Replace(parsedLine, "<", "&lt;", -1)
+		parsedLine = strings.Replace(parsedLine, ">", "&gt;", -1)
 	}
 
 	return

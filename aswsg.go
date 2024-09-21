@@ -138,6 +138,8 @@ func setDefaultSiteVars() {
 		"ASWSG-CSV-COMMA":            ";",  // CSV field separator
 		"ASWSG-CSV-COMMENT":          "#",  // CSV comment line
 		"ASWSG-INCLUDE-REVERSE":      "F",  // reverse order of files to be included
+		"ASWSG-CODE-LINES":           "T",  // T = true, every line in a code block is a separate <code> line
+		"ASWSG-LT-GT-TO-HTML":        "F",  // Convert "<" and ">" to "&lt;" and "&gt;"
 
 		// inline formating, pairs end on -1 respective -2
 		"ASWSG-VAR-1":    "{{", // special: variable to be replaced
@@ -303,7 +305,6 @@ func parseCommonParagraphControls(line string, currentParagraphState string) (re
 				surroundWith = "li"
 			default:
 				Message("", 0, "A", "should not happen (controlChar not found)")
-				break
 			}
 			line = WhiteSpaceTrim(line[1:])
 		} else {
@@ -375,20 +376,33 @@ func parseLine(line string, paragraphState string) (resultLines []string, newPar
 
 	// block mode code - "ASWSG-ML-CODE":    "%"
 	checkBlock = siteContext.vars.GetVal("ASWSG-ML-CODE")
+	separateCodeLine := IsVarTrue("ASWSG-CODE-LINES")
 	if siteContext.blockMode == checkBlock { // in this block
 		if blockToggle == checkBlock { // end of this block
 			siteContext.blockMode = ""
 			newParagraphState = ""
-			resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "</pre>")
+			if separateCodeLine {
+				resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "</pre>")
+			} else {
+				resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "</code></pre>")
+			}
 			return resultLines, newParagraphState
 		} else { // normal in this block
-			resultLines = append(resultLines, "<code>"+line+"</code>")
+			if separateCodeLine {
+				resultLines = append(resultLines, "<code>"+line+"</code>")
+			} else {
+				resultLines = append(resultLines, line)
+			}
 		}
 		return
 	} else if siteContext.blockMode == "" && blockToggle == checkBlock { // new block start
 		siteContext.blockMode = checkBlock
 		newParagraphState = ""
-		resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<pre>")
+		if separateCodeLine {
+			resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<pre>")
+		} else {
+			resultLines = append(changeParagraphs(paragraphState, newParagraphState, false), "<pre><code>")
+		}
 		return resultLines, newParagraphState
 	}
 
@@ -596,9 +610,11 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 		siteContext.lineNumber += 1
 		siteContext.vars.SetVar("linenumber", strconv.Itoa(siteContext.lineNumber))
 
-		if Right(oneInputLine, 1) == siteContext.vars.GetVal("ASWSG-CONTINUE") {
-			continued = oneInputLine[:len(oneInputLine)-1]
-			continue
+		if len(siteContext.vars.GetVal("ASWSG-CONTINUE")) > 0 {
+			if Right(oneInputLine, 1) == siteContext.vars.GetVal("ASWSG-CONTINUE") {
+				continued = oneInputLine[:len(oneInputLine)-1]
+				continue
+			}
 		}
 		continued = ""
 
