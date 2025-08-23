@@ -57,3 +57,5 @@ AStaticWebSiteGenerator
 aswsg
 *~
 /tmp/
+.vscode/launch.json
+test/a.html

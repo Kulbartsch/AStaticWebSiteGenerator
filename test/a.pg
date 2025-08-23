@@ -20,13 +20,13 @@ The time is
 > Just do it!
 > Try it out!
 
-Another cite format - it's now implaemented:
+Another cite format - it's now implemented:
 
 >>>
-The meaning of life is to find your gift. 
+The meaning of life is to find your gift.
 The purpose of life is to give it away.
 \-- Pablo Picasso
->>> 
+>>>
 
 == Variables
 
@@ -58,8 +58,8 @@ I can haz *cookies* with //Milk//!
 Don't need ~~meat~~ to be happy.
 Ah ... links should do to [[Wikipedia|https://wikipedia.org/]] for example.
 But external links should be like this [Hackernews](https://news.ycombinator.com/)
-But we can refrence Fefe [[https://blog.fefe.de/]] 
-and Slashdot [[https://slashdot.org/]] 
+But we can refrence Fefe [[https://blog.fefe.de/]]
+and Slashdot [[https://slashdot.org/]]
 like this.
 => https://gemini.circumlunar.space/ Link to "Project Gemini"
 
@@ -101,11 +101,11 @@ The following include does not exist
 
 == Tables ==
 
-=== default 
+=== default
 
-Default table with one header line 
+Default table with one header line
 
-| Rank | Country | Population | 
+| Rank | Country | Population |
 | 1    | China   | 1.433.783.692|
 | 2    | India   | 1.366.417.756 |
 | 3    | Europe  | 446.824.564|
@@ -117,7 +117,7 @@ Default table with one header line
 @ASWSG-TABLE-HEADERLINES:2
 @ASWSG-TABLE-ALIGNMENT:CLR
 
-| Rank | Country | Population | 
+| Rank | Country | Population |
 |     | or Region | in millions
 | 1    | China   | 1.433|
 | 2    | India   | 1.366 |

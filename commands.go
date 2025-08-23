@@ -66,15 +66,35 @@ func commandMessage(p string) (r []string) {
 	return
 }
 
-// command link-index
-func commandLinkIndex(p string) (r []string) {
+// command link-index [<filename>]
+// Write link index to file, or return as string array for immediate inclusion
+// in the document
+func commandLinkIndex(filename string) (r []string) {
+	var lines []string
 	for _, il := range indexedLinks {
-		attrib := HTMLAttrib{"href": il.link, "rel": "external"}
-		r = append(r, il.index+" "+surroundWithHTMLTagWithAttributes("a", il.link, attrib)+"<br />")
+		attrib := HTMLAttrib{"id": il.index, "href": il.link, "rel": "external"}
+		lines = append(lines, il.index+" "+surroundWithHTMLTagWithAttributes("a", il.link, attrib)+"<br />")
 	}
 	indexedLinks = nil
 	linkIndex = 0
-	return
+
+	if len(filename) != 0 {
+		f, err := os.Create(filename)
+		if err != nil {
+			Message("", 0, "E", "Problem creating file: "+filename)
+			return
+		}
+		defer f.Close()
+		for _, l := range lines {
+			_, err := f.WriteString(l + "\n")
+			if err != nil {
+				Message("", 0, "E", "Problem writing to file: "+filename)
+				return
+			}
+		}
+		return // r is empty
+	}
+	return lines
 }
 
 // writeTOC to file
