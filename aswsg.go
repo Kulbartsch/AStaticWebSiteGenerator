@@ -602,11 +602,12 @@ func parseFile(filename string, startParagraphState string) ([]string, string, e
 
 	// stream scanner
 	for scanner.Scan() {
-		// TODO check for errors ?
-
 		var oneInputLine string
-
-		oneInputLine = continued + scanner.Text() // TODO check for Error
+		oneInputLine = continued + scanner.Text()
+		// remove BOM (UTF-8 Byte Order Mark) if present in first line
+		if siteContext.lineNumber == 0 && strings.HasPrefix(oneInputLine, "\ufeff") {
+			oneInputLine = strings.TrimPrefix(oneInputLine, "\ufeff")
+		}
 		siteContext.lineNumber += 1
 		siteContext.vars.SetVar("linenumber", strconv.Itoa(siteContext.lineNumber))
 
